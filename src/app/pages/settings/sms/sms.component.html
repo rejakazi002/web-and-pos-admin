@@ -1,0 +1,200 @@
+<div class="container">
+
+  <div class="opt-title">
+    <h4>Sms Sent When:</h4>
+  </div>
+  <div class="option-container">
+    <div *ngFor="let key of smsOptionKeys" class="checkbox-item">
+      <mat-checkbox [(ngModel)]="smsSendingOption[key]" color="primary" (ngModelChange)="onSmsSendingOptChange()">
+        {{ formatLabel(key) }}
+      </mat-checkbox>
+    </div>
+  </div>
+
+
+  <div class="content">
+    @for (item of smsMethods; let i = $index; track i) {
+      <div class="view-item" [ngClass]="{ 'active-item': selectedIndex === i }">
+        <div class="icon-checkbox"
+             (click)="toggleCheckbox(i)"
+             [ngClass]="{ active: item.status === 'active' }">
+          <mat-icon>
+            {{ item.status === 'active' ? 'check_circle' : 'radio_button_unchecked' }}
+          </mat-icon>
+        </div>
+        <div class="info" (click)="onSelectItem(i)">
+          <h5>{{ item.providerName }}</h5>
+          <a class="manage-link">
+            Show Setting Form
+            <span class="material-icons">expand_more</span>
+          </a>
+        </div>
+      </div>
+    }
+
+    @if (smsMethods.length < 2) {
+      <div class="add-item" (click)="onAddNewPaymentType()">
+        <div class="icon">
+          <span class="material-icons">add</span>
+        </div>
+        <div class="title">
+          <h5>Add New SMS Method</h5>
+        </div>
+      </div>
+    }
+  </div>
+
+  <form [style.display]="formViewMode === '' ? 'none' : 'block'" [formGroup]="dataForm" (ngSubmit)="onSubmit()"
+        class="form-container">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Select Provider</mat-label>
+      <mat-select formControlName="providerName">
+        @for (item of smsProviders; track $index) {
+          <mat-option [value]="item.value" [disabled]="isDisabledOpt(item.value)">
+            {{ item.viewValue }}
+          </mat-option>
+        }
+      </mat-select>
+      <mat-error>This field is required.</mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline" class="no-underline">
+      <mat-label>Sender Id</mat-label>
+      <input formControlName="senderId" matInput placeholder="Enter here..."/>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="no-underline" *ngIf="dataForm?.value.providerName === 'Smsq BD'  || dataForm?.value.providerName === 'Twilio'">
+      <mat-label>{{dataForm?.value.providerName === 'Twilio' ? 'Twilio phone number' : 'Client Id'}}</mat-label>
+      <input formControlName="clientId" matInput placeholder="Enter here..."/>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="no-underline">
+      <mat-label>Api/Secret Key</mat-label>
+      <input formControlName="secretKey" matInput placeholder="Enter here..."/>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="no-underline" *ngIf="dataForm?.value.providerName === 'Revesms'">
+      <mat-label>API Key</mat-label>
+      <input formControlName="apiKey" matInput placeholder="Enter here..."/>
+    </mat-form-field>
+
+    @if (!isLoading) {
+      <button mat-raised-button color="primary">
+        <mat-icon>check</mat-icon>
+        Save Changes
+      </button>
+    } @else {
+      <button class="btn-loader" mat-raised-button type="button" color="primary">
+        <div><span class="loader"></span></div>
+        <div><span class="txt">Save Changes</span></div>
+      </button>
+    }
+  </form>
+
+  <!-- Custom SMS Message Section -->
+  <div class="custom-message-section">
+    <div class="section-title">
+      <h4>Customize SMS Messages</h4>
+      <p class="hint-text">Leave blank to use default messages. Add custom text and use dynamic tags to personalize.</p>
+    </div>
+
+    @for (key of smsOptionKeys; track key) {
+      @if (smsSendingOption[key]) {
+        <div class="message-item">
+          <div class="item-header" (click)="toggleSection(key)">
+            <div class="header-content">
+              <mat-icon class="expand-icon" [class.expanded]="expandedSections[key]">
+                {{ expandedSections[key] ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+              <h5>{{ formatLabel(key) }} Message</h5>
+            </div>
+            <span class="status-badge" [class.custom]="smsCustomMessages[key]">
+              {{ smsCustomMessages[key] ? 'Custom' : 'Default' }}
+            </span>
+          </div>
+
+          @if (expandedSections[key]) {
+            <div class="item-content">
+              <!-- Dynamic Tags -->
+              <div class="dynamic-tags">
+                <span class="tag-label">Quick Insert:</span>
+                @for (tag of getDynamicTags(key); track tag.key) {
+                  <div class="tag-chip" (click)="insertTag(key, tag.key)" [matTooltip]="tag.tooltip">
+                    <mat-icon>{{ tag.icon }}</mat-icon>
+                    <span>{{ tag.label }}</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Message Input -->
+              <mat-form-field appearance="outline" class="message-input">
+                <mat-label>Custom Message</mat-label>
+                <textarea
+                  matInput
+                  [(ngModel)]="smsCustomMessages[key]"
+                  (ngModelChange)="onCustomMessageChange(key)"
+                  placeholder="Enter your custom message here... Use tags above to add dynamic content."
+                  rows="4"
+                ></textarea>
+                <mat-hint>
+                  @if (key === 'adminNotification') {
+                    Available tags: {{ '{' }}OrderId{{ '}' }}, {{ '{' }}ProductName{{ '}' }}, {{ '{' }}CustomerName{{ '}' }}, {{ '{' }}CustomerPhone{{ '}' }}, {{ '{' }}ShopName{{ '}' }}, {{ '{' }}OrderTotal{{ '}' }}, {{ '{' }}VendorName{{ '}' }}, {{ '{' }}OrderStatus{{ '}' }}, {{ '{' }}OrderDate{{ '}' }}
+                  } @else {
+                    Available tags: {{ '{' }}OrderId{{ '}' }}, {{ '{' }}ProductName{{ '}' }}, {{ '{' }}EstimateDelivery{{ '}' }}, {{ '{' }}CustomerName{{ '}' }}, {{ '{' }}CustomerPhone{{ '}' }}, {{ '{' }}ShopName{{ '}' }}, {{ '{' }}OrderTotal{{ '}' }}
+                  }
+                </mat-hint>
+              </mat-form-field>
+
+              <!-- Character Count Display -->
+              @if (smsCustomMessages[key]) {
+                <div class="char-info">
+                  <span class="char-count" [ngClass]="getCharCountClass(key)">
+                    {{ smsCharacterCounts[key] || 0 }} characters
+                  </span>
+                  @if (smsPartCounts[key] > 0) {
+                    <span class="sms-parts">
+                      {{ getSmsPartLabel(key) }}
+                    </span>
+                  }
+                </div>
+              }
+
+              <!-- Message Preview -->
+              <!-- @if (smsCustomMessages[key]) {
+                <div class="message-preview">
+                  <div class="preview-header">
+                    <mat-icon>visibility</mat-icon>
+                    <span class="preview-label">Preview with Sample Data:</span>
+                  </div>
+                  <div class="preview-content">
+                    <p>{{ getPreviewMessage(smsCustomMessages[key]) }}</p>
+                  </div>
+                </div>
+              } -->
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- Save Button -->
+    @if (hasUnsavedChanges) {
+      <div class="save-button-container">
+        @if (!isSavingCustomMessages) {
+          <button mat-raised-button color="primary" class="save-messages-btn" (click)="saveCustomMessages()">
+            <mat-icon>save</mat-icon>
+            Save All Messages
+          </button>
+        } @else {
+          <button mat-raised-button color="primary" class="save-messages-btn" disabled>
+            <span class="loader-small"></span>
+            Saving...
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+</div>

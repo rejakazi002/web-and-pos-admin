@@ -1,0 +1,93 @@
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">book</mat-icon>
+          Accounts Ledger
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <div class="date-range">
+        <mat-form-field appearance="outline">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onDateRangeChange()">
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>End Date</mat-label>
+          <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onDateRangeChange()">
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="summary-section">
+  <div class="summary-cards">
+    <div class="summary-card">
+      <h3>Opening Balance</h3>
+      <p class="amount">{{ openingBalance | currency:'BDT ':'symbol':'1.2-2' }}</p>
+    </div>
+    <div class="summary-card">
+      <h3>Closing Balance</h3>
+      <p class="amount">{{ closingBalance | currency:'BDT ':'symbol':'1.2-2' }}</p>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<!-- Accounts Ledger Table -->
+<section class="table-section" *ngIf="!isLoading && ledgerEntries.length > 0">
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th class="date-col">Date</th>
+            <th class="type-col">Type</th>
+            <th class="reference-col">Reference</th>
+            <th class="description-col">Description</th>
+            <th class="debit-col">Debit</th>
+            <th class="credit-col">Credit</th>
+            <th class="balance-col">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of ledgerEntries" class="table-row">
+            <td class="date-cell">{{ entry.dateString | date:'short' }}</td>
+            <td class="type-cell">
+              <span class="badge badge-info">{{ entry.transactionType }}</span>
+            </td>
+            <td class="reference-cell">{{ entry.referenceNo || '-' }}</td>
+            <td class="description-cell">{{ entry.description || '-' }}</td>
+            <td class="debit-cell">
+              <span class="negative">{{ entry.debit || 0 | currency:'BDT ':'symbol':'1.2-2' }}</span>
+            </td>
+            <td class="credit-cell">
+              <span class="positive">{{ entry.credit || 0 | currency:'BDT ':'symbol':'1.2-2' }}</span>
+            </td>
+            <td class="balance-cell">
+              <strong>{{ entry.balance || 0 | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- No Content -->
+<app-no-content *ngIf="!isLoading && ledgerEntries.length === 0" [text]="'No ledger entries found'"></app-no-content>
+
+

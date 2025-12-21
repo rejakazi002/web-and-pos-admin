@@ -1,0 +1,158 @@
+<div class="container">
+  <div class="header">
+
+    <form class="table-search" #searchForm=ngForm>
+      <input type="text"
+             name="searchTerm"
+             autocomplete="off"
+             [(ngModel)]="searchQuery"
+             placeholder="Search">
+      @if (!searchQuery) {
+        <button>
+          <mat-icon>search</mat-icon>
+        </button>
+      } @else {
+        <button (click)="onClearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </form> <!-- END! table-search -->
+
+    <div class="right">
+      <a mat-button class="add-product-btn" color="primary"
+         [routerLink]="['/repair/add-brand']">
+        <mat-icon>add</mat-icon>
+        Add Brand
+      </a>
+    </div> <!-- END! right -->
+
+  </div> <!-- END! header -->
+
+  <div class="content">
+
+    <div class="table-tab-container">
+      <div class="right-area">
+        <app-pagination [totalData]="totalData" [dataPerPage]="dataPerPage"
+                        (pageChange)="onPageChanged($event)"></app-pagination>
+      </div>
+    </div> <!-- END Tab & Pagination View -->
+
+    <div class="sub-content">
+      <div class="table-wrapper">
+        <table>
+          <tr class="td-border first-heading-row">
+            <th class="t-checkbox">
+              <mat-checkbox color="primary" [indeterminate]="isIndeterminate" #matCheckbox
+                            (change)="onAllSelectChange($event)"></mat-checkbox>
+            </th>
+            <th>Name</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr> <!-- END Table Head -->
+
+          @defer (when !isLoading) {
+            <tr class="td-gap"></tr>
+            @if (allTableData.length) {
+              @for (data of allTableData; track data._id) {
+                <ng-container>
+                  <tr class="td-border" (click)="onTableRowClick(data._id)" [class.selected]="data.select">
+                    <td class="t-checkbox">
+                      <mat-checkbox
+                        color="primary"
+                        (click)="$event.stopPropagation()"
+                        class="t-mat-checkbox"
+                        [(ngModel)]="data.select"
+                        (ngModelChange)="onCheckChange($event, data._id)">
+                      </mat-checkbox>
+                    </td>
+
+                    <td>
+                      <p [matTooltip]="data.name">{{ (data.name | titlecase)| limitText: 45 }}</p>
+                    </td>
+
+                    <td>
+                      <p>{{ data.createdAt || "-" | date}}</p>
+                    </td>
+
+                    <td class="action-drop-button">
+                      <button mat-icon-button [matMenuTriggerFor]="tableMenu" (click)="$event.stopPropagation()">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #tableMenu="matMenu">
+                        <button [routerLink]="['/repair/edit-brand', data._id]" mat-menu-item>
+                          <mat-icon>edit</mat-icon>
+                          Edit
+                        </button>
+                      </mat-menu>
+                    </td>
+                  </tr>
+                  <tr class="td-gap"></tr>
+                </ng-container>
+              }
+            } @else {
+              <tr>
+                <td colspan="4">
+                  <app-no-content
+                    [matIcon]="'summarize'"
+                    [title]="'No Data Found!'"
+                    [desc]="'Please add some data to show here.'">
+                  </app-no-content>
+                </td>
+              </tr>
+            }
+
+          } @placeholder (minimum 200ms) {
+            <tr>
+              <td colspan="4">
+                <app-page-loader></app-page-loader>
+              </td>
+            </tr>
+          }
+
+        </table>
+
+      </div> <!-- END! table-wrapper -->
+
+    </div> <!-- END! sub-content -->
+
+  </div> <!-- END! content -->
+
+</div> <!-- END! container -->
+
+
+<!-- Bottom Action -->
+<div class="bottom-action" [class.active]="selectedIds.length || isFilterChange">
+  <div class="action-bar-left">
+    <span class="items-selected">
+      @if(selectedIds.length) {
+        <span class="item-count">{{ selectedIds.length }}</span>
+      }
+      @if (isFilterChange && !selectedIds.length) {
+        Filter Applied
+      } @else if (selectedIds.length && isFilterChange ) {
+        Items selected & Filter Applied
+      } @else {
+        Items selected
+      }
+    </span>
+  </div>
+  <div class="action-bar-right">
+    @if (isFilterChange) {
+      <button (click)="onClearDataQuery()" class="btn-black">
+        <span class="material-icons">filter_alt_off</span> Clear Filter
+      </button>
+    }
+
+    @if (selectedIds.length) {
+      <button (click)="onClearSelection()" class="btn-black">
+        <span class="material-icons">clear</span> Clear Selection
+      </button>
+
+      <button (click)="openConfirmDialog('delete')" class="btn-red">
+        <span class="material-icons">delete</span> Delete
+      </button>
+    }
+  </div>
+</div>
+<!-- END! Bottom Action-->
+

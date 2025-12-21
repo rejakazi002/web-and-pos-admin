@@ -1,0 +1,49 @@
+
+
+<section class="container">
+  <div class="from-section">
+  <div class="grid">
+    <form #formElement="ngForm" [formGroup]="dataForm" (ngSubmit)="onSubmit()" class="area-border">
+
+
+      <div class="gallery-picker">
+        <app-gallery-image-picker
+          [type]="'multiple'"
+          [maxImages]="1"
+          [isInvalid]="this.dataForm.get('titleImg').touched && this.dataForm.get('titleImg').invalid"
+          (onPicked)="onPickedImage($event)"
+          infoText="The 1st image for desktop (152px * 100px) "
+          [images]="pickedImages">
+        </app-gallery-image-picker>
+      </div>
+
+
+
+
+
+
+      <div class="from">
+        <mat-label>Title name</mat-label>
+        <mat-form-field appearance="outline">
+          <input formControlName="title" matInput required />
+          <mat-error>This field is required.</mat-error>
+        </mat-form-field>
+      </div>
+
+
+
+
+
+
+      <div class="btn">
+        <button mat-raised-button type="submit" class="btn-submit">
+          {{ id ? "Update" : "Submit" }}
+        </button>
+        <button type="button" (click)="onClose()" mat-raised-button class="btn-submit color">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+  </div>
+</section>

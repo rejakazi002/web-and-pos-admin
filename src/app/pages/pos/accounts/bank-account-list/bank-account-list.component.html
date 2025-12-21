@@ -1,0 +1,151 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">account_balance</mat-icon>
+          Bank Account List
+        </h1>
+        <p class="page-subtitle">Manage all your bank accounts</p>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          (click)="exportToExcel()"
+          mat-stroked-button
+          class="export-btn"
+          matTooltip="Export to Excel">
+          <mat-icon>file_download</mat-icon>
+          <span>Export</span>
+        </button>
+        <a routerLink="/pos/accounts/add-bank-account" mat-raised-button color="primary" class="add-btn">
+          <mat-icon>add</mat-icon>
+          <span>Add New Account</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter & Search Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <!-- Search -->
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search Bank Accounts</mat-label>
+          <input
+            matInput
+            type="search"
+            #searchInput
+            name="searchTerm"
+            autocomplete="off"
+            (input)="onSearchChange($event)"
+            placeholder="Search by account name, number, bank name..."
+          />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-actions">
+        <button
+          mat-stroked-button
+          [class.active]="activeFilter === 'all'"
+          (click)="onFilterChange('all')">
+          All
+        </button>
+        <button
+          mat-stroked-button
+          [class.active]="activeFilter === 'active'"
+          (click)="onFilterChange('active')">
+          Active
+        </button>
+        <button
+          mat-stroked-button
+          [class.active]="activeFilter === 'inactive'"
+          (click)="onFilterChange('inactive')">
+          Inactive
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<!-- Bank Account List Table -->
+<section class="table-section" *ngIf="!isLoading && searchBankAccounts.length > 0">
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th class="name-col">Account Name</th>
+            <th class="number-col">Account Number</th>
+            <th class="bank-col">Bank Name</th>
+            <th class="branch-col">Branch</th>
+            <th class="type-col">Type</th>
+            <th class="balance-col">Current Balance</th>
+            <th class="status-col">Status</th>
+            <th class="action-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let account of searchBankAccounts" class="table-row">
+            <td class="name-cell">
+              <div class="account-info">
+                <mat-icon class="account-icon">account_balance</mat-icon>
+                <strong>{{ account.accountName }}</strong>
+              </div>
+            </td>
+            <td class="number-cell">{{ account.accountNumber }}</td>
+            <td class="bank-cell">{{ account.bankName }}</td>
+            <td class="branch-cell">{{ account.branchName || '-' }}</td>
+            <td class="type-cell">
+              <span class="badge badge-info">{{ account.accountType || 'current' }}</span>
+            </td>
+            <td class="balance-cell">
+              <strong class="balance-amount">{{ account.currentBalance || 0 | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </td>
+            <td class="status-cell">
+              <span class="badge" [ngClass]="{
+                'badge-success': account.status === 'active',
+                'badge-warning': account.status === 'inactive',
+                'badge-danger': account.status === 'closed'
+              }">
+                {{ account.status || 'active' }}
+              </span>
+            </td>
+            <td class="action-cell">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                matTooltip="More actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item routerLink="/pos/accounts/add-bank-account/{{ account._id }}">
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+                <button mat-menu-item (click)="openConfirmDialog(account._id)">
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete</span>
+                </button>
+              </mat-menu>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- No Content -->
+<app-no-content *ngIf="!isLoading && searchBankAccounts.length === 0" [text]="'No bank accounts found'"></app-no-content>
+
+

@@ -1,0 +1,34 @@
+<div class="container">
+  <!-- ছোট্ট লোডিং স্টেট (ফ্লিকার এড়াতে) -->
+  <ng-container *ngIf="!isPermissionChecked">
+    <div class="welcome-container">
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <span class="material-icons">hourglass_top</span>
+        </div>
+        <h1 class="welcome-title">Loading…</h1>
+        <p class="welcome-message">Preparing your dashboard.</p>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Welcome (পারমিশন নাই) -->
+  <div *ngIf="isPermissionChecked && !hasDashboardPermission" class="welcome-container">
+    <div class="welcome-content">
+      <div class="welcome-icon">
+        <span class="material-icons">waving_hand</span>
+      </div>
+      <h1 class="welcome-title">Welcome!</h1>
+      <p class="welcome-message">
+        Welcome to the admin panel. You don't have dashboard permissions, but you can access other available features from the menu.
+      </p>
+    </div>
+  </div>
+
+  <!-- Dashboard (পারমিশন আছে) -->
+  <div class="chart-graph-container" *ngIf="isPermissionChecked && hasDashboardPermission">
+    <app-dashboard-card></app-dashboard-card>
+    <app-chart-section></app-chart-section>
+    <app-recent-order></app-recent-order>
+  </div>
+</div>

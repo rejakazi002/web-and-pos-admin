@@ -1,0 +1,124 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">broken_image</mat-icon>
+          Product Damage / Wastage List
+        </h1>
+        <p class="page-subtitle">Track damaged and wasted products</p>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          (click)="router.navigate(['/pos/product-damage/add'])"
+          mat-raised-button
+          color="primary"
+          class="add-btn">
+          <mat-icon>add</mat-icon>
+          <span>New Damage Record</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Summary Cards -->
+<section class="summary-section" *ngIf="reports">
+  <div class="summary-grid">
+    <mat-card class="summary-item">
+      <mat-card-content>
+        <h4>Total Quantity</h4>
+        <p class="large">{{ reports.totalQuantity || 0 }}</p>
+        <small>Damaged Items</small>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="summary-item">
+      <mat-card-content>
+        <h4>Total Amount</h4>
+        <p class="large">{{ reports.totalAmount || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+        <small>Total Loss</small>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>
+
+<!-- Filter Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search</mat-label>
+        <input matInput [formControl]="searchCtrl" placeholder="Search by product name or SKU">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<!-- Damage Table -->
+<section *ngIf="!isLoading" class="table-section">
+  <div class="table-card">
+    <div class="table-container">
+      <table class="modern-table">
+        <tr>
+          <th>Date</th>
+          <th>Product</th>
+          <th>SKU</th>
+          <th>Quantity</th>
+          <th>Purchase Price</th>
+          <th>Total Loss</th>
+          <th>Note</th>
+          <th>Actions</th>
+        </tr>
+        <tr *ngFor="let damage of damages" class="table-row">
+          <td>{{ damage.date | date:'short' }}</td>
+          <td>{{ damage.product?.name || 'N/A' }}</td>
+          <td>{{ damage.product?.sku || 'N/A' }}</td>
+          <td><strong>{{ damage.quantity || 0 }}</strong></td>
+          <td>{{ (damage.product?.purchasePrice || damage.product?.costPrice || 0) | currency:'BDT ':'symbol':'1.2-2' }}</td>
+          <td><strong class="loss-amount">{{ ((damage.quantity || 0) * (damage.product?.purchasePrice || damage.product?.costPrice || 0)) | currency:'BDT ':'symbol':'1.2-2' }}</strong></td>
+          <td>{{ damage.note || 'N/A' }}</td>
+          <td class="action-column">
+            <button mat-icon-button (click)="router.navigate(['/pos/product-damage/edit', damage._id])" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteDamage(damage)" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+
+      <div *ngIf="damages.length === 0 && !isLoading" class="no-content-overlay">
+        <app-no-content [text]="'No damage records found'"></app-no-content>
+      </div>
+    </div>
+
+    <mat-paginator [length]="totalDamages"
+                   [pageSize]="damagesPerPage"
+                   [pageSizeOptions]="[5, 10, 25, 50]"
+                   (page)="onPageChange($event)"
+                   showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</section>
+

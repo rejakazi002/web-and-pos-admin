@@ -1,0 +1,188 @@
+<div class="container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>
+          <mat-icon>undo</mat-icon>
+          New Purchase Return
+        </h1>
+        <p>Return products to supplier</p>
+      </div>
+      <div class="header-actions">
+        <a routerLink="/pos/purchase/purchase-return-list" mat-stroked-button>
+          <mat-icon>arrow_back</mat-icon>
+          Back to List
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Find Purchase</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="dataForm" class="search-form">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Purchase Number</mat-label>
+            <input matInput formControlName="purchaseNo" placeholder="Enter purchase number">
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="button" (click)="searchPurchase()" [disabled]="isSearching">
+            <mat-icon>search</mat-icon>
+            {{ isSearching ? 'Searching...' : 'Search' }}
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Purchase Details -->
+  @if (purchase) {
+    <div class="purchase-details">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Purchase Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="label">Purchase No:</span>
+              <span class="value">{{ purchase.purchaseNo }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Supplier:</span>
+              <span class="value">{{ purchase.supplier?.name || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Phone:</span>
+              <span class="value">{{ purchase.supplier?.phone || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Date:</span>
+              <span class="value">{{ purchase.purchaseDate | date:'mediumDate' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Total:</span>
+              <span class="value">{{ shopInformation?.currency | currencyIcon }}{{ purchase.total | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Return Products -->
+    <div class="return-products">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Select Products to Return</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="table-responsive">
+            <table class="products-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>SKU</th>
+                  <th>Purchased Qty</th>
+                  <th>Purchase Price</th>
+                  <th>Return Qty</th>
+                  <th>Return Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (product of returnProducts; track product.productId; let i = $index) {
+                  <tr [class.selected]="product.returnQty > 0">
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.sku || '-' }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ shopInformation?.currency | currencyIcon }}{{ product.purchasePrice | number:'1.2-2' }}</td>
+                    <td>
+                      <mat-form-field appearance="outline" class="qty-field">
+                        <input matInput type="number" [(ngModel)]="product.returnQty" 
+                               (ngModelChange)="onReturnQtyChange(i)" 
+                               [min]="0" [max]="product.quantity">
+                      </mat-form-field>
+                    </td>
+                    <td class="return-amount">
+                      {{ shopInformation?.currency | currencyIcon }}{{ product.returnAmount | number:'1.2-2' }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr class="total-row">
+                  <td colspan="5" class="total-label">Grand Total:</td>
+                  <td class="grand-total">
+                    {{ shopInformation?.currency | currencyIcon }}{{ getGrandTotal() | number:'1.2-2' }}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Return Details -->
+    <div class="return-details">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Return Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="dataForm" class="return-form">
+            <mat-form-field appearance="outline">
+              <mat-label>Return Type</mat-label>
+              <mat-select formControlName="returnType">
+                <mat-option value="CREDIT">Supplier Credit (Adjust in next purchase)</mat-option>
+                <mat-option value="REFUND">Refund (Supplier will pay back)</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Return Date</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="returnDate">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Reason for Return</mat-label>
+              <textarea matInput formControlName="reason" rows="2" placeholder="Enter reason..."></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Notes</mat-label>
+              <textarea matInput formControlName="note" rows="2" placeholder="Additional notes..."></textarea>
+            </mat-form-field>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="submit-section">
+      <button mat-raised-button color="warn" (click)="onSubmit()" [disabled]="isLoading || getSelectedProducts().length === 0">
+        <mat-icon>undo</mat-icon>
+        {{ isLoading ? 'Processing...' : 'Process Return' }}
+      </button>
+    </div>
+  }
+
+  <!-- No Purchase Selected -->
+  @if (!purchase && !isLoading) {
+    <div class="no-purchase">
+      <mat-icon>search</mat-icon>
+      <p>Search for a purchase to start the return process</p>
+    </div>
+  }
+</div>
+
+@if (isLoading) {
+  <app-page-loader></app-page-loader>
+}
+

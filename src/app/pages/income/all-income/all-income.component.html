@@ -1,0 +1,487 @@
+<div class="container">
+  <div class="header">
+
+    <form class="table-search" #searchForm=ngForm>
+      <input type="text"
+             name="searchTerm"
+             autocomplete="off"
+             [(ngModel)]="searchQuery"
+             placeholder="Search">
+      @if (!searchQuery) {
+        <button>
+          <mat-icon>search</mat-icon>
+        </button>
+      } @else {
+        <button (click)="onClearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </form> <!-- END! table-search -->
+
+    <div class="right">
+      <a mat-button class="add-product-btn" color="primary"
+         [routerLink]="['/income/add-income']">
+        <mat-icon>add</mat-icon>
+        Add Income
+      </a>
+    </div> <!-- END! right -->
+
+  </div> <!-- END! header -->
+
+  <!-- Income Summary Cards -->
+  <div class="income-summary-section" *ngIf="allSummary">
+    <div class="summary-header">
+      <h2>Income Summary</h2>
+      <p>Total incomes overview for the selected period</p>
+    </div>
+
+    <!-- Grand Total Card -->
+    <div class="grand-total-card">
+      <div class="card-icon">
+        <mat-icon>account_balance_wallet</mat-icon>
+      </div>
+      <div class="card-content">
+        <h3>Total Income</h3>
+        <p class="amount">{{ allSummary.grandTotal | currency:'BDT':'symbol':'1.2-2' }}</p>
+        <span class="count">{{ allSummary.grandCount }} transactions</span>
+      </div>
+    </div>
+
+    <!-- Category Cards -->
+    <div class="category-cards" *ngIf="allSummary.byCategory?.length">
+      <div class="category-card" *ngFor="let category of allSummary.byCategory; let i = index">
+        <div class="card-header">
+          <div class="category-icon">
+            <mat-icon>category</mat-icon>
+          </div>
+          <div class="category-info">
+            <h4>{{ category.categoryName }}</h4>
+            <p>{{ category.totalCount }} transactions</p>
+          </div>
+        </div>
+        <div class="card-amount">
+          <strong>{{ category.totalAmount | currency:'BDT':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="percentage-bar">
+          <div class="percentage-fill"
+               [style.width.%]="(category.totalAmount / allSummary.grandTotal) * 100"
+               [style.background-color]="getCategoryColor(i)">
+          </div>
+        </div>
+        <div class="percentage-text">
+          {{ ((category.totalAmount / allSummary.grandTotal) * 100) | number:'1.1-1' }}%
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="summary-stats">
+      <div class="stat-item">
+        <mat-icon>category</mat-icon>
+        <span>{{ allSummary.categoryCount }} Categories</span>
+      </div>
+      <div class="stat-item">
+        <mat-icon>receipt</mat-icon>
+        <span>{{ allSummary.grandCount }} Total Transactions</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print Report Section -->
+<!--  <div class="print-report-section" *ngIf="allSummary && allTableData.length">-->
+<!--    <div class="print-controls">-->
+<!--      <div class="date-range-info">-->
+<!--        <h3>Income Report Ready</h3>-->
+<!--        <p>Report Period: {{ getDateRangeText() }}</p>-->
+<!--        <p>Total Amount: {{ allSummary.grandTotal | currency:'BDT':'symbol':'1.2-2' }}</p>-->
+<!--        <p>Total Transactions: {{ allSummary.grandCount }}</p>-->
+<!--      </div>-->
+<!--      <div class="print-actions">-->
+<!--        <button mat-raised-button color="primary" (click)="printReportDirect()">-->
+<!--          <mat-icon>print</mat-icon>-->
+<!--          Print Invoice-->
+<!--        </button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+  <!-- Professional Invoice Report Section (Hidden by default) -->
+  <div class="income-report-section" *ngIf="allSummary && allTableData.length && showInvoice">
+    <div class="report-header">
+      <h2>Income Report</h2>
+      <div class="report-actions">
+        <button mat-raised-button color="primary" (click)="downloadPDFReport()">
+          <mat-icon>download</mat-icon>
+          Download PDF
+        </button>
+        <button mat-stroked-button (click)="printReportDirect()">
+          <mat-icon>print</mat-icon>
+          Print Report
+        </button>
+      </div>
+    </div>
+
+    <!-- Professional Invoice Layout -->
+    <div class="invoice-container" id="invoice-content">
+      <!-- Invoice Header -->
+      <div class="invoice-header">
+        <div class="business-info">
+          <h1 class="business-name">{{ businessInfo.name }}</h1>
+          <div class="business-details">
+            <p><strong>Address:</strong> {{ businessInfo.address }}</p>
+            <p><strong>Phone:</strong> {{ businessInfo.phone }}</p>
+            <p><strong>Email:</strong> {{ businessInfo.email }}</p>
+            <p><strong>Website:</strong> {{ businessInfo.website }}</p>
+          </div>
+        </div>
+        <div class="invoice-details">
+          <h2 class="invoice-title">INCOME REPORT</h2>
+          <div class="invoice-meta">
+            <p><strong>Report Period:</strong> {{ getDateRangeText() }}</p>
+            <p><strong>Generated On:</strong> {{ getCurrentDate() }}</p>
+            <p><strong>Total Categories:</strong> {{ allSummary.categoryCount }}</p>
+            <p><strong>Total Transactions:</strong> {{ allSummary.grandCount }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Section -->
+      <div class="invoice-summary">
+        <h3>Income Summary</h3>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="label">Total Amount:</span>
+            <span class="value">{{ allSummary.grandTotal | currency:'BDT':'symbol':'1.2-2' }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Total Transactions:</span>
+            <span class="value">{{ allSummary.grandCount }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Categories:</span>
+            <span class="value">{{ allSummary.categoryCount }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Breakdown -->
+      <div class="category-breakdown-section">
+        <h3>Income by Category</h3>
+        <div class="category-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Transactions</th>
+                <th>Amount</th>
+                <th>Percentage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let category of allSummary.byCategory">
+                <td>{{ category.categoryName }}</td>
+                <td>{{ category.totalCount }}</td>
+                <td>{{ category.totalAmount | currency:'BDT':'symbol':'1.2-2' }}</td>
+                <td>{{ ((category.totalAmount / allSummary.grandTotal) * 100) | number:'1.1-1' }}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Detailed Transactions -->
+      <div class="transactions-section">
+        <h3>Detailed Transactions</h3>
+        <div class="transactions-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let transaction of allTableData">
+                <td>{{ transaction.date | date:'mediumDate' }}</td>
+                <td>{{ transaction.category?.name || 'Uncategorized' }}</td>
+                <td>{{ transaction.description || '-' }}</td>
+                <td>{{ transaction.amount | currency:'BDT':'symbol':'1.2-2' }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="'status-' + transaction.status">
+                    {{ transaction.status | titlecase }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td colspan="3"><strong>Total</strong></td>
+                <td><strong>{{ allSummary.grandTotal | currency:'BDT':'symbol':'1.2-2' }}</strong></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="invoice-footer">
+        <p class="footer-note">
+          This report was generated automatically on {{ getCurrentDate() }}.
+          For any questions regarding this report, please contact us.
+        </p>
+        <div class="footer-signature">
+          <p>Generated by: {{ businessInfo.name }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (isFilterChange) {
+    <button style="margin-right: 5px;" color="warn" mat-button class="overview-filter-btn warn"
+            (click)="onClearFilter()">
+      <mat-icon>clear</mat-icon>
+      Clear Filter
+    </button>
+  }
+
+
+  <mat-form-field style="display: none" appearance="outline" (click)="picker.open()">
+    <mat-label>Filter In Date Range</mat-label>
+    <mat-date-range-input [rangePicker]="picker" [formGroup]="dataFormDateRange" [max]="today">
+      <input formControlName="start" matStartDate placeholder="Start date" readonly>
+      <input formControlName="end" matEndDate placeholder="End date" readonly
+             (dateChange)="endChangeRegDateRange($event)">
+    </mat-date-range-input>
+    <mat-date-range-picker touchUi #picker></mat-date-range-picker>
+  </mat-form-field>
+  <div class="top-area">
+    <button color="primary" mat-button class="overview-filter-btn date-picker" (click)="picker.open()">
+      {{ dateFilterTitle }}
+      <mat-icon>date_range</mat-icon>
+    </button>
+
+    <div class="print-actions">
+      <button mat-raised-button color="primary" (click)="printReportDirect()">
+        <mat-icon>print</mat-icon>
+        Print Invoice
+      </button>
+    </div>
+    <!-- Category Filter -->
+    <mat-form-field appearance="outline" class="category-filter">
+      <mat-label>Filter by Category</mat-label>
+      <mat-select [(value)]="selectedCategoryId" (selectionChange)="onCategoryFilterChange($event.value)" placeholder="All Categories">
+        <mat-option [value]="null">All Categories</mat-option>
+        <mat-option *ngFor="let category of categories" [value]="category.name">
+          {{ category.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="content">
+
+    <div class="table-tab-container">
+      <div class="table-tab-content">
+        @for (data of tableTabData; track $index) {
+          <p (click)="onTabChange(data.value)" [ngClass]="{'active-tab': selectedTab == data.value}">
+            {{ data.viewValue }} <span class="tab-data-count">{{ totalData }}</span>
+          </p>
+        }
+      </div>
+
+      <app-pagination [totalData]="totalData" [dataPerPage]="dataPerPage"
+                      (pageChange)="onPageChanged($event)"></app-pagination>
+
+    </div> <!-- END Tab & Pagination View -->
+
+
+    <div class="sub-content">
+      <div class="table-wrapper">
+        <table>
+          <tr class="td-border first-heading-row">
+            <th class="t-checkbox">
+              <mat-checkbox color="primary" [indeterminate]="isIndeterminate" #matCheckbox
+                            (change)="onAllSelectChange($event)"></mat-checkbox>
+            </th>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr> <!-- END Table Head -->
+
+          @defer (when !isLoading) {
+            <tr class="td-gap"></tr>
+            @if (allTableData.length) {
+              @for (data of allTableData; track data._id) {
+                <ng-container>
+                  <tr class="td-border" (click)="onTableRowClick(data._id)" [class.selected]="data.select">
+                    <td class="t-checkbox">
+                      <mat-checkbox
+                        color="primary"
+                        (click)="$event.stopPropagation()"
+                        class="t-mat-checkbox"
+                        [(ngModel)]="data.select"
+                        (ngModelChange)="onCheckChange($event, data._id)">
+                      </mat-checkbox>
+                    </td>
+                    <td class="img-wrapper">
+                      <img class="table-image"
+                           matTooltip="Click to preview image"
+                           (click)="openGallery($event, data.images)"
+                           [src]="data.images?.length ? data.images[0] : '/assets/images/png/placeholder.png'"
+                           [alt]="''">
+                    </td>
+                    <td>
+                      <p [matTooltip]="data.name">{{ (data.name | titlecase)| limitText: 45 }}</p>
+                    </td>
+                    <td>
+                      <p [matTooltip]="data.category?.name">{{ (data.category?.name | titlecase)| limitText: 30 }}</p>
+                    </td>
+                    <td>
+                      <p><strong>{{ data.amount | currency:'BDT':'symbol':'1.2-2' }}</strong></p>
+                    </td>
+                    <td>
+                      <p>{{ data.date | date:'mediumDate' }}</p>
+                    </td>
+                    <td>
+                      <p><span [ngClass]="getStatusClass(data.status)">{{ data.status | titlecase }}</span></p>
+                    </td>
+                    <td class="action-drop-button">
+                      <button mat-icon-button [matMenuTriggerFor]="tableMenu" (click)="$event.stopPropagation()">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #tableMenu="matMenu">
+                        <button [routerLink]="['/income/edit-income', data._id]" mat-menu-item>
+                          <mat-icon>edit</mat-icon>
+                          Edit
+                        </button>
+                        <button mat-menu-item (click)="openDetailsDialog(data._id)">
+                          <mat-icon>visibility</mat-icon>
+                          Details
+                        </button>
+                      </mat-menu>
+                    </td>
+                  </tr>
+                  <tr class="td-gap"></tr>
+                </ng-container>
+              }
+            } @else {
+              <tr>
+                <td colspan="8">
+                  <app-no-content
+                    [matIcon]="'summarize'"
+                    [title]="'No Data Found!'"
+                    [desc]="'Please add some data to show here.'">
+                  </app-no-content>
+                </td>
+
+              </tr>
+            }
+
+          } @placeholder (minimum 200ms) {
+            <tr>
+              <td colspan="8">
+                <app-page-loader></app-page-loader>
+              </td>
+            </tr>
+          }
+
+
+        </table>
+
+      </div> <!-- END! table-wrapper -->
+
+    </div> <!-- END! sub-content -->
+
+  </div> <!-- END! content -->
+
+</div> <!-- END! container -->
+
+
+<!-- Bottom Action -->
+<div class="bottom-action" [class.active]="selectedIds.length || isFilterChange">
+  <div class="action-bar-left">
+    <!--    <button (click)="clearSelectedItemByClick()" class="close-btn">-->
+    <!--      <span class="material-icons">close</span>-->
+    <!--    </button>-->
+
+
+    <span class="items-selected">
+      @if(selectedIds.length) {
+        <span class="item-count">{{ selectedIds.length }}</span>
+      }
+      @if (isFilterChange && !selectedIds.length) {
+        @if (selectedCategoryId) {
+          Category Filter Applied
+        } @else {
+          Filter Applied
+        }
+      } @else if (selectedIds.length && isFilterChange ) {
+        @if (selectedCategoryId) {
+          Items selected & Category Filter Applied
+        } @else {
+          Items selected & Filter Applied
+        }
+      } @else {
+        Items selected
+      }
+    </span>
+
+  </div>
+  <div class="action-bar-right">
+    @if (isFilterChange) {
+      <button (click)="onClearDataQuery()" class="btn-black">
+        <span class="material-icons">filter_alt_off</span> Clear Filter
+      </button>
+    }
+
+
+    @if (selectedIds.length) {
+      <button (click)="onClearSelection()" class="btn-black">
+        <span class="material-icons">clear</span> Clear Selection
+      </button>
+
+      <button [matMenuTriggerFor]="menuChangeStatus" class="btn-green">
+        Change Status
+        <span class="material-icons right-icon">arrow_drop_down</span>
+      </button>
+
+      <mat-menu #menuChangeStatus="matMenu">
+        <button mat-menu-item (click)="openConfirmDialog('edit', {status: 'publish'})">Publish</button>
+        <button mat-menu-item (click)="openConfirmDialog('edit', {status: 'draft'})">Draft</button>
+      </mat-menu>
+
+
+      <button (click)="openConfirmDialog('delete')" class="btn-red">
+        <span class="material-icons">delete</span> Delete
+      </button>
+    }
+
+
+  </div>
+</div>
+<!-- END! Bottom Action-->
+
+
+<!-- Galley View -->
+@if (isGalleryOpen) {
+  <app-gallery-image-viewer
+    [images]="galleryImages"
+    [startIndex]="selectedImageIndex"
+    (closeEvent)="closeGallery()">
+  </app-gallery-image-viewer>
+}
+<!-- END Galley View -->
+
+
+
+
+
+
+

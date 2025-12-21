@@ -1,0 +1,160 @@
+@import "variables";
+
+.page-header-section {
+  margin-bottom: 2rem;
+}
+
+.page-header-card {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  border-radius: 16px;
+  padding: 24px 32px;
+  box-shadow: 0 4px 20px rgba(250, 112, 154, 0.3);
+  color: #ffffff;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.header-title {
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+
+    .title-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
+
+.filter-section {
+  margin-bottom: 2rem;
+}
+
+.filter-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-content {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.content-section {
+  margin-bottom: 2rem;
+}
+
+.day-close-card {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.status-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  
+  &.status-open {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  &.status-closed {
+    background-color: #666;
+    color: white;
+  }
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.summary-item {
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 8px;
+  
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: #666;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    
+    &.large {
+      font-size: 1.5rem;
+    }
+    
+    &.positive {
+      color: #4caf50;
+    }
+    
+    &.negative {
+      color: #f44336;
+    }
+  }
+  
+  small {
+    color: #999;
+    font-size: 0.75rem;
+  }
+  
+  &.highlight {
+    background: $color-primary;
+    color: white;
+    
+    h4, p {
+      color: white;
+    }
+  }
+}
+
+.close-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e0e0e0;
+  
+  .full-width {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .inline-spinner {
+    display: inline-block;
+    margin-right: 8px;
+  }
+}
+

@@ -1,0 +1,465 @@
+<!-- Page Header -->
+<section class="page-header-section" *ngIf="customer">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">person</mat-icon>
+          Customer Details
+        </h1>
+        <p class="page-subtitle">{{customer?.name || 'Walk-in Customer'}} - {{customer?.phone}}</p>
+      </div>
+      <div class="header-actions">
+        <a
+          [routerLink]="['/pos/customer/add-customer/', customerId]"
+          mat-raised-button
+          color="accent"
+          class="edit-btn">
+          <mat-icon>edit</mat-icon>
+          <span>Edit Customer</span>
+        </a>
+        <button
+          type="button"
+          routerLink="/pos/customer/customer-list"
+          mat-stroked-button
+          class="back-btn">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Back to List</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Customer Info Card -->
+<section class="info-section" *ngIf="customer">
+  <div class="info-card">
+    <div class="customer-header">
+      <div class="customer-avatar">
+        <mat-icon>person</mat-icon>
+      </div>
+      <div class="customer-info">
+        <h2>{{customer?.name || 'Walk-in Customer'}}</h2>
+        <div class="customer-meta">
+          <span class="phone">
+            <mat-icon>phone</mat-icon>
+            {{customer?.phone}}
+          </span>
+          <span class="email" *ngIf="customer?.email">
+            <mat-icon>email</mat-icon>
+            {{customer?.email}}
+          </span>
+          <span class="group-badge" [ngClass]="getGroupBadgeClass(customer?.customerGroup || 'General')">
+            {{customer?.customerGroup || 'General'}}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon total-due">
+          <mat-icon>account_balance_wallet</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Due</div>
+          <div class="stat-value due-value">
+            {{shopInformation?.currency | currencyIcon}}{{ (customer?.totalDue || 0) | number:'1.2-2'}}
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon wallet">
+          <mat-icon>account_balance</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Wallet Balance</div>
+          <div class="stat-value wallet-value">
+            {{shopInformation?.currency | currencyIcon}}{{ (customer?.walletBalance || 0) | number:'1.2-2'}}
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon points">
+          <mat-icon>stars</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Loyalty Points</div>
+          <div class="stat-value points-value">
+            {{customer?.userPoints || 0}}
+          </div>
+        </div>
+      </div>
+      <div class="stat-card" *ngIf="customerStats">
+        <div class="stat-icon purchases">
+          <mat-icon>shopping_cart</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Purchases</div>
+          <div class="stat-value">
+            {{customerStats?.totalPurchases || 0}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tabs Section -->
+<section class="tabs-section" *ngIf="customer">
+  <mat-tab-group [(selectedIndex)]="selectedTab" class="customer-tabs">
+    <!-- Customer Information Tab -->
+    <mat-tab label="Information">
+      <div class="tab-content">
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Name</label>
+            <value>{{customer?.name || 'Walk-in Customer'}}</value>
+          </div>
+          <div class="info-item">
+            <label>Phone</label>
+            <value>{{customer?.phone}}</value>
+          </div>
+          <div class="info-item" *ngIf="customer?.email">
+            <label>Email</label>
+            <value>{{customer?.email}}</value>
+          </div>
+          <div class="info-item" *ngIf="customer?.alternatePhone">
+            <label>Alternate Phone</label>
+            <value>{{customer?.alternatePhone}}</value>
+          </div>
+          <div class="info-item" *ngIf="customer?.address">
+            <label>Address</label>
+            <value>{{customer?.address}}</value>
+          </div>
+          <div class="info-item" *ngIf="customer?.city">
+            <label>City</label>
+            <value>{{customer?.city}}</value>
+          </div>
+          <div class="info-item" *ngIf="customer?.country">
+            <label>Country</label>
+            <value>{{customer?.country}}</value>
+          </div>
+          <div class="info-item" *ngIf="customer?.birthdate">
+            <label>Birthdate</label>
+            <value>{{customer?.birthdate | date:'mediumDate'}}</value>
+          </div>
+          <div class="info-item" *ngIf="customer?.notes">
+            <label>Notes</label>
+            <value>{{customer?.notes}}</value>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Statistics Tab -->
+    <mat-tab label="Statistics" *ngIf="customerStats">
+      <div class="tab-content">
+        <div class="stats-content">
+          <div class="stat-row">
+            <span class="stat-label">Total Purchases:</span>
+            <span class="stat-number">{{customerStats?.totalPurchases || 0}}</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Total Spent:</span>
+            <span class="stat-number">
+              {{shopInformation?.currency | currencyIcon}}{{ (customerStats?.totalSpent || 0) | number:'1.2-2'}}
+            </span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Average Order Value:</span>
+            <span class="stat-number">
+              {{shopInformation?.currency | currencyIcon}}{{ (customerStats?.averageOrderValue || 0) | number:'1.2-2'}}
+            </span>
+          </div>
+          <div class="stat-row" *ngIf="customerStats?.lastPurchaseDate">
+            <span class="stat-label">Last Purchase:</span>
+            <span class="stat-number">{{customerStats?.lastPurchaseDate | date:'medium'}}</span>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Purchase History Tab -->
+    <mat-tab label="Purchase History">
+      <div class="tab-content">
+        <div class="purchase-history-table" *ngIf="purchaseHistory.length > 0">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Invoice No</th>
+                <th>Date</th>
+                <th>Sub Total</th>
+                <th>Discount</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sale of purchaseHistory">
+                <td>{{sale?.invoiceNo}}</td>
+                <td>{{sale?.soldDate | date:'short'}}</td>
+                <td>{{shopInformation?.currency | currencyIcon}}{{ (sale?.subTotal || 0) | number:'1.2-2'}}</td>
+                <td>{{shopInformation?.currency | currencyIcon}}{{ (sale?.discount || 0) | number:'1.2-2'}}</td>
+                <td>{{shopInformation?.currency | currencyIcon}}{{ (sale?.total || 0) | number:'1.2-2'}}</td>
+                <td>{{sale?.paymentType || 'Cash'}}</td>
+                <td>
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="printInvoice(sale)"
+                    matTooltip="View Invoice">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <app-no-content *ngIf="purchaseHistory.length === 0" [text]="'No purchase history found'"></app-no-content>
+      </div>
+    </mat-tab>
+
+    <!-- Due Management Tab -->
+    <mat-tab label="Due Management">
+      <div class="tab-content">
+        <div class="due-management-section">
+          <div class="current-due">
+            <h3>Current Due Amount</h3>
+            <div class="due-amount-display">
+              {{shopInformation?.currency | currencyIcon}}{{ (customer?.totalDue || 0) | number:'1.2-2'}}
+            </div>
+          </div>
+          <div class="due-form">
+            <h3>Update Due Amount</h3>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Amount</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="dueAmount"
+                  placeholder="0.00"
+                  min="0"
+                />
+                <mat-icon matPrefix>attach_money</mat-icon>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Action</mat-label>
+                <mat-select [(ngModel)]="dueType">
+                  <mat-option value="add">Add Due</mat-option>
+                  <mat-option value="subtract">Pay Due</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="updateDue()"
+                [disabled]="dueAmount <= 0">
+                Update Due
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Wallet Management Tab -->
+    <mat-tab label="Wallet Balance">
+      <div class="tab-content">
+        <div class="wallet-management-section">
+          <div class="current-wallet">
+            <h3>Current Wallet Balance</h3>
+            <div class="wallet-amount-display">
+              {{shopInformation?.currency | currencyIcon}}{{ (customer?.walletBalance || 0) | number:'1.2-2'}}
+            </div>
+          </div>
+          <div class="wallet-form">
+            <h3>Update Wallet Balance</h3>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Amount</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="walletAmount"
+                  placeholder="0.00"
+                  min="0"
+                />
+                <mat-icon matPrefix>attach_money</mat-icon>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Action</mat-label>
+                <mat-select [(ngModel)]="walletType">
+                  <mat-option value="add">Add to Wallet</mat-option>
+                  <mat-option value="subtract">Deduct from Wallet</mat-option>
+                  <mat-option value="set">Set Wallet Balance</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="updateWallet()"
+                [disabled]="(walletAmount <= 0 && walletType !== 'set')">
+                Update Wallet
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Points Management Tab -->
+    <mat-tab label="Loyalty Points">
+      <div class="tab-content">
+        <div class="points-management-section">
+          <div class="current-points">
+            <h3>Current Points</h3>
+            <div class="points-amount-display">
+              {{customer?.userPoints || 0}}
+            </div>
+          </div>
+          <div class="points-form">
+            <h3>Update Points</h3>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Points</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="pointsAmount"
+                  placeholder="0"
+                  min="0"
+                />
+                <mat-icon matPrefix>stars</mat-icon>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Action</mat-label>
+                <mat-select [(ngModel)]="pointsType">
+                  <mat-option value="add">Add Points</mat-option>
+                  <mat-option value="subtract">Deduct Points</mat-option>
+                  <mat-option value="set">Set Points</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="updatePoints()"
+                [disabled]="(pointsAmount <= 0 && pointsType !== 'set')">
+                Update Points
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Membership Card Tab -->
+    <mat-tab label="Membership Card">
+      <div class="tab-content">
+        <div class="membership-card-section">
+          <!-- Existing Card Display -->
+          <div *ngIf="membershipCard" class="card-display">
+            <div class="card-header">
+              <h3>Current Membership Card</h3>
+              <span class="status-badge" [ngClass]="getCardTypeClass(membershipCard.cardType)">
+                {{ membershipCard.status }}
+              </span>
+            </div>
+            <div class="card-info">
+              <div class="info-row">
+                <label>Card Number:</label>
+                <value>{{ membershipCard.cardNumber }}</value>
+              </div>
+              <div class="info-row">
+                <label>Card Type:</label>
+                <value>
+                  <span class="card-type-badge" [ngClass]="getCardTypeClass(membershipCard.cardType)">
+                    {{ membershipCard.cardType }}
+                  </span>
+                </value>
+              </div>
+              <div class="info-row">
+                <label>Issue Date:</label>
+                <value>{{ membershipCard.issueDate | date:'mediumDate' }}</value>
+              </div>
+              <div class="info-row" *ngIf="membershipCard.expiryDate">
+                <label>Expiry Date:</label>
+                <value [class.expired]="isExpired(membershipCard.expiryDate)">
+                  {{ membershipCard.expiryDate | date:'mediumDate' }}
+                </value>
+              </div>
+              <div class="info-row">
+                <label>Discount:</label>
+                <value>{{ membershipCard.benefits?.discountPercentage || 0 }}%</value>
+              </div>
+              <div class="info-row">
+                <label>Points Multiplier:</label>
+                <value>{{ membershipCard.benefits?.pointsMultiplier || 1 }}x</value>
+              </div>
+              <div class="info-row">
+                <label>Free Delivery:</label>
+                <value>{{ membershipCard.benefits?.freeDelivery ? 'Yes' : 'No' }}</value>
+              </div>
+              <div class="info-row">
+                <label>Priority Support:</label>
+                <value>{{ membershipCard.benefits?.prioritySupport ? 'Yes' : 'No' }}</value>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button
+                *ngIf="membershipCard.status === 'active'"
+                mat-raised-button
+                color="warn"
+                (click)="updateCardStatus('suspended')">
+                Suspend Card
+              </button>
+              <button
+                *ngIf="membershipCard.status === 'suspended'"
+                mat-raised-button
+                color="primary"
+                (click)="updateCardStatus('active')">
+                Activate Card
+              </button>
+            </div>
+          </div>
+
+          <!-- Create New Card Form -->
+          <div *ngIf="!membershipCard" class="create-card-form">
+            <h3>Create Membership Card</h3>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Card Type</mat-label>
+                <mat-select [(ngModel)]="cardType">
+                  <mat-option value="Silver">Silver (5% discount)</mat-option>
+                  <mat-option value="Gold">Gold (10% discount)</mat-option>
+                  <mat-option value="Platinum">Platinum (15% discount)</mat-option>
+                  <mat-option value="VIP">VIP (20% discount)</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Expiry Date (Optional)</mat-label>
+                <input matInput [matDatepicker]="expiryPicker" [(ngModel)]="expiryDate">
+                <mat-datepicker-toggle matSuffix [for]="expiryPicker"></mat-datepicker-toggle>
+                <mat-datepicker #expiryPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="createMembershipCard()">
+              <mat-icon>add</mat-icon>
+              Create Membership Card
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+

@@ -1,0 +1,20 @@
+// Import base styles from sale-list component
+@import '../sale-list/sale-list.component.scss';
+
+// Return specific styles
+.return-value {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+.summary-card {
+  .summary-icon {
+    background: linear-gradient(135deg, #ff5252 0%, #f44336 100%);
+  }
+}
+
+.group-header {
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+  border-left: 4px solid #f44336;
+}
+

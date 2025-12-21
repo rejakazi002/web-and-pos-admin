@@ -1,0 +1,122 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">inventory</mat-icon>
+          Stock Adjustment List
+        </h1>
+        <p class="page-subtitle">Manage stock in and stock out adjustments</p>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          (click)="router.navigate(['/pos/stock-adjustment/add'])"
+          mat-raised-button
+          color="primary"
+          class="add-btn">
+          <mat-icon>add</mat-icon>
+          <span>New Adjustment</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search</mat-label>
+        <input matInput [formControl]="searchCtrl" placeholder="Search by product name or SKU">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Adjustment Type</mat-label>
+        <mat-select [(ngModel)]="selectedType" (selectionChange)="onFilterChange()">
+          <mat-option value="">All Types</mat-option>
+          <mat-option value="stock_in">Stock In</mat-option>
+          <mat-option value="stock_out">Stock Out</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<!-- Adjustment Table -->
+<section *ngIf="!isLoading" class="table-section">
+  <div class="table-card">
+    <div class="table-container">
+      <table class="modern-table">
+        <tr>
+          <th>Date</th>
+          <th>Product</th>
+          <th>SKU</th>
+          <th>Type</th>
+          <th>Previous Qty</th>
+          <th>Adjustment</th>
+          <th>New Qty</th>
+          <th>Reason</th>
+          <th>Adjusted By</th>
+          <th>Actions</th>
+        </tr>
+        <tr *ngFor="let adjustment of adjustments" class="table-row">
+          <td>{{ adjustment.date | date:'short' }}</td>
+          <td>{{ adjustment.product?.name || 'N/A' }}</td>
+          <td>{{ adjustment.product?.sku || 'N/A' }}</td>
+          <td>
+            <span class="chip" [class.type-in]="adjustment.adjustmentType === 'stock_in'" [class.type-out]="adjustment.adjustmentType === 'stock_out'">
+              {{ adjustment.adjustmentType === 'stock_in' ? 'Stock In' : 'Stock Out' }}
+            </span>
+          </td>
+          <td>{{ adjustment.previousQuantity || 0 }}</td>
+          <td>
+            <span [class.positive]="adjustment.adjustmentType === 'stock_in'" [class.negative]="adjustment.adjustmentType === 'stock_out'">
+              {{ adjustment.adjustmentType === 'stock_in' ? '+' : '-' }}{{ adjustment.quantity }}
+            </span>
+          </td>
+          <td><strong>{{ adjustment.newQuantity }}</strong></td>
+          <td>{{ adjustment.reason || 'N/A' }}</td>
+          <td>{{ adjustment.adjustedBy?.name || 'N/A' }}</td>
+          <td class="action-column">
+            <button mat-icon-button color="warn" (click)="deleteAdjustment(adjustment)" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+
+      <div *ngIf="adjustments.length === 0 && !isLoading" class="no-content-overlay">
+        <app-no-content [text]="'No adjustments found'"></app-no-content>
+      </div>
+    </div>
+
+    <mat-paginator [length]="totalAdjustments"
+                   [pageSize]="adjustmentsPerPage"
+                   [pageSizeOptions]="[5, 10, 25, 50]"
+                   (page)="onPageChange($event)"
+                   showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</section>
+

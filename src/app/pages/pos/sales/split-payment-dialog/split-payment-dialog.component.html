@@ -1,0 +1,110 @@
+<div class="split-payment-dialog">
+  <div class="dialog-header">
+    <h2>
+      <mat-icon>account_balance_wallet</mat-icon>
+      Split Payment
+    </h2>
+    <button mat-icon-button (click)="onCancel()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <div class="total-info">
+      <div class="total-row">
+        <span class="label">Grand Total:</span>
+        <span class="value grand-total">{{grandTotal | number:'1.2-2'}}</span>
+      </div>
+      <div class="total-row">
+        <span class="label">Total Paid:</span>
+        <span class="value" [class.valid]="totalPaid === grandTotal" [class.invalid]="totalPaid !== grandTotal">
+          {{totalPaid | number:'1.2-2'}}
+        </span>
+      </div>
+      <div class="total-row">
+        <span class="label">Remaining:</span>
+        <span class="value" [class.remaining-positive]="remaining > 0" [class.remaining-zero]="remaining === 0" [class.remaining-negative]="remaining < 0">
+          {{remaining | number:'1.2-2'}}
+        </span>
+        <button 
+          *ngIf="remaining > 0" 
+          mat-mini-fab 
+          color="primary" 
+          (click)="autoFillRemaining()"
+          matTooltip="Fill remaining amount">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="payments-list">
+      <div *ngFor="let payment of payments; let i = index" class="payment-item">
+        <div class="payment-row">
+          <mat-form-field appearance="outline" class="method-field">
+            <mat-label>Payment Method</mat-label>
+            <mat-select [(ngModel)]="payment.method" [ngModelOptions]="{standalone: true}" (ngModelChange)="onPaymentMethodChange(i)">
+              <mat-option *ngFor="let type of paymentTypes" [value]="type.value">
+                {{type.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="amount-field">
+            <mat-label>Amount</mat-label>
+            <input
+              matInput
+              type="number"
+              [(ngModel)]="payment.amount"
+              [ngModelOptions]="{standalone: true}"
+              (ngModelChange)="onAmountChange()"
+              placeholder="0.00"
+              min="0"
+              [max]="grandTotal"
+            />
+            <mat-icon matPrefix>attach_money</mat-icon>
+          </mat-form-field>
+
+          <button
+            *ngIf="payments.length > 1"
+            mat-icon-button
+            color="warn"
+            (click)="removePaymentMethod(i)"
+            class="remove-btn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <!-- Transaction ID for mobile banking/card -->
+        <mat-form-field *ngIf="payment.method === 'bkash' || payment.method === 'nagad' || payment.method === 'rocket' || payment.method === 'card'" appearance="outline" class="transaction-field">
+          <mat-label>Transaction ID / Reference</mat-label>
+          <input
+            matInput
+            [(ngModel)]="payment.transactionId"
+            [ngModelOptions]="{standalone: true}"
+            placeholder="Enter transaction ID"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="add-payment-section" *ngIf="payments.length < 3">
+      <button mat-stroked-button (click)="addPaymentMethod()" class="add-btn">
+        <mat-icon>add</mat-icon>
+        Add Payment Method
+      </button>
+    </div>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-stroked-button (click)="onCancel()">Cancel</button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onConfirm()"
+      [disabled]="totalPaid !== grandTotal || payments.length === 0">
+      Confirm Payment
+    </button>
+  </div>
+</div>
+
+

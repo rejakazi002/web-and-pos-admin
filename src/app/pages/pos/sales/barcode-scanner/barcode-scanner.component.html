@@ -1,0 +1,84 @@
+<div class="barcode-scanner-overlay" (click)="closeScanner()">
+  <div class="scanner-container" (click)="$event.stopPropagation()">
+    <div class="scanner-header">
+      <h3>
+        <mat-icon>qr_code_scanner</mat-icon>
+        Barcode / QR Scanner
+      </h3>
+      <button mat-icon-button (click)="closeScanner()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="scanner-content">
+      <!-- Camera Scanner -->
+      <div class="camera-scanner" *ngIf="hasPermission && scannerEnabled">
+        <zxing-scanner
+          #scanner
+          [enable]="scannerEnabled"
+          [formats]="formatsEnabled"
+          [device]="currentDevice"
+          (camerasFound)="onCamerasFound($event)"
+          (scanSuccess)="onScanSuccess($event)"
+          (scanError)="onScanError($event)"
+          class="scanner-view">
+        </zxing-scanner>
+        <div class="scanner-overlay-guide">
+          <div class="guide-box"></div>
+          <p class="guide-text">Position barcode/QR code within the frame</p>
+        </div>
+      </div>
+
+      <!-- Permission Denied -->
+      <div class="permission-denied" *ngIf="!hasPermission">
+        <mat-icon class="error-icon">camera_alt</mat-icon>
+        <h4>Camera Permission Required</h4>
+        <p>Please enable camera access to use barcode scanner</p>
+        <button mat-raised-button color="primary" (click)="checkPermissions()">
+          <mat-icon>refresh</mat-icon>
+          Retry
+        </button>
+      </div>
+
+      <!-- Manual Input -->
+      <div class="manual-input-section">
+        <mat-form-field appearance="outline" class="manual-input-field">
+          <mat-label>Or Enter Barcode/SKU Manually</mat-label>
+          <input
+            matInput
+            [(ngModel)]="manualBarcode"
+            (keyup.enter)="onManualSubmit()"
+            placeholder="Enter barcode or SKU"
+            autofocus
+          />
+          <mat-icon matPrefix>keyboard</mat-icon>
+          <button
+            matSuffix
+            mat-icon-button
+            (click)="onManualSubmit()"
+            [disabled]="!manualBarcode.trim()"
+            matTooltip="Search">
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+        <p class="hint-text">Press Enter or click search to find product</p>
+      </div>
+    </div>
+
+    <div class="scanner-footer">
+      <button mat-stroked-button (click)="closeScanner()">
+        <mat-icon>close</mat-icon>
+        Cancel
+      </button>
+      <button
+        *ngIf="hasPermission"
+        mat-raised-button
+        color="primary"
+        (click)="toggleScanner()">
+        <mat-icon>{{scannerEnabled ? 'pause' : 'play_arrow'}}</mat-icon>
+        {{scannerEnabled ? 'Pause' : 'Start'}} Scanner
+      </button>
+    </div>
+  </div>
+</div>
+

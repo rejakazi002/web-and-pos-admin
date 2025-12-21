@@ -1,0 +1,97 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">stars</mat-icon>
+          Point Settings
+        </h1>
+        <p class="page-subtitle">Configure loyalty points system</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<section class="content-section" *ngIf="!isLoading">
+  <form [formGroup]="pointSettingsForm" (ngSubmit)="onSubmit()">
+    <div class="settings-card">
+      <h2>Loyalty Points Configuration</h2>
+      
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Point Amount (%)</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="pointAmount"
+            placeholder="0"
+            min="0"
+            max="100"
+          />
+          <mat-icon matPrefix>percent</mat-icon>
+          <mat-hint>Percentage of purchase amount that will be converted to points (e.g., 5 = 5%)</mat-hint>
+          <mat-error *ngIf="pointSettingsForm.get('pointAmount')?.hasError('required')">
+            Point amount is required
+          </mat-error>
+          <mat-error *ngIf="pointSettingsForm.get('pointAmount')?.hasError('min')">
+            Point amount must be 0 or greater
+          </mat-error>
+          <mat-error *ngIf="pointSettingsForm.get('pointAmount')?.hasError('max')">
+            Point amount cannot exceed 100%
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Point Value (Tk)</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="pointValue"
+            placeholder="1"
+            min="0.01"
+            step="0.01"
+          />
+          <mat-icon matPrefix>attach_money</mat-icon>
+          <mat-hint>Value of 1 point in Taka (e.g., 1 = 1 Tk per point)</mat-hint>
+          <mat-error *ngIf="pointSettingsForm.get('pointValue')?.hasError('required')">
+            Point value is required
+          </mat-error>
+          <mat-error *ngIf="pointSettingsForm.get('pointValue')?.hasError('min')">
+            Point value must be greater than 0
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Example Calculation -->
+      <div class="example-card" *ngIf="pointSettingsForm.valid">
+        <mat-icon>info</mat-icon>
+        <p>{{ getPointExample() }}</p>
+      </div>
+
+      <!-- Explanation -->
+      <div class="info-section">
+        <h3>How it works:</h3>
+        <ul>
+          <li><strong>Point Amount:</strong> Percentage of purchase amount that converts to points</li>
+          <li><strong>Point Value:</strong> How much money each point is worth when used as discount</li>
+          <li><strong>Example:</strong> If Point Amount = 5% and Point Value = 1 Tk, then a 1000 Tk purchase earns 50 points (worth 50 Tk discount)</li>
+        </ul>
+      </div>
+
+      <div class="form-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="pointSettingsForm.invalid || isLoading">
+          <mat-icon>save</mat-icon>
+          Save Settings
+        </button>
+      </div>
+    </div>
+  </form>
+</section>
+

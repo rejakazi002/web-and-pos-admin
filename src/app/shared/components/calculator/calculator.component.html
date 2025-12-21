@@ -1,0 +1,39 @@
+<div class="calculator-container">
+  <div class="calculator-header">
+    <h3>Calculator</h3>
+    <button mat-icon-button class="close-btn" (click)="closeCalculator()" matTooltip="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  
+  <div class="calculator-display">
+    {{ display }}
+  </div>
+  
+  <div class="calculator-buttons">
+    <button class="btn btn-clear" (click)="onClearClick()">AC</button>
+    <button class="btn btn-clear-entry" (click)="onClearEntryClick()">CE</button>
+    <button class="btn btn-operator" (click)="onPercentageClick()">%</button>
+    <button class="btn btn-operator" (click)="onOperationClick('÷')">÷</button>
+    
+    <button class="btn btn-number" (click)="onNumberClick('7')">7</button>
+    <button class="btn btn-number" (click)="onNumberClick('8')">8</button>
+    <button class="btn btn-number" (click)="onNumberClick('9')">9</button>
+    <button class="btn btn-operator" (click)="onOperationClick('×')">×</button>
+    
+    <button class="btn btn-number" (click)="onNumberClick('4')">4</button>
+    <button class="btn btn-number" (click)="onNumberClick('5')">5</button>
+    <button class="btn btn-number" (click)="onNumberClick('6')">6</button>
+    <button class="btn btn-operator" (click)="onOperationClick('-')">-</button>
+    
+    <button class="btn btn-number" (click)="onNumberClick('1')">1</button>
+    <button class="btn btn-number" (click)="onNumberClick('2')">2</button>
+    <button class="btn btn-number" (click)="onNumberClick('3')">3</button>
+    <button class="btn btn-operator" (click)="onOperationClick('+')">+</button>
+    
+    <button class="btn btn-number btn-zero" (click)="onNumberClick('0')">0</button>
+    <button class="btn btn-number" (click)="onDecimalClick()">.</button>
+    <button class="btn btn-equals" (click)="onEqualsClick()">=</button>
+  </div>
+</div>
+

@@ -1,0 +1,109 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">broken_image</mat-icon>
+          {{ damage ? 'Edit Damage Record' : 'New Damage / Wastage Record' }}
+        </h1>
+        <p class="page-subtitle">{{ damage ? 'Update damage record details' : 'Record damaged or wasted products' }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Damage Form -->
+<section class="form-section">
+  <div class="form-card">
+    <div class="section-header">
+      <mat-icon>edit</mat-icon>
+      <h3>Damage Information</h3>
+    </div>
+    <div class="section-content">
+      <form [formGroup]="dataForm" #formElement="ngForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="product-search-wrapper">
+            <mat-form-field appearance="outline" class="product-search-field">
+              <mat-label>Search Product *</mat-label>
+              <input
+                matInput
+                type="text"
+                [(ngModel)]="productSearchQuery"
+                (input)="onProductSearch($any($event.target).value)"
+                (keyup)="onProductSearch($any($event.target).value)"
+                (focus)="onProductSearch(productSearchQuery)"
+                placeholder="Search by product name or SKU"
+                autocomplete="off"
+                required>
+              <mat-icon matPrefix>search</mat-icon>
+              <mat-error *ngIf="!selectedProduct && dataForm.get('product')?.touched && dataForm.get('product')?.hasError('required')">Product is required</mat-error>
+            </mat-form-field>
+            <div class="product-search-results" *ngIf="searchProducts.length > 0">
+              <div
+                *ngFor="let product of searchProducts"
+                (click)="onSelectProduct(product)"
+                class="product-search-item">
+                <div class="product-item-info">
+                  <span class="product-item-name">{{utilsService.getProductName(product)}}</span>
+                  <span class="product-item-sku" *ngIf="product.sku">SKU: {{product.sku}}</span>
+                  <span class="product-item-stock">Stock: {{product.quantity || 0}}</span>
+                  <span class="product-item-price">Price: {{(product.costPrice || product.purchasePrice || 0) | currency:'BDT ':'symbol':'1.2-2'}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="selected-product" *ngIf="selectedProduct">
+            <div class="product-card">
+              <mat-icon>inventory_2</mat-icon>
+              <div class="product-details">
+                <span class="product-name">{{selectedProduct.name}}</span>
+                <span class="product-sku" *ngIf="selectedProduct.sku">SKU: {{selectedProduct.sku}}</span>
+                <span class="product-stock">Current Stock: {{selectedProduct.quantity || 0}}</span>
+                <span class="product-price">Purchase Price: {{selectedProduct.costPrice || selectedProduct.purchasePrice || 0 | currency:'BDT ':'symbol':'1.2-2'}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Damaged Quantity *</mat-label>
+            <input matInput formControlName="quantity" type="number" min="0.01" step="0.01" placeholder="0.00">
+            <mat-error *ngIf="dataForm.get('quantity')?.hasError('required')">Quantity is required</mat-error>
+            <mat-error *ngIf="dataForm.get('quantity')?.hasError('min')">Quantity must be greater than 0</mat-error>
+            <mat-hint *ngIf="selectedProduct && dataForm.get('quantity')?.value">
+              Estimated Loss: {{ (dataForm.get('quantity')?.value || 0) * (selectedProduct.costPrice || selectedProduct.purchasePrice || 0) | currency:'BDT ':'symbol':'1.2-2' }}
+            </mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date *</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Choose date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="dataForm.get('date')?.hasError('required')">Date is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Note</mat-label>
+            <textarea matInput formControlName="note" rows="3" placeholder="Reason for damage/wastage (optional)"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="action-buttons">
+          <button type="button" mat-stroked-button routerLink="/pos/product-damage/list">Cancel</button>
+          <button type="submit" mat-raised-button color="primary" [disabled]="dataForm.invalid || isLoading">
+            <mat-icon>save</mat-icon>
+            {{ damage ? 'Update Record' : 'Add Record' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+

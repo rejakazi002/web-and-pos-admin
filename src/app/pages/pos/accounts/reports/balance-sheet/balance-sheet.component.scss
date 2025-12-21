@@ -1,0 +1,196 @@
+@import "variables";
+
+.filter-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.export-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .export-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: none;
+    transition: all 0.2s ease;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      background-color: #f5f5f5;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.report-card {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  h2 {
+    margin-bottom: 2rem;
+    color: #333;
+  }
+}
+
+.balance-sheet {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.assets-section, .liabilities-section {
+  h3 {
+    margin-bottom: 1rem;
+    color: #333;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e0e0;
+  }
+}
+
+.section-content {
+    .item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    
+    &.total {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 2px solid #e0e0e0;
+      font-weight: 600;
+    }
+    
+    strong {
+      color: $color-primary;
+    }
+  }
+}
+
+.purchase-summary-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e0e0e0;
+  
+  h3 {
+    margin-bottom: 1rem;
+    color: #333;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e0e0;
+  }
+  
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    
+    .summary-item {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      
+      span {
+        font-size: 0.875rem;
+        color: #666;
+      }
+      
+      strong {
+        font-size: 1.25rem;
+        color: $color-primary;
+      }
+    }
+  }
+}
+
+.purchase-history-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e0e0e0;
+  
+  h3 {
+    margin-bottom: 1rem;
+    color: #333;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e0e0;
+  }
+  
+  .history-table {
+    overflow-x: auto;
+    
+    .modern-table {
+      width: 100%;
+      border-collapse: collapse;
+      
+      th, td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      
+      th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+      }
+      
+      .has-due {
+        color: #d32f2f;
+        font-weight: 600;
+      }
+      
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        
+        &.status-completed, &.status-paid {
+          background: #4caf50;
+          color: white;
+        }
+        
+        &.status-pending, &.status-due {
+          background: #ff9800;
+          color: white;
+        }
+        
+        &.status-cancelled {
+          background: #f44336;
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+

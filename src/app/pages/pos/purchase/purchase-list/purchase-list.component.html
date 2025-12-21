@@ -1,0 +1,194 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">shopping_cart</mat-icon>
+          Purchase List
+        </h1>
+        <p class="page-subtitle">Manage and track all your purchases</p>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          (click)="exportToExcel()"
+          mat-stroked-button
+          class="export-btn"
+          matTooltip="Export to Excel">
+          <mat-icon>file_download</mat-icon>
+          <span>Export</span>
+        </button>
+        <a routerLink="/pos/purchase/add-purchase" mat-raised-button color="primary" class="add-btn">
+          <mat-icon>add</mat-icon>
+          <span>Add New Purchase</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter & Search Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <!-- Search -->
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search Purchases</mat-label>
+          <input
+            matInput
+            type="search"
+            #searchInput
+            name="searchTerm"
+            autocomplete="off"
+            ngModel
+            placeholder="Search by purchase no, supplier name..."
+          />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-actions">
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'all'"
+          (click)="onFilterChange('all')"
+          class="filter-btn">
+          All Purchases
+        </button>
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'Completed'"
+          (click)="onFilterChange('Completed')"
+          class="filter-btn completed-btn">
+          Completed
+        </button>
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'Pending'"
+          (click)="onFilterChange('Pending')"
+          class="filter-btn pending-btn">
+          Pending
+        </button>
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'Partial'"
+          (click)="onFilterChange('Partial')"
+          class="filter-btn partial-btn">
+          Partial
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Purchase List Table -->
+<section class="table-section" *ngIf="!isLoading && purchases.length > 0">
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th class="checkbox-col">
+              <mat-checkbox
+                #matCheckbox
+                (change)="onAllSelectChange($event, purchases, 0)"
+                color="primary"
+              ></mat-checkbox>
+            </th>
+            <th class="purchase-no-col">Purchase No</th>
+            <th class="date-col">Date</th>
+            <th class="supplier-col">Supplier</th>
+            <th class="total-col">Total</th>
+            <th class="paid-col">Paid</th>
+            <th class="due-col">Due</th>
+            <th class="status-col">Status</th>
+            <th class="payment-col">Payment Type</th>
+            <th class="action-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let purchase of purchases; let i = index" class="table-row">
+            <td class="checkbox-cell">
+              <mat-checkbox
+                [(ngModel)]="purchase['select']"
+                (ngModelChange)="onCheckChange($event, i, purchase._id)"
+                color="primary"
+              ></mat-checkbox>
+            </td>
+            <td class="purchase-no-cell">
+              <div class="purchase-info">
+                <mat-icon class="purchase-icon">receipt</mat-icon>
+                <span class="purchase-no">{{ purchase?.purchaseNo }}</span>
+              </div>
+            </td>
+            <td class="date-cell">
+              <span>{{ purchase?.purchaseDateString || (purchase?.purchaseDate | date:'short') }}</span>
+            </td>
+            <td class="supplier-cell">
+              <div class="supplier-info">
+                <mat-icon class="supplier-icon">business</mat-icon>
+                <span>{{ purchase?.supplier?.name || '-' }}</span>
+              </div>
+            </td>
+            <td class="total-cell">
+              <span class="total-value">
+                {{shopInformation?.currency | currencyIcon}}{{ (purchase?.total || 0) | number:'1.2-2'}}
+              </span>
+            </td>
+            <td class="paid-cell">
+              <span class="paid-value">
+                {{shopInformation?.currency | currencyIcon}}{{ (purchase?.paidAmount || 0) | number:'1.2-2'}}
+              </span>
+            </td>
+            <td class="due-cell">
+              <span class="due-value" [class.has-due]="(purchase?.dueAmount || 0) > 0">
+                {{shopInformation?.currency | currencyIcon}}{{ (purchase?.dueAmount || 0) | number:'1.2-2'}}
+              </span>
+            </td>
+            <td class="status-cell">
+              <span class="status-badge" [ngClass]="getStatusBadgeClass(purchase?.status || '')">
+                {{ purchase?.status || '-' }}
+              </span>
+            </td>
+            <td class="payment-cell">
+              <span class="payment-type">{{ purchase?.paymentType || '-' }}</span>
+            </td>
+            <td class="action-cell">
+              <div class="action-buttons">
+                <a
+                  mat-icon-button
+                  color="primary"
+                  [routerLink]="['/pos/purchase/add-purchase/', purchase._id]"
+                  matTooltip="View/Edit Purchase"
+                  class="view-btn"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </a>
+                <button
+                  *ngIf="checkDeletePermission"
+                  mat-icon-button
+                  color="warn"
+                  (click)="openConfirmDialog('delete', purchase)"
+                  matTooltip="Delete Purchase"
+                  class="delete-btn"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- No Content -->
+<app-no-content *ngIf="!isLoading && purchases.length === 0" [text]="'No purchases found'"></app-no-content>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+

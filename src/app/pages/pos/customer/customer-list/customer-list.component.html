@@ -1,0 +1,207 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">people</mat-icon>
+          Customer List
+        </h1>
+        <p class="page-subtitle">Manage and track all your customers</p>
+      </div>
+      <div class="header-actions">
+        <app-export-toolbar
+          [data]="getExportData()"
+          [filename]="'customer-list'"
+          [title]="'Customer List'"
+          [headers]="getExportHeaders()"
+          [columns]="exportColumns"
+          (columnVisibilityChange)="onColumnVisibilityChange($event)">
+        </app-export-toolbar>
+        <a routerLink="/pos/customer/add-customer" mat-raised-button color="primary" class="add-btn">
+          <mat-icon>add</mat-icon>
+          <span>Add New Customer</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter & Search Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <!-- Search -->
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search Customers</mat-label>
+          <input
+            matInput
+            type="search"
+            #searchInput
+            name="searchTerm"
+            autocomplete="off"
+            ngModel
+            placeholder="Search by name, phone, email..."
+          />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Group Filter -->
+      <div class="filter-actions">
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'all'"
+          (click)="onFilterChange('all')"
+          class="filter-btn">
+          All Customers
+        </button>
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'VIP'"
+          (click)="onFilterChange('VIP')"
+          class="filter-btn vip-btn">
+          VIP
+        </button>
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'General'"
+          (click)="onFilterChange('General')"
+          class="filter-btn general-btn">
+          General
+        </button>
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'Wholesale'"
+          (click)="onFilterChange('Wholesale')"
+          class="filter-btn wholesale-btn">
+          Wholesale
+        </button>
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'withDue'"
+          (click)="onFilterChange('withDue')"
+          class="filter-btn due-btn">
+          <mat-icon>account_balance_wallet</mat-icon>
+          With Due
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Customer List Table -->
+<section class="table-section" *ngIf="!isLoading && customers.length > 0">
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th class="checkbox-col">
+              <mat-checkbox
+                #matCheckbox
+                (change)="onAllSelectChange($event, customers, 0)"
+                color="primary"
+              ></mat-checkbox>
+            </th>
+            <th class="name-col">Name</th>
+            <th class="phone-col">Phone</th>
+            <th class="email-col">Email</th>
+            <th class="group-col">Group</th>
+            <th class="due-col">Total Due</th>
+            <th class="wallet-col">Wallet</th>
+            <th class="points-col">Points</th>
+            <th class="action-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let customer of customers; let i = index" class="table-row">
+            <td class="checkbox-cell">
+              <mat-checkbox
+                [(ngModel)]="customer['select']"
+                (ngModelChange)="onCheckChange($event, i, customer._id)"
+                color="primary"
+              ></mat-checkbox>
+            </td>
+            <td class="name-cell">
+              <div class="customer-info">
+                <mat-icon class="customer-icon">person</mat-icon>
+                <span class="customer-name">{{ customer?.name || 'Walk-in Customer' }}</span>
+              </div>
+            </td>
+            <td class="phone-cell">
+              <div class="phone-info">
+                <mat-icon class="phone-icon">phone</mat-icon>
+                <span>{{ customer?.phone }}</span>
+              </div>
+            </td>
+            <td class="email-cell">
+              <span>{{ customer?.email || '-' }}</span>
+            </td>
+            <td class="group-cell">
+              <span class="group-badge" [ngClass]="getGroupBadgeClass(customer?.customerGroup || 'General')">
+                {{ customer?.customerGroup || 'General' }}
+              </span>
+            </td>
+            <td class="due-cell">
+              <span class="due-value" [class.has-due]="(customer?.totalDue || 0) > 0">
+                {{shopInformation?.currency | currencyIcon}}{{ (customer?.totalDue || 0) | number:'1.2-2'}}
+              </span>
+            </td>
+            <td class="wallet-cell">
+              <span class="wallet-value">
+                {{shopInformation?.currency | currencyIcon}}{{ (customer?.walletBalance || 0) | number:'1.2-2'}}
+              </span>
+            </td>
+            <td class="points-cell">
+              <span class="points-value">
+                {{ customer?.userPoints || 0 }}
+              </span>
+            </td>
+            <td class="action-cell">
+              <div class="action-buttons">
+                <a
+                  mat-icon-button
+                  color="primary"
+                  [routerLink]="['/pos/customer/customer-details/', customer._id]"
+                  matTooltip="View Details"
+                  class="view-btn"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </a>
+                <a
+                  *ngIf="checkEditPermission"
+                  mat-icon-button
+                  color="accent"
+                  [routerLink]="['/pos/customer/add-customer/', customer._id]"
+                  matTooltip="Edit Customer"
+                  class="edit-btn"
+                >
+                  <mat-icon>edit</mat-icon>
+                </a>
+                <button
+                  *ngIf="checkDeletePermission"
+                  mat-icon-button
+                  color="warn"
+                  (click)="openConfirmDialog('delete', customer)"
+                  matTooltip="Delete Customer"
+                  class="delete-btn"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- No Content -->
+<app-no-content *ngIf="!isLoading && customers.length === 0" [text]="'No customers found'"></app-no-content>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+

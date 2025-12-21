@@ -1,0 +1,65 @@
+@import "exports/table-scroll";
+@import "exports/search-table";
+@import "exports/top-data-header";
+
+@import "variables";
+@import "common/container-base";
+@import "common/title-header";
+@import "common/table-scroll";
+@import "common/search-table";
+@import "exports/table-tab";
+@import "exports/sticky-table-header";
+@import "exports/bottom-action";
+
+::ng-deep .mat-dialog-container {
+  //margin-top: 2% !important;
+  //height: 80vh !important;
+  //height: auto !important;
+}
+//table {
+//  text-align: left;
+//  position: relative;
+//  border-collapse: collapse;
+//  overflow-y: auto;
+//  height: 200px;
+//}
+//th{
+//  background: white;
+//  position: sticky;
+//  height: 42px;
+//  top: 0; /* Don't forget this, required for the stickiness */
+//  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+//}
+.table-responsive {
+  overflow-y: auto;
+  max-height: 570px;
+}
+
+table th {
+  position: -webkit-sticky; // this is for all Safari (Desktop & iOS), not for Chrome
+  position: sticky;
+  top: 0;
+  z-index: 1; // any positive value, layer order is global
+  background: $bg-primary; // any bg-color to overlap
+}
+
+
+
+.close {
+  position: absolute;
+  //top: 12px;
+  top: 60px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  text-align: center;
+
+  //button {
+  //  background: #ffc9c9;
+  //}
+}
+
+
+::ng-deep.mdc-button{
+  height: 44px !important;
+}

@@ -1,0 +1,179 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">business</mat-icon>
+          Supplier List
+        </h1>
+        <p class="page-subtitle">Manage and track all your suppliers</p>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          (click)="exportToExcel()"
+          mat-stroked-button
+          class="export-btn"
+          matTooltip="Export to Excel">
+          <mat-icon>file_download</mat-icon>
+          <span>Export</span>
+        </button>
+        <a routerLink="/pos/supplier/add-supplier" mat-raised-button color="primary" class="add-btn">
+          <mat-icon>add</mat-icon>
+          <span>Add New Supplier</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter & Search Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <!-- Search -->
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search Suppliers</mat-label>
+          <input
+            matInput
+            type="search"
+            #searchInput
+            name="searchTerm"
+            autocomplete="off"
+            ngModel
+            placeholder="Search by name, phone, email..."
+          />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-actions">
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'all'"
+          (click)="onFilterChange('all')"
+          class="filter-btn">
+          All Suppliers
+        </button>
+        <button
+          mat-raised-button
+          [class.active]="activeFilter === 'withDue'"
+          (click)="onFilterChange('withDue')"
+          class="filter-btn due-btn">
+          <mat-icon>account_balance_wallet</mat-icon>
+          With Due
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Supplier List Table -->
+<section class="table-section" *ngIf="!isLoading && suppliers.length > 0">
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th class="checkbox-col">
+              <mat-checkbox
+                #matCheckbox
+                (change)="onAllSelectChange($event, suppliers, 0)"
+                color="primary"
+              ></mat-checkbox>
+            </th>
+            <th class="name-col">Name</th>
+            <th class="phone-col">Phone</th>
+            <th class="email-col">Email</th>
+            <th class="contact-col">Contact Person</th>
+            <th class="due-col">Total Due</th>
+            <th class="paid-col">Total Paid</th>
+            <th class="action-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let supplier of suppliers; let i = index" class="table-row">
+            <td class="checkbox-cell">
+              <mat-checkbox
+                [(ngModel)]="supplier['select']"
+                (ngModelChange)="onCheckChange($event, i, supplier._id)"
+                color="primary"
+              ></mat-checkbox>
+            </td>
+            <td class="name-cell">
+              <div class="supplier-info">
+                <mat-icon class="supplier-icon">business</mat-icon>
+                <span class="supplier-name">{{ supplier?.name || '-' }}</span>
+              </div>
+            </td>
+            <td class="phone-cell">
+              <div class="phone-info">
+                <mat-icon class="phone-icon">phone</mat-icon>
+                <span>{{ supplier?.phone || '-' }}</span>
+              </div>
+            </td>
+            <td class="email-cell">
+              <span>{{ supplier?.email || '-' }}</span>
+            </td>
+            <td class="contact-cell">
+              <span>{{ supplier?.contactPerson || '-' }}</span>
+            </td>
+            <td class="due-cell">
+              <span class="due-value" [class.has-due]="(supplier?.totalDue || 0) > 0">
+                {{shopInformation?.currency | currencyIcon}}{{ (supplier?.totalDue || 0) | number:'1.2-2'}}
+              </span>
+            </td>
+            <td class="paid-cell">
+              <span class="paid-value">
+                {{shopInformation?.currency | currencyIcon}}{{ (supplier?.totalPaid || 0) | number:'1.2-2'}}
+              </span>
+            </td>
+            <td class="action-cell">
+              <div class="action-buttons">
+                <a
+                  mat-icon-button
+                  color="primary"
+                  [routerLink]="['/pos/supplier/supplier-details/', supplier._id]"
+                  matTooltip="View Details"
+                  class="view-btn"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </a>
+                <a
+                  *ngIf="checkEditPermission"
+                  mat-icon-button
+                  color="accent"
+                  [routerLink]="['/pos/supplier/add-supplier/', supplier._id]"
+                  matTooltip="Edit Supplier"
+                  class="edit-btn"
+                >
+                  <mat-icon>edit</mat-icon>
+                </a>
+                <button
+                  *ngIf="checkDeletePermission"
+                  mat-icon-button
+                  color="warn"
+                  (click)="openConfirmDialog('delete', supplier)"
+                  matTooltip="Delete Supplier"
+                  class="delete-btn"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- No Content -->
+<app-no-content *ngIf="!isLoading && suppliers.length === 0" [text]="'No suppliers found'"></app-no-content>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+

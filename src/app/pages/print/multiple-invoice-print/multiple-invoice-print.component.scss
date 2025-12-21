@@ -1,0 +1,80 @@
+@import "common/invoice-print";
+@import "common/invoice-print2";
+
+.actions {
+  width: calc(2480px / 3);
+  margin: 0 auto 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.preview-container  {
+  width: calc(2480px / 3);
+  margin: 0 auto;
+  background: #fff;
+  padding: 30px;
+}
+
+body {
+  background: #c0c0c0 !important;
+}
+
+/* Each order one page */
+.invoice-page {
+  /* Will be visible separately on screen */
+  margin-bottom: 12px;
+  /* So that inner block doesn't break */
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.invoice-wrapper,
+.invoice-container,
+.product-infos,
+.product-info-header,
+.product-info-content,
+.bottom-area {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Prevent table/row/image cut */
+.product-infos,
+.product-info-content {
+  overflow: visible;
+}
+
+.logo img { width: 150px; height: 50px; }
+
+body { background: #c0c0c0 !important; }
+
+@media print {
+  .actions { display: none; }
+
+  /* Full page setting */
+  @page { size: A4; margin: 10mm; }
+
+  body {
+    margin: 0; padding: 0; background: #fff !important;
+  }
+
+  .preview-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* New page after each order */
+  .invoice-page {
+    break-after: page;         /* modern */
+    page-break-after: always;  /* legacy */
+  }
+
+  /* No page break after the last one */
+  .invoice-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

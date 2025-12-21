@@ -1,0 +1,98 @@
+@import "exports/all-orders";
+
+
+td{
+  //height: 61px!important;
+  height: 80px !important;
+}
+
+.copy-area{
+  display: flex;
+  justify-content: center;
+  height: 18px;
+  .material-icons {
+    font-size: 14px !important;
+  }
+}
+
+.user-phone-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.icon-link:hover {
+  transform: scale(1.1);
+}
+
+.wa-icon path {
+  fill: #25d366; /* WhatsApp green */
+}
+
+.call-icon path {
+  fill: #34b7f1; /* Light blue call icon */
+}
+
+.wp-phone{
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+
+  svg{
+    width: 24px;
+    height: 24px;
+  }
+}
+
+
+.download-box {
+  display: flex;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.customer-status {
+  .order-data{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  p {
+    width: 113px;
+    &:hover {
+      text-decoration: none !important;
+    }
+  }
+
+}
+
+
+.new-order {
+  margin-top: 3px;
+  background: #00c153;
+  color: white;
+  padding: 3px 10px;
+  width: 50px;
+  border-radius: 15px;
+  font-size: 10px;
+}
+
+
+.old-order {
+  margin-top: 3px;
+  padding: 3px 10px;
+  width: 50px;
+  border-radius: 15px;
+  font-size: 10px;
+  background: #1aa4e0;
+  color: white;
+}

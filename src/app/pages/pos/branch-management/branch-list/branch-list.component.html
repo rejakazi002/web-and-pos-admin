@@ -1,0 +1,127 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">store</mat-icon>
+          Branch Management
+        </h1>
+        <p class="page-subtitle">Manage all branches</p>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          (click)="navigateToAdd()"
+          mat-raised-button
+          color="primary"
+          class="add-btn">
+          <mat-icon>add</mat-icon>
+          <span>Add Branch</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Search Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search Branch</mat-label>
+        <input matInput [formControl]="searchCtrl" placeholder="Search by name or domain">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<!-- Branch Table -->
+<section *ngIf="!isLoading" class="table-section">
+  <div class="table-card">
+    <div class="table-header" *ngIf="selectedIds.length > 0">
+      <span class="selected-count">{{ selectedIds.length }} selected</span>
+      <button
+        mat-raised-button
+        color="warn"
+        (click)="deleteMultipleBranches()">
+        <mat-icon>delete</mat-icon>
+        Delete Selected
+      </button>
+    </div>
+
+    <div class="table-container">
+      <table class="modern-table">
+        <tr>
+          <th style="width: 50px;">
+            <mat-checkbox
+              (change)="onAllSelectChange($event)"
+              [checked]="selectedIds.length === branches.length && branches.length > 0"
+              [indeterminate]="selectedIds.length > 0 && selectedIds.length < branches.length">
+            </mat-checkbox>
+          </th>
+          <th>Branch Name</th>
+          <th>Domain</th>
+          <th>Status</th>
+          <th>Created Date</th>
+          <th class="action-column">Actions</th>
+        </tr>
+        <tr *ngFor="let branch of branches" class="table-row">
+          <td>
+            <mat-checkbox
+              (change)="onCheckChange($event, branch)"
+              [checked]="selectedIds.includes(branch._id)">
+            </mat-checkbox>
+          </td>
+          <td>
+            <div class="branch-info">
+              <span class="branch-name">{{ branch.websiteName || 'N/A' }}</span>
+            </div>
+          </td>
+          <td>{{ branch.domain || 'N/A' }}</td>
+          <td>
+            <span [class]="'status-chip status-' + (branch.status || 'active')">
+              {{ branch.status || 'Active' }}
+            </span>
+          </td>
+          <td>{{ branch.dateString || 'N/A' }}</td>
+          <td class="action-column">
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="branchMenu"
+              matTooltip="Actions">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #branchMenu="matMenu">
+              <button mat-menu-item (click)="navigateToEdit(branch)">
+                <mat-icon>edit</mat-icon>
+                <span>Edit</span>
+              </button>
+              <button mat-menu-item (click)="deleteBranch(branch)">
+                <mat-icon>delete</mat-icon>
+                <span>Delete</span>
+              </button>
+            </mat-menu>
+          </td>
+        </tr>
+      </table>
+
+      <div *ngIf="branches.length === 0 && !isLoading" class="no-content-overlay">
+        <app-no-content [text]="'No branches found'"></app-no-content>
+      </div>
+    </div>
+
+    <mat-paginator
+      [length]="totalBranches"
+      [pageSize]="branchesPerPage"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</section>
+

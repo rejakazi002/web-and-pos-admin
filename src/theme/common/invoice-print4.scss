@@ -1,0 +1,49 @@
+.data {
+  //margin-top: 0!important;
+  width: 90mm;
+  height: 55mm;
+  background: #ffffff;
+  //padding: 5px;
+  position: relative;
+  border: 1px dashed #ccc; /* Optional: visual guide for screen */
+}
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  //padding: 5px;
+  border-bottom: 1px solid #000;
+}
+
+.logo {
+  width: 92px;
+  height: 35px;
+  margin-right: 8px;
+}
+
+.from-section, .to-section {
+  //flex: 1;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  flex-direction: column;
+  height: auto;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.qr {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.section {
+  padding: 5px;
+}
+
+.small {
+  font-size: 11px;
+}

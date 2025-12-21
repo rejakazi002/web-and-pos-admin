@@ -1,0 +1,84 @@
+<div class="barcode-print-dialog">
+  <div class="dialog-header">
+    <h2 mat-dialog-title style="margin: 0; display: flex; align-items: center; gap: 8px;">
+      <mat-icon>qr_code_scanner</mat-icon>
+      Print Barcode
+    </h2>
+    <button mat-icon-button (click)="onClose()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    <div class="controls-section">
+      <div class="control-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Print Count (per product)</mat-label>
+          <input matInput type="number" [(ngModel)]="printCount" (change)="onPrintCountChange()" min="1" />
+          <mat-icon matSuffix>print</mat-icon>
+        </mat-form-field>
+
+        <mat-checkbox [(ngModel)]="showPrice" color="primary">
+          Show Price
+        </mat-checkbox>
+
+        <button mat-raised-button color="primary" (click)="onGenerate()">
+          <mat-icon>refresh</mat-icon>
+          Regenerate
+        </button>
+      </div>
+    </div>
+
+    <div class="products-info">
+      <p><strong>{{ selectedProducts.length }}</strong> product(s) selected</p>
+    </div>
+
+    <div class="preview-section">
+      <h3>Preview</h3>
+      <div id="barcode-print-section" class="barcode-preview">
+        <ng-container *ngFor="let product of selectedProducts">
+          <!-- If product has variations, show all variations -->
+          <ng-container *ngIf="product?.variationList?.length">
+            <div class="barcode-item" *ngFor="let variation of product.variationList">
+              <div class="product-name" *ngIf="barcodeSettings.showProductName">{{ (product.name || 'Product').substring(0, 30) }}</div>
+              <div class="variation-name" *ngIf="barcodeSettings.showVariationName">{{ variation.name }}</div>
+              <div class="barcode-image-container" *ngIf="getVariationBarcode(variation)">
+                <img [src]="barcodeDataUrls.get(product._id + ':' + variation._id)" alt="Barcode" class="barcode-img" />
+              </div>
+              <div class="barcode-text" *ngIf="barcodeSettings.showBarcodeCode && getVariationBarcode(variation)">
+                {{ getVariationBarcode(variation) }}
+              </div>
+              <div class="price-info" *ngIf="barcodeSettings.showPrice && showPrice">
+                {{ shopInformation?.currency || '৳' }} {{ (variation.salePrice || variation.regularPrice || 0).toFixed(2) }}
+              </div>
+              <div class="shop-name" *ngIf="barcodeSettings.showShopName">{{ shopInformation?.websiteName || 'Shop' }}</div>
+            </div>
+          </ng-container>
+          <!-- If product has no variations, show single barcode -->
+          <div class="barcode-item" *ngIf="!product?.variationList?.length">
+            <div class="product-name" *ngIf="barcodeSettings.showProductName">{{ (product.name || 'Product').substring(0, 30) }}</div>
+            <div class="barcode-image-container" *ngIf="getDisplayBarcode(product)">
+              <img [src]="barcodeDataUrls.get(product._id + ':base')" alt="Barcode" class="barcode-img" />
+            </div>
+            <div class="barcode-text" *ngIf="barcodeSettings.showBarcodeCode && getDisplayBarcode(product)">
+              {{ getDisplayBarcode(product) }}
+            </div>
+            <div class="price-info" *ngIf="barcodeSettings.showPrice && showPrice">
+              {{ shopInformation?.currency || '৳' }} {{ getPriceValue(product).toFixed(2) }}
+            </div>
+            <div class="shop-name" *ngIf="barcodeSettings.showShopName">{{ shopInformation?.websiteName || 'Shop' }}</div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onClose()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onPrint()">
+      <mat-icon>print</mat-icon>
+      Print
+    </button>
+  </mat-dialog-actions>
+</div>
+

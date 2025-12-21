@@ -1,0 +1,237 @@
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">history</mat-icon>
+          Activity Log
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-header">
+      <mat-icon class="filter-icon">filter_list</mat-icon>
+      <span class="filter-title">Filters</span>
+    </div>
+    <div class="filter-content">
+      <mat-form-field appearance="outline">
+        <mat-label>By:</mat-label>
+        <mat-select [(ngModel)]="selectedUserId" (selectionChange)="onFilterChange()">
+          <mat-option value="All">All</mat-option>
+          <mat-option>
+            <div class="select-search-container" (click)="$event.stopPropagation()">
+              <input matInput class="select-search-input" [formControl]="userSearchControl" placeholder="Search user...">
+              <mat-icon class="select-search-icon">search</mat-icon>
+            </div>
+          </mat-option>
+          <mat-divider></mat-divider>
+          @for (user of filteredUsers; track user._id) {
+            <mat-option [value]="user._id">
+              {{ user.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Subject Type:</mat-label>
+        <mat-select [(ngModel)]="selectedSubjectType" (selectionChange)="onFilterChange()">
+          @for (type of subjectTypes; track type) {
+            <mat-option [value]="type">{{ type }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="date-field">
+        <mat-label>Date Range:</mat-label>
+        <input matInput [value]="getDateRangeDisplay()" readonly placeholder="01-01-2025 - 31-12-2025">
+      </mat-form-field>
+
+      <div class="date-range-buttons">
+        <button mat-button (click)="setDateRange('today')">Today</button>
+        <button mat-button (click)="setDateRange('week')">This Week</button>
+        <button mat-button (click)="setDateRange('month')">This Month</button>
+        <button mat-button (click)="setDateRange('year')">This Year</button>
+      </div>
+
+      <mat-form-field appearance="outline" class="date-field">
+        <mat-label>From Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="date-field">
+        <mat-label>To Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+</section>
+
+<section class="filter-section" *ngIf="!isLoading && reportData.length > 0">
+  <div class="filter-card">
+    <div class="export-toolbar">
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportCSV()"
+        matTooltip="Export CSV">
+        <mat-icon>description</mat-icon>
+        <span>Export CSV</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportExcel()"
+        matTooltip="Export Excel">
+        <mat-icon>table_chart</mat-icon>
+        <span>Export Excel</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="printReport()"
+        matTooltip="Print">
+        <mat-icon>print</mat-icon>
+        <span>Print</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="showColumnsInfo()"
+        matTooltip="Columns">
+        <mat-icon>view_column</mat-icon>
+        <span>Columns</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportPDF()"
+        matTooltip="Export PDF">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span>Export PDF</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<section class="content-section" *ngIf="!isLoading">
+  <div class="summary-section" *ngIf="summary && summary.totalActivities !== undefined">
+    <div class="summary-grid">
+      <div class="summary-item highlight">
+        <h4>Total Activities</h4>
+        <p class="large">{{ summary.totalActivities || 0 }}</p>
+      </div>
+      <div class="summary-item">
+        <h4>Sales</h4>
+        <p>{{ summary.byType?.sale || 0 }}</p>
+      </div>
+      <div class="summary-item">
+        <h4>Purchases</h4>
+        <p>{{ summary.byType?.purchase || 0 }}</p>
+      </div>
+      <div class="summary-item">
+        <h4>Cash Transactions</h4>
+        <p>{{ summary.byType?.cashTransaction || 0 }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-card" *ngIf="reportData.length > 0">
+    <h2>Activity Details</h2>
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" class="modern-table">
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="date">Date</th>
+          <td mat-cell *matCellDef="let item">
+            {{ item.date | date:'dd-MM-yyyy' }} {{ item.time || (item.date | date:'h:mm a') }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="subjectType">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="subjectType">Subject Type</th>
+          <td mat-cell *matCellDef="let item">
+            <span class="subject-type-badge" [ngClass]="'subject-' + (item.subjectType || item.type || '').toLowerCase().replace(' ', '-')">
+              {{ item.subjectType || item.type }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="action">Action</th>
+          <td mat-cell *matCellDef="let item">
+            <span class="action-badge" [ngClass]="'action-' + (item.action || '').toLowerCase().replace(' ', '-')">
+              {{ item.action }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="by">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="by">By</th>
+          <td mat-cell *matCellDef="let item">{{ item.by || item.user || 'System' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="note">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="note">Note</th>
+          <td mat-cell *matCellDef="let item">
+            <div class="note-content" *ngIf="item.note">
+              <div *ngIf="item.subjectType === 'Sell' || item.type === 'Sell'">
+                <div *ngIf="item.note.invoiceNo || item.metadata?.invoiceNo">
+                  <strong>Invoice No.:</strong> {{ item.note.invoiceNo || item.metadata?.invoiceNo }}
+                </div>
+                <div class="note-badges">
+                  <span class="badge badge-status" *ngIf="item.note.status || item.metadata?.status">
+                    Status: {{ item.note.status || item.metadata?.status }}
+                  </span>
+                  <span class="badge badge-total" *ngIf="item.note.total || item.metadata?.total">
+                    Total: ৳ {{ (item.note.total || item.metadata?.total) | number:'1.2-2' }}
+                  </span>
+                  <span class="badge badge-payment" *ngIf="item.note.paymentStatus || item.metadata?.paymentType">
+                    Payment Status: {{ item.note.paymentStatus || (item.metadata?.paymentType === 'due' ? 'Due' : 'Paid') }}
+                  </span>
+                </div>
+              </div>
+              <div *ngIf="item.subjectType === 'Purchase' || item.type === 'Purchase'">
+                <div *ngIf="item.note.purchaseNo || item.metadata?.purchaseNo">
+                  <strong>Purchase No.:</strong> {{ item.note.purchaseNo || item.metadata?.purchaseNo }}
+                </div>
+                <div *ngIf="item.note.total || item.metadata?.total">
+                  <strong>Total:</strong> ৳ {{ (item.note.total || item.metadata?.total) | number:'1.2-2' }}
+                </div>
+              </div>
+              <div *ngIf="item.subjectType === 'Contact' || item.subjectType === 'User'">
+                {{ item.note || item.details || '-' }}
+              </div>
+              <div *ngIf="!item.note && item.details">
+                {{ item.details }}
+              </div>
+            </div>
+            <span *ngIf="!item.note && !item.details">-</span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="no-data" *ngIf="!isLoading && reportData.length === 0">
+    <mat-icon>inbox</mat-icon>
+    <p>No data found for the selected date range</p>
+  </div>
+</section>
+

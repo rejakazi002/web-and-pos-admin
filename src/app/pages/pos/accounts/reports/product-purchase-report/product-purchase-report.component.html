@@ -1,0 +1,159 @@
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">inventory</mat-icon>
+          Product Purchase Report
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline">
+        <mat-label>From Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onDateChange()">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>To Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onDateChange()">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="loadReport()" [disabled]="isLoading">
+        <mat-icon>search</mat-icon>
+        Load Report
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="filter-section" *ngIf="!isLoading && reportData.length > 0">
+  <div class="filter-card">
+    <div class="export-toolbar">
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportCSV()"
+        matTooltip="Export CSV">
+        <mat-icon>description</mat-icon>
+        <span>Export CSV</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportExcel()"
+        matTooltip="Export Excel">
+        <mat-icon>table_chart</mat-icon>
+        <span>Export Excel</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="printReport()"
+        matTooltip="Print">
+        <mat-icon>print</mat-icon>
+        <span>Print</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="showColumnsInfo()"
+        matTooltip="Columns">
+        <mat-icon>view_column</mat-icon>
+        <span>Columns</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportPDF()"
+        matTooltip="Export PDF">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span>Export PDF</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<section class="content-section" *ngIf="!isLoading">
+  <div class="summary-section" *ngIf="hasSummary">
+    <div class="summary-grid">
+      <div class="summary-item highlight">
+        <h4>Total Purchase</h4>
+        <p class="large">{{ summary.totalPurchase || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="summary-item">
+        <h4>Total Products</h4>
+        <p>{{ summary.totalProducts || 0 }}</p>
+      </div>
+      <div class="summary-item">
+        <h4>Total Quantity</h4>
+        <p>{{ summary.totalQuantity || 0 }}</p>
+      </div>
+      <div class="summary-item">
+        <h4>Total Transactions</h4>
+        <p>{{ summary.totalTransactions || 0 }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-card" *ngIf="reportData.length > 0">
+    <h2>Product Purchase Details</h2>
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" class="modern-table">
+        <ng-container matColumnDef="productName">
+          <th mat-header-cell *matHeaderCellDef>Product Name</th>
+          <td mat-cell *matCellDef="let item">{{ item.productName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity</th>
+          <td mat-cell *matCellDef="let item">{{ item.quantity }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="unitPrice">
+          <th mat-header-cell *matHeaderCellDef>Unit Price</th>
+          <td mat-cell *matCellDef="let item">{{ item.unitPrice | currency:'BDT ':'symbol':'1.2-2' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef>Total</th>
+          <td mat-cell *matCellDef="let item">{{ item.total | currency:'BDT ':'symbol':'1.2-2' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="supplier">
+          <th mat-header-cell *matHeaderCellDef>Supplier</th>
+          <td mat-cell *matCellDef="let item">{{ item.supplier }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="count">
+          <th mat-header-cell *matHeaderCellDef>Transactions</th>
+          <td mat-cell *matCellDef="let item">{{ item.count }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="no-data" *ngIf="!isLoading && reportData.length === 0">
+    <mat-icon>inbox</mat-icon>
+    <p>No data found for the selected date range</p>
+  </div>
+</section>
+

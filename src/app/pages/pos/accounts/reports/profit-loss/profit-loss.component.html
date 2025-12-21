@@ -1,0 +1,205 @@
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">trending_up</mat-icon>
+          Profit & Loss Report
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <div class="date-range">
+        <mat-form-field appearance="outline">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onDateRangeChange()">
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>End Date</mat-label>
+          <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onDateRangeChange()">
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="export-toolbar" *ngIf="!isLoading && profitLoss">
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportCSV()"
+        matTooltip="Export CSV">
+        <mat-icon>description</mat-icon>
+        <span>Export CSV</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportExcel()"
+        matTooltip="Export Excel">
+        <mat-icon>table_chart</mat-icon>
+        <span>Export Excel</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="printReport()"
+        matTooltip="Print">
+        <mat-icon>print</mat-icon>
+        <span>Print</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="showColumnsInfo()"
+        matTooltip="Columns">
+        <mat-icon>view_column</mat-icon>
+        <span>Columns</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportPDF()"
+        matTooltip="Export PDF">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span>Export PDF</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<section class="content-section" *ngIf="!isLoading && profitLoss">
+  <div class="report-card">
+    <h2>Profit & Loss Statement</h2>
+    <p class="period">{{ startDate | date:'shortDate' }} to {{ endDate | date:'shortDate' }}</p>
+    
+    <div class="profit-loss">
+      <!-- Revenue Section -->
+      <div class="section">
+        <h3>
+          <mat-icon>trending_up</mat-icon>
+          Revenue
+        </h3>
+        <div class="item">
+          <span>Gross Sales</span>
+          <strong>{{ profitLoss.revenue?.grossSales | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="item negative-item">
+          <span>Less: Sales Returns</span>
+          <strong class="negative">-{{ profitLoss.revenue?.salesReturns | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="item negative-item">
+          <span>Less: Sales Discount</span>
+          <strong class="negative">-{{ profitLoss.revenue?.salesDiscount | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="item subtotal">
+          <span>Net Sales</span>
+          <strong>{{ profitLoss.revenue?.netSales | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="item">
+          <span>Other Income</span>
+          <strong class="positive">{{ profitLoss.revenue?.otherIncome | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="item total">
+          <span>Total Revenue</span>
+          <strong>{{ profitLoss.revenue?.totalRevenue | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <!-- Cost of Goods Sold Section -->
+      <div class="section">
+        <h3>
+          <mat-icon>shopping_cart</mat-icon>
+          Cost of Goods Sold
+        </h3>
+        <div class="item">
+          <span>Cost of Goods Sold (COGS)</span>
+          <strong>{{ profitLoss.costOfGoodsSold?.cogs | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="item negative-item">
+          <span>Less: COGS Returns</span>
+          <strong class="positive">-{{ profitLoss.costOfGoodsSold?.cogsReturns | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="item total">
+          <span>Net COGS</span>
+          <strong>{{ profitLoss.costOfGoodsSold?.netCogs | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <!-- Gross Profit -->
+      <div class="section highlight">
+        <h3>
+          <mat-icon>insights</mat-icon>
+          Gross Profit
+        </h3>
+        <div class="item total" [ngClass]="(profitLoss.grossProfit || 0) >= 0 ? 'profit' : 'loss'">
+          <span>Gross Profit</span>
+          <strong>{{ profitLoss.grossProfit | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="item margin">
+          <span>Gross Profit Margin</span>
+          <strong>{{ profitLoss.grossProfitMargin }}</strong>
+        </div>
+      </div>
+
+      <!-- Operating Expenses Section -->
+      <div class="section">
+        <h3>
+          <mat-icon>receipt_long</mat-icon>
+          Operating Expenses
+        </h3>
+        <div class="item" *ngFor="let exp of profitLoss.operatingExpenses?.breakdown">
+          <span>{{ exp.category || 'Other' }}</span>
+          <strong class="negative">{{ exp.amount | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="item total">
+          <span>Total Operating Expenses</span>
+          <strong class="negative">{{ profitLoss.operatingExpenses?.total | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <!-- Operating Profit -->
+      <div class="section highlight">
+        <div class="item total" [ngClass]="(profitLoss.operatingProfit || 0) >= 0 ? 'profit' : 'loss'">
+          <span>Operating Profit</span>
+          <strong>{{ profitLoss.operatingProfit | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <!-- Net Profit -->
+      <div class="section highlight final">
+        <h3>
+          <mat-icon>{{ (profitLoss.netProfit || 0) >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+          Net {{ (profitLoss.netProfit || 0) >= 0 ? 'Profit' : 'Loss' }}
+        </h3>
+        <div class="item total final-total" [ngClass]="(profitLoss.netProfit || 0) >= 0 ? 'profit' : 'loss'">
+          <span>Net {{ (profitLoss.netProfit || 0) >= 0 ? 'Profit' : 'Loss' }}</span>
+          <strong>{{ profitLoss.netProfit | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="item margin">
+          <span>Net Profit Margin</span>
+          <strong>{{ profitLoss.netProfitMargin }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="no-data-section" *ngIf="!isLoading && !profitLoss">
+  <div class="no-data-card">
+    <mat-icon>info</mat-icon>
+    <p>No profit & loss data available for the selected period.</p>
+  </div>
+</section>

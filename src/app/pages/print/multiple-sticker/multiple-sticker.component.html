@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+@defer (when !isLoading) {
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="printInvoice()" class="print-button">
+      <mat-icon>print</mat-icon>
+      Print
+    </button>
+  </div>
+
+  <div class="preview-container" id="preview-container" [style.--bill-invoice-color]="invoice?.color ?? '#5d36ff'">
+    <ng-container *ngFor="let invoice of invoices; let i = index">
+      <section class="invoice-page" [attr.data-order-id]="invoice?.orderId">
+        <div class="invoice-wrapper" [style.--bill-invoice-color]="invoice?.color ?? '#5d36ff'">
+    <div id="print-section" class="invoice-container">
+      <div class="data">
+        <!-- From Section -->
+        <div class="row">
+          @if (invoice?.shopLogo) {
+            <img class="logo" [src]="invoice?.shopLogo" alt="image"  loading="lazy">
+          } @else {
+            <p>{{ invoice?.shopName }}</p>
+          }
+          <div class="from-section">
+            <div class="bold">Shipped From:</div>
+            <div class="small">{{ invoice?.shopAddress }}</div>
+            <div class="small">{{ invoice?.shopPhoneNo }}</div>
+          </div>
+        </div>
+        <div class="top-area" *ngIf="invoiceSetting?.isEnableInvoiceCourierId">
+          <div  class="" style="padding: 2px 0; text-align: center;border-right: 1px solid #000000">Order Id: {{ invoice?.orderId  }}</div>
+          <div  class="" style="padding: 2px 0; text-align: center;">{{ invoice?.trackingId  }}</div>
+        </div>
+
+        <!-- To Section -->
+        <div class="row">
+          <div class="to-section">
+
+            <div class="bold">{{ invoice?.shopName | titlecase }}</div>
+
+              <div class="bold">Shipped To: {{ invoice?.name }}</div>
+              <div>Phone: {{ invoice?.phoneNo }}</div>
+              <div>Address: {{ invoice?.shippingAddress }}</div>
+                @if (invoice?.deliveryNote) {
+                 <p>Note: {{ invoice.deliveryNote }}</p>
+                }
+
+          </div>
+          <div>
+            <img class="qr" [src]="qrByOrderId[invoice?.orderId ?? invoice?.phoneNo]" alt="">
+<!--            <div  class="" style="text-align: center;padding-right: 5px">54444444444444</div>-->
+<!--            <div *ngIf="invoiceSetting?.isEnableInvoiceCourierId" class="" style="text-align: center;padding-right: 5px">{{ invoice?.trackingId  }}</div>-->
+<!--            <div *ngIf="!invoiceSetting?.isEnableInvoiceCourierId" class="" style="text-align: center;padding-right: 5px">{{ invoice?.phoneNo  }}</div>-->
+
+          </div>
+        </div>
+        <!-- Product Information Section -->
+        <div class="product-infos">
+          <div class="product-info-header">
+            <p class="border header-style" style="border-right: 1px solid #000000;
+      border-bottom: 1px solid #000000;">Product</p>
+            <p class="border header-style" style="border-right: 1px solid #000000;
+      border-bottom: 1px solid #000000;">Image</p>
+            <p class="border header-style" style="border-right: 1px solid #000000;
+      border-bottom: 1px solid #000000;">Price</p>
+            <p class="border header-style" style="border-right: 1px solid #000000;
+      border-bottom: 1px solid #000000;">Qty</p>
+            <p class="border header-style" style="border-right: 1px solid #000000;
+      border-bottom: 1px solid #000000;">Total</p>
+          </div>
+
+          <div class="product-info-content" *ngFor="let order of invoice.items">
+            <p class="border">
+              {{ order?.name }}
+              {{ order?.variation ? ' - ' + order?.variation?.name : '' }}
+              {{ order?.phoneModel ? ' - ' + (order?.phoneModel) : '' }}
+            </p>
+            <p class="border" style="border-right: 1px solid #000000;
+      border-bottom: 1px solid #000000;"><img [src]="order?.image + '?&auto=format&w=384'" alt="" /></p>
+            <p class="border" style="border-right: 1px solid #000000;
+      border-bottom: 1px solid #000000;">{{ (order?.salePrice) | shopCurrency }}</p>
+            <p class="border" style="border-right: 1px solid #000000;
+      border-bottom: 1px solid #000000;">{{ order?.quantity }}</p>
+            <p class="border" style="border-right: 1px solid #000000;
+      border-bottom: 1px solid #000000;">{{ (order?.quantity * order?.salePrice) | shopCurrency }}</p>
+          </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="bottom-area" *ngIf="!invoiceSetting?.isDisableInvoicePriceSection">
+          <div class="product-total-content">
+            <div class="product-total">
+              <div class="product-total-price" style=" border-top: 1px solid #000000!important;
+    border-left: 1px solid #000000!important;
+    border-right: 1px solid #000000!important;">
+                <p>SubTotal :</p>
+                <p class="quantity">{{ (invoice?.subTotal) | shopCurrency }}</p>
+              </div>
+              <div class="product-total-price"  style=" border-top: 1px solid #000000!important;
+    border-left: 1px solid #000000!important;
+    border-right: 1px solid #000000!important;">
+                <p>Delivery Charge :</p>
+                <p class="quantity">{{ (invoice?.deliveryCharge) | shopCurrency }}</p>
+              </div>
+              <div class="product-total-price"  style=" border-top: 1px solid #000000!important;
+    border-left: 1px solid #000000!important;
+    border-right: 1px solid #000000!important;">
+                <p>Discount Amount :</p>
+                <p class="quantity">-{{ (invoice?.discount ?? '0') | shopCurrency }}</p>
+              </div>
+              <div class="product-total-price border-btm"  style=" border-top: 1px solid #000000!important;
+    border-left: 1px solid #000000!important;
+    border-right: 1px solid #000000!important;">
+                <p>Grand Total :</p>
+                <p class="quantity">{{ (invoice?.grandTotal) | shopCurrency }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!--      <div class="thanks">-->
+      <!--        <p>Thank you for your order from {{ invoice?.domain }}</p>-->
+      <!--      </div>-->
+
+    </div>
+        </div>
+        </section>
+    </ng-container>
+  </div>
+
+
+  </body>
+  </html>
+
+} @placeholder (minimum 200ms) {
+  <app-page-loader></app-page-loader>
+}
+
+
+
+
+
+
+
+

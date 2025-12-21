@@ -1,0 +1,115 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">account_balance_wallet</mat-icon>
+          Cash Transaction List
+        </h1>
+      </div>
+      <div class="header-actions">
+        <button type="button" (click)="exportToExcel()" mat-stroked-button class="export-btn">
+          <mat-icon>file_download</mat-icon>
+          <span>Export</span>
+        </button>
+        <a routerLink="/pos/accounts/add-cash-transaction" mat-raised-button color="primary" class="add-btn">
+          <mat-icon>add</mat-icon>
+          <span>Add Transaction</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search Transactions</mat-label>
+          <input matInput type="search" #searchInput (input)="onSearchChange($event)" placeholder="Search by transaction no, description..." />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="filter-actions">
+        <button mat-stroked-button [class.active]="activeFilter === 'all'" (click)="onFilterChange('all')">All</button>
+        <button mat-stroked-button [class.active]="activeFilter === 'cash_in'" (click)="onFilterChange('cash_in')">Cash In</button>
+        <button mat-stroked-button [class.active]="activeFilter === 'cash_out'" (click)="onFilterChange('cash_out')">Cash Out</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<!-- Cash Transaction List Table -->
+<section class="table-section" *ngIf="!isLoading && searchTransactions.length > 0">
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th class="transaction-no-col">Transaction No</th>
+            <th class="date-col">Date</th>
+            <th class="type-col">Type</th>
+            <th class="amount-col">Amount</th>
+            <th class="description-col">Description</th>
+            <th class="payment-col">Payment Method</th>
+            <th class="action-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transaction of searchTransactions" class="table-row">
+            <td class="transaction-no-cell">
+              <div class="transaction-info">
+                <mat-icon class="transaction-icon">receipt</mat-icon>
+                <span>{{ transaction.transactionNo }}</span>
+              </div>
+            </td>
+            <td class="date-cell">{{ transaction.transactionDateString | date:'short' }}</td>
+            <td class="type-cell">
+              <span class="badge" [ngClass]="{
+                'badge-success': transaction.type === 'cash_in',
+                'badge-danger': transaction.type === 'cash_out'
+              }">
+                {{ transaction.type === 'cash_in' ? 'Cash In' : 'Cash Out' }}
+              </span>
+            </td>
+            <td class="amount-cell">
+              <strong [ngClass]="{
+                'positive': transaction.type === 'cash_in',
+                'negative': transaction.type === 'cash_out'
+              }">
+                {{ transaction.amount | currency:'BDT ':'symbol':'1.2-2' }}
+              </strong>
+            </td>
+            <td class="description-cell">{{ transaction.description || '-' }}</td>
+            <td class="payment-cell">{{ transaction.paymentMethod || 'cash' }}</td>
+            <td class="action-cell">
+              <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item routerLink="/pos/accounts/add-cash-transaction/{{ transaction._id }}">
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+                <button mat-menu-item (click)="openConfirmDialog(transaction._id)">
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete</span>
+                </button>
+              </mat-menu>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- No Content -->
+<app-no-content *ngIf="!isLoading && searchTransactions.length === 0" [text]="'No transactions found'"></app-no-content>
+
+

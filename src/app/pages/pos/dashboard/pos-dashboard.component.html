@@ -1,0 +1,100 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">dashboard</mat-icon>
+          POS Dashboard
+        </h1>
+        <p class="page-subtitle">Today's sales, profit, due, expense, and cash overview</p>
+      </div>
+      <div class="header-actions">
+        <button mat-raised-button color="primary" (click)="refreshData()">
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>
+
+<!-- Dashboard Content -->
+<section *ngIf="!isLoading" class="dashboard-section">
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <!-- Today Sale -->
+    <mat-card class="summary-card sale-card">
+      <mat-card-content>
+        <div class="card-icon primary">
+          <mat-icon>point_of_sale</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Today Sale</div>
+          <div class="card-value">{{ dashboardData.todaySale || 0 | number }}</div>
+          <div class="card-subtitle">{{ dashboardData.invoiceCount || 0 }} Invoice(s)</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Today Profit -->
+    <mat-card class="summary-card profit-card">
+      <mat-card-content>
+        <div class="card-icon success">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Today Profit</div>
+          <div class="card-value" [class.negative]="dashboardData.todayProfit < 0">
+            {{ dashboardData.todayProfit || 0 | number }}
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Today Due -->
+    <mat-card class="summary-card due-card">
+      <mat-card-content>
+        <div class="card-icon warn">
+          <mat-icon>account_balance_wallet</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Today Due</div>
+          <div class="card-value">{{ dashboardData.todayDue || 0 | number }}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Expense -->
+    <mat-card class="summary-card expense-card">
+      <mat-card-content>
+        <div class="card-icon danger">
+          <mat-icon>money_off</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Today Expense</div>
+          <div class="card-value">{{ dashboardData.expense || 0 | number }}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Cash in Hand -->
+    <mat-card class="summary-card cash-card">
+      <mat-card-content>
+        <div class="card-icon accent">
+          <mat-icon>account_balance</mat-icon>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Cash in Hand</div>
+          <div class="card-value">{{ dashboardData.cashInHand || 0 | number }}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>
+

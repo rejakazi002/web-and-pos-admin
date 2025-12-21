@@ -1,0 +1,132 @@
+.reprint-bill-dialog {
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .close-btn {
+      color: #ffffff;
+    }
+  }
+
+  .dialog-content {
+    padding: 24px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .sales-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .no-sales {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6c757d;
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+        color: #bdbdbd;
+      }
+
+      p {
+        margin: 0;
+        font-size: 16px;
+      }
+    }
+
+    .sale-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateX(4px);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+      }
+
+      .sale-info {
+        flex: 1;
+
+        .invoice-number {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+          font-weight: 600;
+          font-size: 16px;
+          color: #212529;
+
+          mat-icon {
+            color: #667eea;
+          }
+        }
+
+        .sale-details {
+          display: flex;
+          gap: 16px;
+          font-size: 13px;
+          color: #6c757d;
+
+          .date {
+            flex: 1;
+          }
+
+          .customer {
+            flex: 1;
+          }
+
+          .total {
+            font-weight: 600;
+            color: #4caf50;
+          }
+        }
+      }
+
+      .print-btn {
+        margin-left: 12px;
+      }
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 24px;
+    border-top: 1px solid #e0e0e0;
+    background: #f8f9fa;
+  }
+}
+
+

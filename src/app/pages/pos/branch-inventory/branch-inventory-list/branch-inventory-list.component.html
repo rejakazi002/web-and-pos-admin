@@ -1,0 +1,140 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">inventory</mat-icon>
+          Branch Inventory
+        </h1>
+        <p class="page-subtitle">Manage inventory across all branches</p>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          (click)="addInventory()"
+          mat-raised-button
+          color="primary"
+          class="add-btn"
+          [disabled]="!selectedBranch">
+          <mat-icon>add</mat-icon>
+          <span>Add Inventory</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <!-- Branch Selector -->
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Select Branch</mat-label>
+        <mat-select [(ngModel)]="selectedBranch" (selectionChange)="onBranchChange()">
+          <mat-option *ngFor="let branch of branches" [value]="branch._id">
+            {{ branch.websiteName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Low Stock Toggle -->
+      <mat-checkbox [(ngModel)]="showLowStock" (change)="toggleLowStock()" class="filter-checkbox">
+        Show Low Stock Only
+      </mat-checkbox>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>
+
+<!-- Inventory Table -->
+<section *ngIf="!isLoading" class="table-section">
+  <div class="table-card">
+    <div class="table-container">
+      <table mat-table [dataSource]="inventories" class="inventory-table">
+        <!-- Product Column -->
+        <ng-container matColumnDef="product">
+          <th mat-header-cell *matHeaderCellDef>Product</th>
+          <td mat-cell *matCellDef="let inventory">
+            <div class="product-info">
+              <img
+                *ngIf="inventory.product?.images && inventory.product.images.length > 0"
+                [src]="inventory.product.images[0]"
+                alt="Product"
+                class="product-image"
+              />
+              <div class="product-details">
+                <div class="product-name">{{ inventory.product?.name || 'N/A' }}</div>
+                <div class="product-sku">{{ inventory.product?.sku || 'N/A' }}</div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Quantity Column -->
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity</th>
+          <td mat-cell *matCellDef="let inventory">
+            <span [class.low-stock]="inventory.quantity <= inventory.reorderPoint">
+              {{ inventory.quantity }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Reserved Quantity Column -->
+        <ng-container matColumnDef="reservedQuantity">
+          <th mat-header-cell *matHeaderCellDef>Reserved</th>
+          <td mat-cell *matCellDef="let inventory">{{ inventory.reservedQuantity || 0 }}</td>
+        </ng-container>
+
+        <!-- Available Quantity Column -->
+        <ng-container matColumnDef="availableQuantity">
+          <th mat-header-cell *matHeaderCellDef>Available</th>
+          <td mat-cell *matCellDef="let inventory">
+            {{ (inventory.quantity || 0) - (inventory.reservedQuantity || 0) }}
+          </td>
+        </ng-container>
+
+        <!-- Reorder Point Column -->
+        <ng-container matColumnDef="reorderPoint">
+          <th mat-header-cell *matHeaderCellDef>Reorder Point</th>
+          <td mat-cell *matCellDef="let inventory">{{ inventory.reorderPoint || 0 }}</td>
+        </ng-container>
+
+        <!-- Location Column -->
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef>Location</th>
+          <td mat-cell *matCellDef="let inventory">{{ inventory.location || 'N/A' }}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let inventory">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="editInventory(inventory)"
+              matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <div *ngIf="inventories.length === 0" class="no-data">
+        <mat-icon>inventory_2</mat-icon>
+        <p>No inventory found for this branch</p>
+      </div>
+    </div>
+  </div>
+</section>
+

@@ -1,0 +1,151 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">card_membership</mat-icon>
+          Membership Cards
+        </h1>
+        <p class="page-subtitle">Manage customer membership cards</p>
+      </div>
+      <div class="header-actions">
+        <a routerLink="/pos/customer/customer-list" mat-stroked-button class="back-btn">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Back to Customers</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search</mat-label>
+        <input matInput [formControl]="searchCtrl" placeholder="Search by card number, customer name or phone">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="statusFilter" (selectionChange)="onFilterChange()">
+          <mat-option value="all">All Status</mat-option>
+          <mat-option value="active">Active</mat-option>
+          <mat-option value="expired">Expired</mat-option>
+          <mat-option value="suspended">Suspended</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Card Type</mat-label>
+        <mat-select [(ngModel)]="cardTypeFilter" (selectionChange)="onFilterChange()">
+          <mat-option value="all">All Types</mat-option>
+          <mat-option value="Silver">Silver</mat-option>
+          <mat-option value="Gold">Gold</mat-option>
+          <mat-option value="Platinum">Platinum</mat-option>
+          <mat-option value="VIP">VIP</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<!-- Membership Cards Table -->
+<section class="table-section" *ngIf="!isLoading">
+  <div class="table-card">
+    <div class="table-responsive" *ngIf="membershipCards.length > 0">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>Card Number</th>
+            <th>Customer</th>
+            <th>Card Type</th>
+            <th>Status</th>
+            <th>Issue Date</th>
+            <th>Expiry Date</th>
+            <th>Discount %</th>
+            <th>Total Spent</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let card of membershipCards" class="table-row">
+            <td class="card-number-cell">
+              <strong>{{ card.cardNumber }}</strong>
+            </td>
+            <td class="customer-cell">
+              <div class="customer-info">
+                <span class="customer-name">{{ card.customer?.name || 'N/A' }}</span>
+                <span class="customer-phone">{{ card.customer?.phone || '' }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="card-type-badge" [ngClass]="getCardTypeClass(card.cardType)">
+                {{ card.cardType }}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(card.status)">
+                {{ card.status }}
+              </span>
+            </td>
+            <td>{{ card.issueDate | date:'shortDate' }}</td>
+            <td>
+              <span [class.expired]="isExpired(card.expiryDate)">
+                {{ card.expiryDate ? (card.expiryDate | date:'shortDate') : 'No expiry' }}
+              </span>
+            </td>
+            <td>{{ card.benefits?.discountPercentage || 0 }}%</td>
+            <td>{{ card.totalSpent || 0 | number:'1.2-2' }}</td>
+            <td class="action-cell">
+              <div class="action-buttons">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="viewCustomer(card.customer?._id || card.customer)"
+                  matTooltip="View Customer">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button
+                  *ngIf="card.status === 'active'"
+                  mat-icon-button
+                  color="warn"
+                  (click)="updateCardStatus(card, 'suspended')"
+                  matTooltip="Suspend Card">
+                  <mat-icon>block</mat-icon>
+                </button>
+                <button
+                  *ngIf="card.status === 'suspended'"
+                  mat-icon-button
+                  color="primary"
+                  (click)="updateCardStatus(card, 'active')"
+                  matTooltip="Activate Card">
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="membershipCards.length === 0 && !isLoading" class="no-content-overlay">
+      <app-no-content [text]="'No membership cards found'"></app-no-content>
+    </div>
+
+    <mat-paginator
+      [length]="totalCards"
+      [pageSize]="cardsPerPage"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</section>
+

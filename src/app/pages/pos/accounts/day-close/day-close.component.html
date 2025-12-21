@@ -1,0 +1,89 @@
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">event</mat-icon>
+          Day Close Report
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline">
+        <mat-label>Select Date</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange()">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<section class="content-section" *ngIf="!isLoading && dayClose">
+  <div class="day-close-card">
+    <div class="status-badge" [ngClass]="{
+      'status-open': dayClose.status === 'open',
+      'status-closed': dayClose.status === 'closed'
+    }">
+      {{ dayClose.status === 'open' ? 'Open' : 'Closed' }}
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-item">
+        <h4>Opening Balance</h4>
+        <p>{{ dayClose.openingBalance || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="summary-item">
+        <h4>Total Sales</h4>
+        <p>{{ dayClose.totalSalesAmount || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+        <small>{{ dayClose.totalSales || 0 }} transactions</small>
+      </div>
+      <div class="summary-item">
+        <h4>Total Purchase</h4>
+        <p>{{ dayClose.totalPurchaseAmount || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+        <small>{{ dayClose.totalPurchase || 0 }} transactions</small>
+      </div>
+      <div class="summary-item">
+        <h4>Cash In</h4>
+        <p class="positive">{{ dayClose.totalCashIn || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="summary-item">
+        <h4>Cash Out</h4>
+        <p class="negative">{{ dayClose.totalCashOut || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="summary-item">
+        <h4>Income</h4>
+        <p class="positive">{{ dayClose.totalIncome || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="summary-item">
+        <h4>Expense</h4>
+        <p class="negative">{{ dayClose.totalExpense || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="summary-item highlight">
+        <h4>Closing Balance</h4>
+        <p class="large">{{ dayClose.closingBalance || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+      </div>
+    </div>
+
+    <div class="close-section" *ngIf="dayClose.status === 'open'">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Closing Notes</mat-label>
+        <textarea matInput [(ngModel)]="closeNotes" rows="3" placeholder="Optional notes for day close..."></textarea>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="closeDay()" [disabled]="isClosing">
+        <mat-icon *ngIf="!isClosing">lock</mat-icon>
+        <mat-spinner *ngIf="isClosing" diameter="20" class="inline-spinner"></mat-spinner>
+        <span>Close Day</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+

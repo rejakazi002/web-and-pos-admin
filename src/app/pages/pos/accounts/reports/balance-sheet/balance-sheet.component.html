@@ -1,0 +1,245 @@
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">assessment</mat-icon>
+          Balance Sheet
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline">
+        <mat-label>As On Date</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="asOnDate" (dateChange)="onDateChange()">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="export-toolbar" *ngIf="!isLoading && balanceSheet">
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportCSV()"
+        matTooltip="Export CSV">
+        <mat-icon>description</mat-icon>
+        <span>Export CSV</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportExcel()"
+        matTooltip="Export Excel">
+        <mat-icon>table_chart</mat-icon>
+        <span>Export Excel</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="printReport()"
+        matTooltip="Print">
+        <mat-icon>print</mat-icon>
+        <span>Print</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="showColumnsInfo()"
+        matTooltip="Columns">
+        <mat-icon>view_column</mat-icon>
+        <span>Columns</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportPDF()"
+        matTooltip="Export PDF">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span>Export PDF</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<section class="content-section" *ngIf="!isLoading && balanceSheet">
+  <div class="report-card">
+    <h2>Balance Sheet as on {{ asOnDate | date:'longDate' }}</h2>
+    
+    <!-- Balance Check Status -->
+    <div class="balance-status" [ngClass]="balanceSheet.summary?.balanceCheck === 'BALANCED' ? 'balanced' : 'unbalanced'">
+      <mat-icon>{{ balanceSheet.summary?.balanceCheck === 'BALANCED' ? 'check_circle' : 'warning' }}</mat-icon>
+      <span>{{ balanceSheet.summary?.balanceCheck === 'BALANCED' ? 'Books are Balanced' : 'Books are Unbalanced (Difference: ' + (balanceSheet.summary?.difference | number:'1.2-2') + ')' }}</span>
+    </div>
+    
+    <div class="balance-sheet">
+      <!-- ASSETS Section -->
+      <div class="assets-section">
+        <h3>
+          <mat-icon>account_balance_wallet</mat-icon>
+          Assets
+        </h3>
+        
+        <!-- Current Assets -->
+        <div class="sub-section">
+          <h4>Current Assets</h4>
+          <div class="section-content">
+            <div class="item">
+              <span>Cash in Hand</span>
+              <strong>{{ balanceSheet.assets?.currentAssets?.cashInHand | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+            <div class="item">
+              <span>Cash at Bank</span>
+              <strong>{{ balanceSheet.assets?.currentAssets?.cashAtBank | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+            <div class="item">
+              <span>Inventory / Stock</span>
+              <strong>{{ balanceSheet.assets?.currentAssets?.inventory | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+            <div class="item">
+              <span>Accounts Receivable (Customer Due)</span>
+              <strong>{{ balanceSheet.assets?.currentAssets?.accountsReceivable | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+            <div class="item subtotal">
+              <span>Total Current Assets</span>
+              <strong>{{ balanceSheet.assets?.currentAssets?.totalCurrentAssets | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Fixed Assets -->
+        <div class="sub-section">
+          <h4>Fixed Assets</h4>
+          <div class="section-content">
+            <div class="item">
+              <span>Total Fixed Assets</span>
+              <strong>{{ balanceSheet.assets?.fixedAssets?.total | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+          </div>
+        </div>
+        
+        <div class="section-content">
+          <div class="item total">
+            <span>TOTAL ASSETS</span>
+            <strong>{{ balanceSheet.assets?.totalAssets | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIABILITIES Section -->
+      <div class="liabilities-section">
+        <h3>
+          <mat-icon>credit_card</mat-icon>
+          Liabilities
+        </h3>
+        
+        <!-- Current Liabilities -->
+        <div class="sub-section">
+          <h4>Current Liabilities</h4>
+          <div class="section-content">
+            <div class="item">
+              <span>Accounts Payable (Supplier Due)</span>
+              <strong>{{ balanceSheet.liabilities?.currentLiabilities?.accountsPayable | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+            <div class="item">
+              <span>Customer Advance / Wallet</span>
+              <strong>{{ balanceSheet.liabilities?.currentLiabilities?.customerAdvance | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+            <div class="item">
+              <span>VAT Payable</span>
+              <strong>{{ balanceSheet.liabilities?.currentLiabilities?.vatPayable | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+            <div class="item subtotal">
+              <span>Total Current Liabilities</span>
+              <strong>{{ balanceSheet.liabilities?.currentLiabilities?.totalCurrentLiabilities | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Long Term Liabilities -->
+        <div class="sub-section">
+          <h4>Long Term Liabilities</h4>
+          <div class="section-content">
+            <div class="item">
+              <span>Total Long Term Liabilities</span>
+              <strong>{{ balanceSheet.liabilities?.longTermLiabilities?.total | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+            </div>
+          </div>
+        </div>
+        
+        <div class="section-content">
+          <div class="item total">
+            <span>TOTAL LIABILITIES</span>
+            <strong>{{ balanceSheet.liabilities?.totalLiabilities | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- EQUITY Section -->
+      <div class="equity-section">
+        <h3>
+          <mat-icon>business</mat-icon>
+          Owner's Equity
+        </h3>
+        <div class="section-content">
+          <div class="item">
+            <span>Owner Capital</span>
+            <strong>{{ balanceSheet.equity?.ownerCapital | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="item">
+            <span>Retained Earnings</span>
+            <strong>{{ balanceSheet.equity?.retainedEarnings | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="item" [ngClass]="(balanceSheet.equity?.currentYearProfitLoss || 0) >= 0 ? 'profit' : 'loss'">
+            <span>Current Year {{ (balanceSheet.equity?.currentYearProfitLoss || 0) >= 0 ? 'Profit' : 'Loss' }}</span>
+            <strong>{{ balanceSheet.equity?.currentYearProfitLoss | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="item total">
+            <span>TOTAL EQUITY</span>
+            <strong>{{ balanceSheet.equity?.totalEquity | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-section">
+      <div class="summary-grid">
+        <div class="summary-item assets-total">
+          <mat-icon>account_balance_wallet</mat-icon>
+          <div class="summary-content">
+            <span>Total Assets</span>
+            <strong>{{ balanceSheet.summary?.totalAssets | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+          </div>
+        </div>
+        <div class="summary-item equals">
+          <mat-icon>drag_handle</mat-icon>
+        </div>
+        <div class="summary-item liabilities-total">
+          <mat-icon>credit_card</mat-icon>
+          <div class="summary-content">
+            <span>Liabilities + Equity</span>
+            <strong>{{ balanceSheet.summary?.totalLiabilitiesAndEquity | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="no-data-section" *ngIf="!isLoading && !balanceSheet">
+  <div class="no-data-card">
+    <mat-icon>info</mat-icon>
+    <p>No balance sheet data available. Please initialize Chart of Accounts first.</p>
+  </div>
+</section>

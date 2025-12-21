@@ -1,0 +1,51 @@
+import { Shop } from './shop.interface';
+
+export interface Setting {
+  deliveryOptionType: any;
+  advancePayment: any;
+  _id?: string;
+  shop?: Shop;
+  smsMethods?: any[];
+  smsSendingOption?: any;
+  orderNotification?: any;
+  smsCustomMessages?: any;
+  courierMethods?: any[];
+  deliveryCharges?: any[];
+  paymentMethods?: any[];
+  socialLogins?: any[];
+  offers?: any[];
+  chats?: any[];
+  currency?: any[];
+  incompleteOrder?: any;
+  prescriptionOrder?: any;
+  isEnablePrescriptionOrder?: any;
+  affiliate?: any;
+  invoiceSetting?: any;
+  blog?: any;
+  country?: any;
+  googleLogin?: any;
+  googleSearchConsoleToken?: any;
+  facebookLogin?: any;
+  domains?: any;
+  facebookPixel?: any;
+  googleTagManager?: any;
+  googleAnalytics?: any;
+  analytics?: any;
+  facebookCatalog?: any;
+  orderSetting?: any;
+  productSetting?: any;
+  isEnableProductKeyFeature?: any;
+  isCashOnDeliveryOff?: boolean;
+  posSettings?: {
+    vatPercentage?: number;
+    taxPercentage?: number;
+    isAutoCalculateVat?: boolean;
+    isAutoCalculateTax?: boolean;
+    showVat?: boolean;
+    showTax?: boolean;
+    showServiceCharge?: boolean;
+    showAit?: boolean;
+  };
+  createdAt?: Date;
+  updatedAt?: Date;
+}

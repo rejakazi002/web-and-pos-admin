@@ -1,0 +1,135 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">history</mat-icon>
+          Price Update History
+        </h1>
+        <p class="page-subtitle">Track all product price changes</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter Section -->
+<section class="filter-section" *ngIf="!productId">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search</mat-label>
+        <input matInput [formControl]="searchCtrl" placeholder="Search by product name or SKU">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<!-- Price History Table -->
+<section class="table-section" *ngIf="!isLoading">
+  <div class="table-card">
+    <div class="table-container">
+      <div class="table-responsive" *ngIf="priceHistory.length > 0">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Price Type</th>
+              <th>Previous Price</th>
+              <th>New Price</th>
+              <th>Change</th>
+              <th>Changed By</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let history of priceHistory" class="table-row">
+              <td>{{ history.date | date:'short' }}</td>
+              <td>{{ history.product?.name || 'N/A' }}</td>
+              <td>{{ history.product?.sku || 'N/A' }}</td>
+              <td>
+                <span class="chip price-type-chip">
+                  {{ getPriceChange(history).type }}
+                </span>
+              </td>
+              <td>
+                <div *ngIf="history.priceChangeType === 'costPrice'">
+                  {{ history.previousPrice?.costPrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}
+                </div>
+                <div *ngIf="history.priceChangeType === 'salePrice'">
+                  {{ history.previousPrice?.salePrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}
+                </div>
+                <div *ngIf="history.priceChangeType === 'regularPrice'">
+                  {{ history.previousPrice?.regularPrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}
+                </div>
+                <div *ngIf="history.priceChangeType === 'all'">
+                  Cost: {{ history.previousPrice?.costPrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}<br>
+                  Sale: {{ history.previousPrice?.salePrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}<br>
+                  Regular: {{ history.previousPrice?.regularPrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}
+                </div>
+              </td>
+              <td>
+                <div *ngIf="history.priceChangeType === 'costPrice'">
+                  <strong>{{ history.newPrice?.costPrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+                </div>
+                <div *ngIf="history.priceChangeType === 'salePrice'">
+                  <strong>{{ history.newPrice?.salePrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+                </div>
+                <div *ngIf="history.priceChangeType === 'regularPrice'">
+                  <strong>{{ history.newPrice?.regularPrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+                </div>
+                <div *ngIf="history.priceChangeType === 'all'">
+                  Cost: <strong>{{ history.newPrice?.costPrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}</strong><br>
+                  Sale: <strong>{{ history.newPrice?.salePrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}</strong><br>
+                  Regular: <strong>{{ history.newPrice?.regularPrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}</strong>
+                </div>
+              </td>
+              <td>
+                <span [class.positive]="getPriceChange(history).amount > 0" [class.negative]="getPriceChange(history).amount < 0">
+                  {{ getPriceChange(history).amount > 0 ? '+' : '' }}{{ getPriceChange(history).amount | currency:'BDT ':'symbol':'1.2-2' }}
+                  <br>
+                  <small>({{ getPriceChange(history).percentage > 0 ? '+' : '' }}{{ getPriceChange(history).percentage | number:'1.2-2' }}%)</small>
+                </span>
+              </td>
+              <td>{{ history.changedBy?.name || 'N/A' }}</td>
+              <td>{{ history.reason || 'N/A' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="priceHistory.length === 0 && !isLoading" class="no-content-overlay">
+        <app-no-content [text]="'No price history found'"></app-no-content>
+      </div>
+    </div>
+
+    <mat-paginator *ngIf="!productId"
+                   [length]="totalHistory"
+                   [pageSize]="historyPerPage"
+                   [pageSizeOptions]="[5, 10, 25, 50]"
+                   (page)="onPageChange($event)"
+                   showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</section>
+

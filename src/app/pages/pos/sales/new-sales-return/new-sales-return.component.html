@@ -1,0 +1,227 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">undo</mat-icon>
+          Sales Return
+        </h1>
+        <p class="page-subtitle">Process product returns from previous sales</p>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          routerLink="/pos/sales/return-list"
+          mat-stroked-button
+          class="back-btn">
+          <mat-icon>list</mat-icon>
+          <span>Return List</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main Form Section -->
+<section id="new-return-section" class="form-section">
+  <div class="form-container">
+    <!-- Sale Search Section -->
+    <div class="sale-search-section" *ngIf="!selectedSale">
+      <div class="search-card">
+        <h3 class="section-title">
+          <mat-icon>search</mat-icon>
+          Search Sale
+        </h3>
+        <mat-form-field appearance="outline" class="sale-search-field">
+          <mat-label>Search by Invoice No or Customer Phone</mat-label>
+          <input
+            matInput
+            type="text"
+            [(ngModel)]="saleSearchQuery"
+            (input)="onSaleSearch($any($event.target).value)"
+            (keyup)="onSaleSearch($any($event.target).value)"
+            placeholder="Enter invoice number or customer phone"
+          />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+        <div class="sale-search-results" *ngIf="searchSales.length > 0">
+          <div
+            *ngFor="let sale of searchSales"
+            (click)="onSelectSale(sale)"
+            class="sale-search-item">
+            <div class="sale-item-info">
+              <div class="sale-item-header">
+                <span class="sale-invoice">Invoice: {{sale.invoiceNo}}</span>
+                <span class="sale-date">{{sale.soldDateString | date:'short'}}</span>
+              </div>
+              <div class="sale-item-details">
+                <span>Customer: {{sale.customer?.phone || 'N/A'}}</span>
+                <span>Total: {{shopInformation?.currency | currencyIcon}}{{sale.total | number:'1.2-2'}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="no-results" *ngIf="saleSearchQuery && searchSales.length === 0">
+          No sales found for "{{saleSearchQuery}}"
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Sale Info -->
+    <div class="selected-sale-section" *ngIf="selectedSale">
+      <div class="selected-sale-card">
+        <div class="sale-info-header">
+          <div class="sale-info-left">
+            <h3>Selected Sale</h3>
+            <div class="sale-details">
+              <span><strong>Invoice:</strong> {{selectedSale.invoiceNo}}</span>
+              <span><strong>Date:</strong> {{selectedSale.soldDateString | date:'short'}}</span>
+              <span><strong>Customer:</strong> {{selectedSale.customer?.phone || 'N/A'}}</span>
+            </div>
+          </div>
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="selectedSale = null; returnProducts = []"
+            matTooltip="Clear Selection">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Return Products Table -->
+    <div class="products-section" *ngIf="selectedSale">
+      <div class="table-card">
+        <h3 class="section-title">
+          <mat-icon>shopping_cart</mat-icon>
+          Select Products to Return
+        </h3>
+        <div class="table-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th class="product-name-col">Product Name</th>
+                <th class="quantity-col">Sold Qty</th>
+                <th class="quantity-col">Return Qty</th>
+                <th class="price-col">Unit Price</th>
+                <th class="price-col">Return Amount</th>
+                <th class="action-col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let product of returnProducts; let i = index" class="table-row">
+                <td class="product-name-cell">
+                  <div class="product-info">
+                    <mat-icon class="product-icon">inventory_2</mat-icon>
+                    <div class="product-details">
+                      <span class="product-name">{{utilsService.getProductName(product)}}</span>
+                      <span class="product-sku" *ngIf="product?.sku">SKU: {{product.sku}}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="quantity-cell">
+                  <span class="quantity-badge">{{ product?.maxReturnQuantity || 0 }}</span>
+                </td>
+                <td class="quantity-control-cell">
+                  <div class="quantity-controls">
+                    <button
+                      type="button"
+                      class="qty-btn qty-decrease"
+                      (click)="decrementReturnQuantity(i)"
+                      [disabled]="!product.returnQuantity || product.returnQuantity <= 0"
+                      matTooltip="Decrease quantity">
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                    <input
+                      digitOnly
+                      [max]="product?.maxReturnQuantity"
+                      [(ngModel)]="product.returnQuantity"
+                      type="text"
+                      class="qty-input"
+                      [value]="product?.returnQuantity || 0"/>
+                    <button
+                      type="button"
+                      class="qty-btn qty-increase"
+                      (click)="incrementReturnQuantity(i)"
+                      [disabled]="!product.returnQuantity || product.returnQuantity >= product.maxReturnQuantity"
+                      matTooltip="Increase quantity">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </div>
+                </td>
+                <td class="price-cell">
+                  <span class="price-value">
+                    {{shopInformation?.currency | currencyIcon}}{{ product?.salePrice | number:'1.2-2'}}
+                  </span>
+                </td>
+                <td class="price-cell total-cell">
+                  <span class="total-value">
+                    {{shopInformation?.currency | currencyIcon}}{{ (product?.salePrice || 0) * (product?.returnQuantity || 0) | number:'1.2-2'}}
+                  </span>
+                </td>
+                <td class="action-cell">
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    class="delete-btn"
+                    matTooltip="Remove from return"
+                    (click)="removeReturnProduct(i)"
+                    [disabled]="!product.returnQuantity || product.returnQuantity === 0">
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Return Summary -->
+    <div class="summary-section" *ngIf="selectedSale && returnTotal > 0">
+      <div class="summary-card">
+        <div class="summary-header">
+          <h3 class="summary-title">
+            <mat-icon>receipt_long</mat-icon>
+            Return Summary
+          </h3>
+        </div>
+        <div class="summary-content">
+          <div class="summary-row">
+            <span class="summary-label">Return Total</span>
+            <span class="summary-value return-value">{{shopInformation?.currency | currencyIcon}}{{ returnTotal | number:'':'bn' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons-section" *ngIf="selectedSale && returnTotal > 0">
+      <button
+        *ngIf="!isLoading"
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="onSubmit()"
+        class="submit-btn">
+        <mat-icon>check_circle</mat-icon>
+        <span>Process Return</span>
+      </button>
+      <button
+        *ngIf="isLoading"
+        disabled
+        type="button"
+        mat-raised-button
+        class="loading-btn">
+        <mat-icon>hourglass_empty</mat-icon>
+        <span>Processing...</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+

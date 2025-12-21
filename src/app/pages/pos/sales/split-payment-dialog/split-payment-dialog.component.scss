@@ -1,0 +1,152 @@
+.split-payment-dialog {
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .close-btn {
+      color: #ffffff;
+    }
+  }
+
+  .dialog-content {
+    padding: 24px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .total-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+    border: 1px solid #e0e0e0;
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+        border-top: 2px solid #e0e0e0;
+        padding-top: 12px;
+      }
+
+      .label {
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .value {
+        font-size: 18px;
+        font-weight: 700;
+
+        &.grand-total {
+          color: #667eea;
+        }
+
+        &.valid {
+          color: #4caf50;
+        }
+
+        &.invalid {
+          color: #f44336;
+        }
+
+        &.remaining-positive {
+          color: #ff9800;
+        }
+
+        &.remaining-zero {
+          color: #4caf50;
+        }
+
+        &.remaining-negative {
+          color: #f44336;
+        }
+      }
+    }
+  }
+
+  .payments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+
+    .payment-item {
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px;
+
+      .payment-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+
+        .method-field {
+          flex: 1;
+          min-width: 150px;
+        }
+
+        .amount-field {
+          flex: 1;
+          min-width: 150px;
+        }
+
+        .remove-btn {
+          margin-top: 8px;
+        }
+      }
+
+      .transaction-field {
+        width: 100%;
+        margin-top: 12px;
+      }
+    }
+  }
+
+  .add-payment-section {
+    text-align: center;
+    padding: 16px 0;
+
+    .add-btn {
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #e0e0e0;
+    background: #f8f9fa;
+  }
+}
+
+

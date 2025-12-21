@@ -1,0 +1,309 @@
+<!-- Page Header -->
+<section class="page-header-section" *ngIf="supplier">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">business</mat-icon>
+          Supplier Details
+        </h1>
+        <p class="page-subtitle">{{supplier?.name}} - {{supplier?.phone || 'No phone'}}</p>
+      </div>
+      <div class="header-actions">
+        <a
+          [routerLink]="['/pos/supplier/add-supplier/', supplierId]"
+          mat-raised-button
+          color="accent"
+          class="edit-btn">
+          <mat-icon>edit</mat-icon>
+          <span>Edit Supplier</span>
+        </a>
+        <button
+          type="button"
+          routerLink="/pos/supplier/supplier-list"
+          mat-stroked-button
+          class="back-btn">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Back to List</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Supplier Info Card -->
+<section class="info-section" *ngIf="supplier">
+  <div class="info-card">
+    <div class="supplier-header">
+      <div class="supplier-avatar">
+        <mat-icon>business</mat-icon>
+      </div>
+      <div class="supplier-info">
+        <h2>{{supplier?.name}}</h2>
+        <div class="supplier-meta">
+          <span class="phone" *ngIf="supplier?.phone">
+            <mat-icon>phone</mat-icon>
+            {{supplier?.phone}}
+          </span>
+          <span class="email" *ngIf="supplier?.email">
+            <mat-icon>email</mat-icon>
+            {{supplier?.email}}
+          </span>
+          <span class="contact-person" *ngIf="supplier?.contactPerson">
+            <mat-icon>person</mat-icon>
+            {{supplier?.contactPerson}}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon total-due">
+          <mat-icon>account_balance_wallet</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Due</div>
+          <div class="stat-value due-value">
+            {{shopInformation?.currency | currencyIcon}}{{ (supplier?.totalDue || 0) | number:'1.2-2'}}
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon paid">
+          <mat-icon>payments</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Paid</div>
+          <div class="stat-value paid-value">
+            {{shopInformation?.currency | currencyIcon}}{{ (supplier?.totalPaid || 0) | number:'1.2-2'}}
+          </div>
+        </div>
+      </div>
+      <div class="stat-card" *ngIf="supplierStats">
+        <div class="stat-icon balance">
+          <mat-icon>account_balance</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Balance</div>
+          <div class="stat-value balance-value">
+            {{shopInformation?.currency | currencyIcon}}{{ ((supplier?.totalDue || 0) - (supplier?.totalPaid || 0)) | number:'1.2-2'}}
+          </div>
+        </div>
+      </div>
+      <div class="stat-card" *ngIf="supplierStats">
+        <div class="stat-icon purchases">
+          <mat-icon>shopping_cart</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Purchases</div>
+          <div class="stat-value">
+            {{purchaseHistory?.length || 0}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tabs Section -->
+<section class="tabs-section" *ngIf="supplier">
+  <mat-tab-group [(selectedIndex)]="selectedTab" class="supplier-tabs">
+    <!-- Supplier Information Tab -->
+    <mat-tab label="Information">
+      <div class="tab-content">
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Name</label>
+            <value>{{supplier?.name}}</value>
+          </div>
+          <div class="info-item" *ngIf="supplier?.phone">
+            <label>Phone</label>
+            <value>{{supplier?.phone}}</value>
+          </div>
+          <div class="info-item" *ngIf="supplier?.email">
+            <label>Email</label>
+            <value>{{supplier?.email}}</value>
+          </div>
+          <div class="info-item" *ngIf="supplier?.alternatePhone">
+            <label>Alternate Phone</label>
+            <value>{{supplier?.alternatePhone}}</value>
+          </div>
+          <div class="info-item" *ngIf="supplier?.contactPerson">
+            <label>Contact Person</label>
+            <value>{{supplier?.contactPerson}}</value>
+          </div>
+          <div class="info-item" *ngIf="supplier?.taxId">
+            <label>Tax ID</label>
+            <value>{{supplier?.taxId}}</value>
+          </div>
+          <div class="info-item" *ngIf="supplier?.address">
+            <label>Address</label>
+            <value>{{supplier?.address}}</value>
+          </div>
+          <div class="info-item" *ngIf="supplier?.city">
+            <label>City</label>
+            <value>{{supplier?.city}}</value>
+          </div>
+          <div class="info-item" *ngIf="supplier?.country">
+            <label>Country</label>
+            <value>{{supplier?.country}}</value>
+          </div>
+          <div class="info-item" *ngIf="supplier?.description">
+            <label>Description</label>
+            <value>{{supplier?.description}}</value>
+          </div>
+          <div class="info-item" *ngIf="supplier?.notes">
+            <label>Notes</label>
+            <value>{{supplier?.notes}}</value>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Statistics Tab -->
+    <mat-tab label="Statistics">
+      <div class="tab-content">
+        <div class="stats-content" *ngIf="supplierStats">
+          <div class="stat-item">
+            <label>Total Due</label>
+            <value class="due-value">
+              {{shopInformation?.currency | currencyIcon}}{{ (supplier?.totalDue || 0) | number:'1.2-2'}}
+            </value>
+          </div>
+          <div class="stat-item">
+            <label>Total Paid</label>
+            <value class="paid-value">
+              {{shopInformation?.currency | currencyIcon}}{{ (supplier?.totalPaid || 0) | number:'1.2-2'}}
+            </value>
+          </div>
+          <div class="stat-item">
+            <label>Balance</label>
+            <value class="balance-value">
+              {{shopInformation?.currency | currencyIcon}}{{ ((supplier?.totalDue || 0) - (supplier?.totalPaid || 0)) | number:'1.2-2'}}
+            </value>
+          </div>
+        </div>
+        <div *ngIf="!supplierStats" class="no-stats">
+          <p>No statistics available</p>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Purchase History Tab -->
+    <mat-tab label="Purchase History">
+      <div class="tab-content">
+        <div class="purchase-list" *ngIf="purchaseHistory && purchaseHistory.length > 0">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Purchase No</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Paid</th>
+                <th>Due</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let purchase of purchaseHistory">
+                <td>{{purchase.purchaseNo}}</td>
+                <td>{{purchase.purchaseDateString || (purchase.purchaseDate | date:'short')}}</td>
+                <td>{{shopInformation?.currency | currencyIcon}}{{ (purchase.total || 0) | number:'1.2-2'}}</td>
+                <td>{{shopInformation?.currency | currencyIcon}}{{ (purchase.paidAmount || 0) | number:'1.2-2'}}</td>
+                <td>{{shopInformation?.currency | currencyIcon}}{{ (purchase.dueAmount || 0) | number:'1.2-2'}}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="'status-' + purchase.status?.toLowerCase()">
+                    {{purchase.status}}
+                  </span>
+                </td>
+                <td>
+                  <button mat-icon-button color="primary" [routerLink]="['/pos/purchase/add-purchase/', purchase._id]" matTooltip="View Purchase">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="!purchaseHistory || purchaseHistory.length === 0" class="no-purchases">
+          <p>No purchase history available</p>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Due Management Tab -->
+    <mat-tab label="Due Management">
+      <div class="tab-content">
+        <div class="due-management-card">
+          <h3>Update Due Amount</h3>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Amount</mat-label>
+              <input matInput type="number" [(ngModel)]="dueAmount" placeholder="Enter amount" min="0">
+              <mat-icon matPrefix>attach_money</mat-icon>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Type</mat-label>
+              <mat-select [(ngModel)]="dueType">
+                <mat-option value="add">Add</mat-option>
+                <mat-option value="subtract">Subtract</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <button mat-raised-button color="primary" (click)="updateDue()">
+            <mat-icon>update</mat-icon>
+            Update Due
+          </button>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Payment Management Tab -->
+    <mat-tab label="Payment">
+      <div class="tab-content">
+        <div class="payment-management-card">
+          <h3>Record Payment</h3>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Amount</mat-label>
+              <input matInput type="number" [(ngModel)]="paymentAmount" placeholder="Enter amount" min="0">
+              <mat-icon matPrefix>attach_money</mat-icon>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Payment Method</mat-label>
+              <mat-select [(ngModel)]="paymentMethod">
+                <mat-option value="cash">Cash</mat-option>
+                <mat-option value="bank">Bank</mat-option>
+                <mat-option value="cheque">Cheque</mat-option>
+                <mat-option value="mobile_banking">Mobile Banking</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Reference</mat-label>
+              <input matInput [(ngModel)]="paymentReference" placeholder="Transaction ID, Cheque No, etc.">
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Notes</mat-label>
+              <textarea matInput [(ngModel)]="paymentNotes" rows="3" placeholder="Additional notes"></textarea>
+            </mat-form-field>
+          </div>
+          <button mat-raised-button color="primary" (click)="addPayment()">
+            <mat-icon>payment</mat-icon>
+            Record Payment
+          </button>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+

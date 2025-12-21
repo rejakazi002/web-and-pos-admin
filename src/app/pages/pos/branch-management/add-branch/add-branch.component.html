@@ -1,0 +1,147 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">{{ id ? 'edit' : 'add' }}</mat-icon>
+          {{ id ? 'Edit Branch' : 'Add Branch' }}
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<!-- Form Section -->
+<section *ngIf="!isLoading" class="form-section">
+  <div class="form-card">
+    <form [formGroup]="dataForm" (ngSubmit)="onSubmit()" #formElement="ngForm">
+      <div class="form-section-content">
+        <h3 class="section-title">Basic Information</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Vendor Name *</mat-label>
+            <input matInput formControlName="name" placeholder="Enter vendor name">
+            <mat-error *ngIf="dataForm.get('name')?.hasError('required')">
+              Vendor name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Branch Name *</mat-label>
+            <input matInput formControlName="websiteName" placeholder="Enter branch name">
+            <mat-error *ngIf="dataForm.get('websiteName')?.hasError('required')">
+              Branch name is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Password Less Login</mat-label>
+            <mat-select formControlName="isPasswordLess">
+              <mat-option [value]="false">No</mat-option>
+              <mat-option [value]="true">Yes</mat-option>
+            </mat-select>
+            <mat-error *ngIf="dataForm.get('isPasswordLess')?.hasError('required')">
+              This field is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Domain</mat-label>
+            <input matInput formControlName="domain" placeholder="Enter domain">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Domain Type</mat-label>
+            <mat-select formControlName="domainType">
+              <mat-option value="sub-domain">Sub Domain</mat-option>
+              <mat-option value="domain">Domain</mat-option>
+              <mat-option value="domain-http-www">Domain HTTP WWW</mat-option>
+              <mat-option value="domain-www-http">Domain WWW HTTP</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <h3 class="section-title">Contact Information</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phoneNo" placeholder="Enter phone number">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Enter email">
+            <mat-error *ngIf="dataForm.get('email')?.hasError('email')">
+              Invalid email format
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <h3 class="section-title">Address Information</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Address</mat-label>
+            <textarea matInput formControlName="address" rows="3" placeholder="Enter address"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>City</mat-label>
+            <input matInput formControlName="city" placeholder="Enter city">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Country</mat-label>
+            <input matInput formControlName="country" placeholder="Enter country">
+          </mat-form-field>
+        </div>
+
+        <h3 class="section-title">Additional Information</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="active">Active</mat-option>
+              <mat-option value="inactive">Inactive</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="4" placeholder="Enter description"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          mat-raised-button
+          (click)="onCancel()"
+          class="cancel-btn">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          [disabled]="dataForm.invalid || isLoading"
+          class="submit-btn">
+          {{ id ? 'Update' : 'Add' }} Branch
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+

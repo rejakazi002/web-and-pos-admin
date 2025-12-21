@@ -1,0 +1,150 @@
+// Import base styles from new-sales component
+@import '../new-sales/new-sales.component.scss';
+
+// Sale Search Section
+.sale-search-section {
+  margin-bottom: 24px;
+
+  .search-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e0e0;
+    padding: 24px;
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 20px 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #212529;
+
+      mat-icon {
+        color: #667eea;
+      }
+    }
+
+    .sale-search-field {
+      width: 100%;
+    }
+
+    .sale-search-results {
+      position: relative;
+      margin-top: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #ffffff;
+      z-index: 1000;
+
+      .sale-search-item {
+        padding: 16px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #f8f9fa;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .sale-item-info {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          .sale-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .sale-invoice {
+              font-weight: 600;
+              font-size: 15px;
+              color: #212529;
+            }
+
+            .sale-date {
+              font-size: 13px;
+              color: #6c757d;
+            }
+          }
+
+          .sale-item-details {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #6c757d;
+          }
+        }
+      }
+    }
+
+    .no-results {
+      padding: 16px;
+      text-align: center;
+      color: #6c757d;
+      font-size: 14px;
+    }
+  }
+}
+
+// Selected Sale Section
+.selected-sale-section {
+  margin-bottom: 24px;
+
+  .selected-sale-card {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #ffcc80;
+    padding: 20px;
+
+    .sale-info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      .sale-info-left {
+        h3 {
+          margin: 0 0 12px 0;
+          font-size: 18px;
+          font-weight: 600;
+          color: #e65100;
+        }
+
+        .sale-details {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          font-size: 14px;
+          color: #5d4037;
+
+          span {
+            display: flex;
+            gap: 8px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Return Summary
+.summary-section {
+  margin-top: 24px;
+
+  .summary-card {
+    .return-value {
+      color: #f44336;
+      font-weight: 600;
+    }
+  }
+}
+

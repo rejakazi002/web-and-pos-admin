@@ -1,0 +1,113 @@
+.page-header-section {
+  margin-bottom: 20px;
+}
+
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-card {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
+  h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+  }
+}
+
+.form-row {
+  margin-bottom: 20px;
+  
+  h3 {
+    margin-bottom: 12px;
+    color: #555;
+    font-size: 16px;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.permissions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.table-section {
+  margin-top: 20px;
+}
+
+.table-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.access-table {
+  width: 100%;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.user-email {
+  font-size: 12px;
+  color: #666;
+}
+
+.branches-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.branch-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #e3f2fd;
+  border-radius: 16px;
+  font-size: 12px;
+  color: #1976d2;
+}
+
+.permissions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.permission-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 11px;
+  background: #4caf50;
+  color: white;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+

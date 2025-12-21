@@ -1,0 +1,250 @@
+@import "common/invoice-print";
+@import "common/invoice-print2";
+
+/* ===== Canvas & Print Button ===== */
+.actions{
+  width: calc(2480px / 3);
+  margin: 0 auto 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.preview-container{
+  width: calc(2480px / 3);
+  margin: 0 auto;
+  background: #fff;
+  padding: 16px;
+}
+body{ background:#c0c0c0 !important; }
+.print-button{ padding:14px 24px; }
+
+/* ===== Print Rules ===== */
+@media print{
+  .preview-container{ width:100%; padding:0; margin:0; }
+  body{ margin:0; padding:0; background:#fff !important; }
+  .actions{ display:none; }
+  @page{ size:A4; margin:10mm; }
+}
+
+/* =========================================================
+   A4 Invoice — Dhaka Water Purifier style
+   ========================================================= */
+.invoice-a4{
+  max-width: 800px;
+  margin: 0 auto;
+  background: #fff;
+  color: #000;
+  padding: 16px 18px 24px;
+  font-family: 'Satoshi', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+/* ---------- Header ---------- */
+.hdr{
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #dcdcdc;
+
+  .left-head{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    img{
+      width: 120px;
+      height: 80px;
+      object-fit: contain;
+    }
+  }
+
+  .brand{
+    .logo{ width:140px; height:auto; object-fit:contain; display:block; }
+    .company{ margin:6px 0 8px; font-size:18px; font-weight:700; }
+    .addr{ display:grid; gap:2px; color:#222; line-height:1.4; }
+  }
+
+  .right-meta{
+    text-align:right;
+    .barcode{
+      /* ngx-barcode renders an svg/canvas; keep a safe box */
+      display:block; margin-left:auto;
+      img, svg, canvas{ width:140px; height:50px; object-fit:contain; display:block; }
+    }
+    .code{ font-weight:700; text-align:center;}
+  }
+}
+
+/* ---------- Center Title Row ---------- */
+.doc-title{
+  text-align:center;
+  font-weight:700;
+  margin: 10px 0;
+  padding: 6px 0;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+/* ---------- Sales Meta Table ---------- */
+.sales-meta {
+  margin-top: 12px;
+
+  .sales-meta-box {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 14px;
+
+    .left, .right {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.4;
+      strong {
+        font-weight: 600;
+      }
+    }
+
+    .right {
+      text-align: right;
+    }
+  }
+}
+
+/* ---------- Items Table ---------- */
+.items{ margin-top: 14px; }
+
+.tbl{
+  width:100%;
+  border-collapse: collapse;
+
+  thead th{
+    background:#f1f1f1;
+    font-weight:700;
+    text-align:left;
+    border:1px solid #e2e2e2;
+    padding:8px 10px;
+  }
+  tbody td{
+    border:1px solid #e8e8e8;
+    padding:8px 10px;
+    vertical-align: top;
+  }
+}
+.ta-r{ text-align:right; }
+
+/* ---------- Summary (Left blocks + Right totals) ---------- */
+.summary{
+  display:grid;
+  grid-template-columns: 1.2fr 0.9fr;
+  gap: 18px;
+  margin-top: 14px;
+
+  .left{
+    .block{
+      border:1px solid #e6e6e6;
+      margin-bottom:10px;
+
+      .line{
+        display:grid;
+        grid-template-columns: 160px 1fr;
+        border-bottom:1px solid #eee;
+
+        &:last-child{ border-bottom:none; }
+        label{ padding:8px 10px; background:#f8f8f8; font-weight:600; }
+        .val{ padding:8px 10px; }
+      }
+    }
+    .blocks{
+
+      margin-bottom:10px;
+
+      .line{
+        display:grid;
+        grid-template-columns: 80px 1fr;
+
+        &:last-child{ border-bottom:none; }
+        label{ padding:8px 10px; font-weight:600; }
+        .val{ padding:8px 10px; }
+      }
+    }
+  }
+
+  .right{
+    .totals{
+      width:100%;
+      border-collapse:collapse;
+
+      td{ border:1px solid #e6e6e6; padding:8px 10px; }
+      td:first-child{ background:#f8f8f8; font-weight:600; }
+      tr.strong td{ font-weight:700; }
+    }
+  }
+}
+
+/* ---------- Footer: Received | QR | Signature ---------- */
+.footer-row{
+  display:grid;
+  grid-template-columns: 1fr 120px 1fr;
+  align-items:end;
+  gap:12px;
+  margin-top: 28px;
+  border-bottom: 1px solid #e2e2e2;
+
+  .received{
+    min-height:64px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    &:before{
+      content:"";
+      display:block;
+      width: 240px;
+      height:1px;
+      background:#000;
+      margin-bottom:6px;
+    }
+  }
+
+  .qr{
+    display:flex; justify-content:center;
+    img, canvas{ width:100%; height:auto; object-fit:contain; max-width:120px; }
+  }
+
+  .sign{
+    min-height:64px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    &:before{
+      content:"";
+      display:block;
+      width: 240px;
+      height:1px;
+      background:#000;
+      margin-bottom:6px;
+    }
+  }
+}
+
+/* ---------- Print meta row ---------- */
+.print-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
+  color:#444;
+  font-size:12px;
+}
+
+/* Safety for any inline images */
+img{ max-width:100%; height:auto; }

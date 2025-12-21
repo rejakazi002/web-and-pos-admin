@@ -1,0 +1,131 @@
+@import "variables";
+@import "exports/mat-button-loader";
+
+.container {
+  width: 95%;
+  margin: 20px auto 0 auto;
+}
+
+.full-sec {
+  padding: 15px 0 15px 0;
+  h3 {
+    font-weight: 900;
+    font-size: 25px;
+  }
+}
+
+.form-container {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 416px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.urlsetting{
+  display: flex;
+  flex-direction: column;
+}
+
+.submit-btn {
+  max-width: 180px;
+}
+
+.container {
+  form {
+    ::ng-deep .mat-mdc-checkbox {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+
+.invoice-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  //flex-wrap: wrap;
+  gap: 20px;
+}
+
+.invoice-card {
+  width: 250px;
+  border: 2px solid #ccc;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.invoice-card img {
+  width: 100%;
+  border-radius: 6px;
+}
+
+.invoice-card h4 {
+  margin: 10px 0;
+}
+
+.invoice-card button {
+  margin-top: 10px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+}
+
+.invoice-card.active {
+  border-color: #28a745;
+  background: #e9f9ef;
+}
+
+.invoice-card.active button {
+  background-color: #28a745;
+  cursor: not-allowed;
+}
+
+.save-button {
+  margin-top: 30px;
+}
+@media (max-width: 768px) {
+  .full-sec h3{
+    font-size: 22px;
+  }
+  .form-container{
+    width: 100%;
+    max-width: 100%;
+  }
+  .invoice-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 16px;
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .invoice-card {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    min-width: 250px; // or whatever width fits your card content
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .invoice-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}

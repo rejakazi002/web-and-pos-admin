@@ -1,0 +1,160 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">inventory_2</mat-icon>
+          Central Products
+        </h1>
+        <p class="page-subtitle">Manage central products and sync to branches</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search Products</mat-label>
+        <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search by name, SKU...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Category</mat-label>
+        <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onFilterChange()">
+          <mat-option value="">All Categories</mat-option>
+          <!-- Add categories dynamically if available -->
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onFilterChange()">
+          <mat-option value="">All Status</mat-option>
+          <mat-option value="publish">Published</mat-option>
+          <mat-option value="draft">Draft</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="onSearch()">
+        <mat-icon>search</mat-icon>
+        Search
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<!-- Products Table -->
+<section *ngIf="!isLoading" class="table-section">
+  <div class="table-card">
+    <div class="table-container">
+      <table mat-table [dataSource]="products" class="product-table">
+        <!-- Product Column -->
+        <ng-container matColumnDef="product">
+          <th mat-header-cell *matHeaderCellDef>Product</th>
+          <td mat-cell *matCellDef="let product">
+            <div class="product-info">
+              <img
+                *ngIf="product.images && product.images.length > 0"
+                [src]="product.images[0]"
+                alt="Product"
+                class="product-image"
+              />
+              <div class="product-details">
+                <div class="product-name">{{ product.name || 'N/A' }}</div>
+                <div class="product-sku">{{ product.sku || 'N/A' }}</div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Category Column -->
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let product">
+            {{ product.category?.name || 'N/A' }}
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let product">
+            <span [class]="'status-chip status-' + (product.status || 'draft')">
+              {{ product.status || 'Draft' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Price Column -->
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>Price</th>
+          <td mat-cell *matCellDef="let product">
+            {{ product.salePrice || 0 | currency:'BDT ':'symbol':'1.2-2' }}
+          </td>
+        </ng-container>
+
+        <!-- Quantity Column -->
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity</th>
+          <td mat-cell *matCellDef="let product">
+            {{ product.quantity || 0 }}
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let product">
+            <button
+              mat-icon-button
+              matTooltip="Sync to Branches"
+              (click)="syncToBranches(product)"
+              color="primary">
+              <mat-icon>sync</mat-icon>
+            </button>
+            <button
+              *ngIf="!product.isCentralProduct"
+              mat-icon-button
+              matTooltip="Mark as Central"
+              (click)="markAsCentral(product)"
+              color="accent">
+              <mat-icon>star_border</mat-icon>
+            </button>
+            <button
+              *ngIf="product.isCentralProduct"
+              mat-icon-button
+              matTooltip="Unmark as Central"
+              (click)="unmarkAsCentral(product)"
+              color="warn">
+              <mat-icon>star</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalItems > itemsPerPage">
+      <app-pagination
+        [currentPage]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        [totalItems]="totalItems"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
+    </div>
+  </div>
+</section>
+
+<app-no-content *ngIf="!isLoading && products.length === 0" [text]="'No central products found'"></app-no-content>
+

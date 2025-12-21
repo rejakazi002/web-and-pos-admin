@@ -1,0 +1,158 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">swap_horiz</mat-icon>
+          Transfer Requests
+        </h1>
+        <p class="page-subtitle">Manage product transfers between branches</p>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          (click)="createTransfer()"
+          mat-raised-button
+          color="primary"
+          class="add-btn">
+          <mat-icon>add</mat-icon>
+          <span>Create Transfer</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter Section -->
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="statusFilter" (selectionChange)="onFilterChange()">
+          <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+            {{ status.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>From Branch</mat-label>
+        <mat-select [(ngModel)]="fromBranchFilter" (selectionChange)="onFilterChange()">
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let branch of branches" [value]="branch._id">
+            {{ branch.websiteName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>To Branch</mat-label>
+        <mat-select [(ngModel)]="toBranchFilter" (selectionChange)="onFilterChange()">
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let branch of branches" [value]="branch._id">
+            {{ branch.websiteName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>
+
+<!-- Transfer Table -->
+<section *ngIf="!isLoading" class="table-section">
+  <div class="table-card">
+    <div class="table-container">
+      <table mat-table [dataSource]="transfers" class="transfer-table">
+        <!-- Transfer No Column -->
+        <ng-container matColumnDef="transferNo">
+          <th mat-header-cell *matHeaderCellDef>Transfer No</th>
+          <td mat-cell *matCellDef="let transfer">{{ transfer.transferNo }}</td>
+        </ng-container>
+
+        <!-- From Branch Column -->
+        <ng-container matColumnDef="fromBranch">
+          <th mat-header-cell *matHeaderCellDef>From Branch</th>
+          <td mat-cell *matCellDef="let transfer">{{ transfer.fromBranch?.websiteName || 'N/A' }}</td>
+        </ng-container>
+
+        <!-- To Branch Column -->
+        <ng-container matColumnDef="toBranch">
+          <th mat-header-cell *matHeaderCellDef>To Branch</th>
+          <td mat-cell *matCellDef="let transfer">{{ transfer.toBranch?.websiteName || 'N/A' }}</td>
+        </ng-container>
+
+        <!-- Products Column -->
+        <ng-container matColumnDef="products">
+          <th mat-header-cell *matHeaderCellDef>Products</th>
+          <td mat-cell *matCellDef="let transfer">
+            {{ transfer.products?.length || 0 }} items
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let transfer">
+            <mat-chip [color]="getStatusColor(transfer.status)">
+              {{ transfer.status | titlecase }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Request Date Column -->
+        <ng-container matColumnDef="requestDate">
+          <th mat-header-cell *matHeaderCellDef>Request Date</th>
+          <td mat-cell *matCellDef="let transfer">
+            {{ transfer.requestDate | date: 'short' }}
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let transfer">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="viewDetails(transfer)"
+              matTooltip="View Details">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button
+              *ngIf="transfer.status === 'pending'"
+              mat-icon-button
+              color="primary"
+              (click)="approveTransfer(transfer)"
+              matTooltip="Approve">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            <button
+              *ngIf="transfer.status === 'pending'"
+              mat-icon-button
+              color="warn"
+              (click)="rejectTransfer(transfer)"
+              matTooltip="Reject">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <div *ngIf="transfers.length === 0" class="no-data">
+        <mat-icon>swap_horiz</mat-icon>
+        <p>No transfer requests found</p>
+      </div>
+    </div>
+  </div>
+</section>
+

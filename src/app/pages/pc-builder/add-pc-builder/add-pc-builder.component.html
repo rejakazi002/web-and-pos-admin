@@ -1,0 +1,99 @@
+<div class="container">
+
+  <div class="content add-page">
+    <form #formElement="ngForm" [formGroup]="dataForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+      <div class="gallery-picker">
+        <app-gallery-image-picker
+          [type]="'multiple'"
+          [maxImages]="1"
+          [isInvalid]="this.dataForm.get('images').touched && this.dataForm.get('images').invalid"
+          (onPicked)="onPickedImage($event)"
+          infoText = "Recommended Image Resolution: 1200×630px or 800×800px or 1000×1000px (ideal for eCommerce). Recommended File Size: Keep between 100KB to 200KB for optimal performance."
+          [images]="pickedImages">
+        </app-gallery-image-picker>
+      </div>
+
+<!--      <mat-form-field appearance="outline">-->
+<!--        <mat-label>Pc Builder Title</mat-label>-->
+<!--        <mat-select formControlName="type" required>-->
+<!--          @for(data of pcBuilderType; track data.value) {-->
+<!--            <mat-option [value]="data.value">-->
+<!--              {{ data.viewValue }}-->
+<!--            </mat-option>-->
+<!--          }-->
+<!--        </mat-select>-->
+<!--        <mat-error>This field is required.</mat-error>-->
+<!--      </mat-form-field>-->
+
+      <mat-checkbox  style="margin-bottom: 20px;" formControlName="isRequired" color="primary">
+        Is Required?
+      </mat-checkbox>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Title</mat-label>
+        <input formControlName="title" matInput placeholder="Enter Title" required>
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Url</mat-label>
+        <input formControlName="url"  matInput placeholder="Enter url">
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Priority</mat-label>
+        <input formControlName="priority" digitOnly matInput placeholder="Enter priority">
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+
+
+<!--      <mat-form-field appearance="outline">-->
+<!--        <mat-label>Short Description</mat-label>-->
+<!--        <textarea formControlName="seoDescription" matInput placeholder="Enter description" required></textarea>-->
+<!--        <mat-error>This field is required</mat-error>-->
+<!--      </mat-form-field>-->
+
+<!--      <mat-form-field appearance="outline">-->
+<!--        <mat-label>Keyword</mat-label>-->
+<!--        <textarea formControlName="seoKeyword" matInput placeholder="Enter Keyword"></textarea>-->
+<!--        <mat-error>This field is required</mat-error>-->
+<!--      </mat-form-field>-->
+
+      <div class="d-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            @for(data of dataStatus; track data.value) {
+              <mat-option [value]="data.value">
+                {{ data.viewValue }}
+              </mat-option>
+            }
+          </mat-select>
+          <mat-error>This field is required.</mat-error>
+        </mat-form-field>
+      </div> <!-- END! d-row -->
+
+      <div class="action">
+        <button (click)="onDiscard()" mat-stroked-button color="warn" type="button" class="discard">
+          <mat-icon>arrow_back_ios</mat-icon>
+          Discard
+        </button>
+
+        @if(!isLoading) {
+          <button mat-button class="add-product-btn" color="primary" type="submit">
+            <mat-icon>check</mat-icon>
+            {{ id ? 'Update PcBuilder' : 'Add PcBuilder' }}
+          </button>
+        } @else {
+          <button class="btn-loader" mat-button type="button" color="primary">
+            <div><span class="loader"></span></div>
+            <div><span class="txt">{{ id ? 'Update Pc Builder' : 'Add Pc Builder' }}</span></div>
+          </button>
+        }
+      </div> <!-- END! action -->
+
+    </form> <!-- END! form -->
+  </div> <!-- END! content -->
+</div> <!-- END! container -->

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+@defer (when !isLoading) {
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="printInvoice()" class="print-button">
+      <mat-icon>print</mat-icon>
+      Print
+    </button>
+  </div>
+
+  <div class="preview-container" [style.--bill-invoice-color]="invoice?.color ?? '#5d36ff'">
+    <div id="print-section" class="invoice-container">
+      <div class="data">
+        <div class="invoice">
+          <div class="logo-container padding-10">
+            @if (invoice?.shopLogo) {
+              <img [src]="invoice?.shopLogo" alt="image" style="min-height: 40px;object-fit: contain;" loading="lazy">
+            } @else {
+              <p>{{ invoice?.websiteName }}</p>
+            }
+            <div class="courier-box">
+<!--              <p class="text-wrap text-bold font-12">Delivery Partner:</p>-->
+              <!-- <img class="logo-w-100" src="../../../../../assets/images/logo/courier-logo.png" alt=""> -->
+<!--              <img class="courier-logo" src="../../../../assets/images/logo/courier-logo-2.png" alt="">-->
+            </div>
+            <p class="logo-right text-bold" *ngIf="invoiceSetting?.isEnableInvoiceCourierId">{{ invoice?.trackingId }}</p>
+
+          </div>
+          <div class="first-section padding-10">
+            <div class="bar-code">
+              <ngx-barcode6
+                [bc-format]="'MSI'"
+                [bc-value]="invoice?.orderId"
+                [bc-display-value]="true"
+                [bc-height]= 45
+                [bc-width]= 4
+              >
+              </ngx-barcode6>
+            </div>
+            <div class="serial-number">
+              <div class="left">
+                <p class="text-bold">65B</p>
+              </div>
+              <div class="right text-bold">
+                <p class="text-bold">{{invoice?.grandTotal}}Tk</p>
+              </div>
+            </div>
+            <div class="address-container">
+              <div class="address-left">
+                <div class="receiver-phone">
+                  <p class="font-9 text-bold">Receiver <span>{{invoice?.name}}</span></p>
+                  <p class="font-9 text-bold">{{invoice?.phoneNo}}</p>
+                </div>
+                <div class="receiver-address">
+                  <p class="font-10">
+                    {{invoice?.shippingAddress}}
+                    {{invoice?.division}}
+                    {{invoice?.postCode? ',' : ''}} {{invoice?.postCode}}
+                  </p>
+                </div>
+
+              </div>
+              <div class="address-right">
+                <div class="box">
+                  <p class="item-1">{{invoice?.division}}</p>
+                </div>
+                <div class="box">
+                  <p>-</p>
+                </div>
+                <div class="box">
+                  <p>-</p>
+                </div>
+                <div class="box">
+                  <p>{{invoice?.paymentType}}</p>
+                </div>
+                <div class="box">
+                  <p>0.00</p>
+                </div>
+              </div>
+            </div>
+            <div class="shop-order-id-bar-code-container">
+              <div class="shop-order-id-bar">
+                <div class="shop-order-id">
+                  <div class="shop-name">
+                    <p class="font-10 text-bold padding-l-10">Shop Name: {{invoice?.shopName}}</p>
+                  </div>
+                  <div class="order-id-weight-ship-time">
+                    <div class="order-id">
+                      <p class="padding-l-10 font-10">Order Id <br> <span class="text-bold">{{invoice?.orderId}}</span>
+                      </p>
+                    </div>
+                    <div class="weight">
+                      <p class="font-10">Quantity <br> <span class="text-bold">{{invoice?.items?.length}}</span>
+                      </p>
+                    </div>
+                    <div class="ship-by-time">
+                      <p class="font-10">Ship by Date <br> <span class="text-bold">{{invoice?.date}}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar-code-2">
+                  <img [src]="qrImageUrl" alt="">
+<!--                  <qrcode [qrdata]="invoice?.orderId"  [width]="85" [errorCorrectionLevel]="'M'"></qrcode>-->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cross">
+            <p class="test1">&#9984;</p>
+            <p class="dashed"></p>
+          </div>
+
+          <div class="second-section">
+            <div class="product-details-title">
+              <div class="quantity">
+                <p class="font-12 text-bold">Qty</p>
+              </div>
+              <div class="product-title">
+                <p class="font-12 text-bold">Product Name</p>
+              </div>
+              <div class="sku-title">
+                <p class="font-12 text-bold">Variation</p>
+              </div>
+            </div>
+            <div class="product-details-list-container">
+              <div class="product-details-list" *ngFor="let d of invoice.items">
+                <div class="serial">
+                  <p class="font-10 text-bold">1</p>
+                </div>
+                <div class="product-name">
+                  <p class="font-10">
+                    {{d?.name}}
+                  </p>
+                </div>
+                <div class="sku-name">
+                  <p *ngIf="d?.variation" class="font-10">{{d?.variation?.name}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="total">
+              <div class="footer-logo">
+                @if (invoice?.shopLogo) {
+                  <img [src]="invoice?.shopLogo" alt="image" loading="lazy">
+                } @else {
+                  <p>{{ invoice?.websiteName }}</p>
+                }
+              </div>
+              <div class="total-quantity">
+                <div class="total-text-digit">
+                  <div class="total-text">
+                    <p>Total</p>
+                  </div>
+                  <div class="total-digit">
+                    <p>{{invoice?.items?.length}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="order-package-id">
+<!--                <div class="order-id">-->
+<!--                  <p class="font-10">Order Id: {{invoice?.orderId}}</p>-->
+<!--                </div>-->
+<!--                <div>-->
+<!--                  <p class="font-10" style="font-size: 10px;">Package Id: {{invoice?._id}}</p>-->
+<!--                </div>-->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="thanks">
+        <p>Thank you for your order from {{ invoice?.domain }}</p>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  </body>
+  </html>
+
+} @placeholder (minimum 200ms) {
+  <app-page-loader></app-page-loader>
+}
+
+
+
+
+
+
+
+

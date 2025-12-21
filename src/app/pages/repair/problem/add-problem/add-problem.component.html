@@ -1,0 +1,27 @@
+<div class="container">
+
+  <div class="content add-page">
+    <form #formElement="ngForm" [formGroup]="dataForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Problem Name</mat-label>
+        <input formControlName="name" matInput placeholder="Enter problem name" required>
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+
+      <div class="d-row">
+        <button mat-button class="add-product-btn" color="primary" type="submit">
+          <mat-icon>check</mat-icon>
+          {{ id ? 'Update' : 'Submit' }}
+        </button>
+        <button mat-button type="button" [routerLink]="['/repair/problem-list']">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+      </div>
+
+    </form> <!-- END! Form -->
+
+  </div>
+</div>
+

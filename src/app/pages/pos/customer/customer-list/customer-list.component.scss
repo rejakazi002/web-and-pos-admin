@@ -1,0 +1,300 @@
+@import "variables";
+
+// Page Header Section
+.page-header-section {
+  margin-bottom: 24px;
+}
+
+.page-header-card {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
+  color: #ffffff;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.header-title {
+  flex: 1;
+
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
+    .title-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  .page-subtitle {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.9;
+    font-weight: 400;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+
+  .export-btn,
+  .add-btn {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// Filter Section
+.filter-section {
+  margin-bottom: 24px;
+}
+
+.filter-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+}
+
+.filter-content {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.search-container {
+  flex: 1;
+  min-width: 250px;
+
+  .search-field {
+    width: 100%;
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  .filter-btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &.active {
+      background: #1976d2;
+      color: #ffffff;
+    }
+
+    &.vip-btn.active {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    &.general-btn.active {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    &.wholesale-btn.active {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    &.due-btn.active {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    mat-icon {
+      margin-right: 4px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Table Section
+.table-section {
+  margin-bottom: 24px;
+}
+
+.table-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+  overflow-x: auto;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: #1976d2;
+    color: #ffffff;
+
+    th {
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f8f9fa;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      padding: 16px;
+      vertical-align: middle;
+    }
+  }
+}
+
+// Customer Info
+.customer-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .customer-icon {
+    color: #667eea;
+  }
+
+  .customer-name {
+    font-weight: 500;
+  }
+}
+
+.phone-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .phone-icon {
+    color: #4caf50;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// Group Badges
+.group-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.vip-badge {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: #ffffff;
+  }
+
+  &.general-badge {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: #ffffff;
+  }
+
+  &.wholesale-badge {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: #ffffff;
+  }
+}
+
+// Due & Wallet Values
+.due-value {
+  font-weight: 600;
+  color: #6c757d;
+
+  &.has-due {
+    color: #f44336;
+  }
+}
+
+.wallet-value {
+  font-weight: 600;
+  color: #4caf50;
+}
+
+.points-value {
+  font-weight: 600;
+  color: #ff9800;
+}
+
+// Action Buttons
+.action-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-content {
+    flex-direction: column;
+  }
+
+  .table-card {
+    overflow-x: auto;
+  }
+
+  .modern-table {
+    min-width: 800px;
+  }
+}
+

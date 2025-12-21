@@ -1,0 +1,105 @@
+<div class="container">
+  <div class="full-sec">
+    <h3>Select Your Invoice Design</h3>
+  </div>
+
+  <form [formGroup]="dataForm" (ngSubmit)="onSubmit()" class="form-container">
+    <div class="invoice-selector">
+      <div class="invoice-grid">
+        <div
+          class="invoice-card"
+          [class.active]="dataForm.value.selectedInvoice === 'invoice1'"
+          (click)="selectInvoice('invoice1')"
+        >
+          <img src="/assets/images/png/invoice1.png" alt="Invoice 1" />
+          <h4>Classic Design</h4>
+          <button type="button" [disabled]="dataForm.value.selectedInvoice === 'invoice1'">Active</button>
+        </div>
+
+        <div
+          class="invoice-card"
+          [class.active]="dataForm.value.selectedInvoice === 'invoice4'"
+          (click)="selectInvoice('invoice4')"
+        >
+          <img src="/assets/images/png/invoice4.png" alt="Invoice 4" />
+          <h4>Classic Detailed Design</h4>
+          <button type="button" [disabled]="dataForm.value.selectedInvoice === 'invoice4'">Active</button>
+        </div>
+
+        <div
+          class="invoice-card"
+          [class.active]="dataForm.value.selectedInvoice === 'invoice2'"
+          (click)="selectInvoice('invoice2')"
+        >
+          <img src="/assets/images/png/invoice2.png" alt="Invoice 2" />
+          <h4>Modern Design</h4>
+          <button type="button" [disabled]="dataForm.value.selectedInvoice === 'invoice2'">Active</button>
+        </div>
+
+        <div
+          class="invoice-card"
+          [class.active]="dataForm.value.selectedInvoice === 'invoice3'"
+          (click)="selectInvoice('invoice3')"
+        >
+          <img src="/assets/images/png/invoice3.png" alt="Invoice 3" />
+          <h4>Minimal Design</h4>
+          <button type="button" [disabled]="dataForm.value.selectedInvoice === 'invoice3'">Active</button>
+        </div>
+
+        <div
+          class="invoice-card"
+          [class.active]="dataForm.value.selectedInvoice === 'invoice5'"
+          (click)="selectInvoice('invoice5')"
+        >
+          <img src="/assets/images/png/invoice5.png" alt="Invoice 5" />
+          <h4>Minimal Detailed Design</h4>
+          <button type="button" [disabled]="dataForm.value.selectedInvoice === 'invoice5'">Active</button>
+        </div>
+
+        <div
+          class="invoice-card"
+          [class.active]="dataForm.value.selectedInvoice === 'invoice6'"
+          (click)="selectInvoice('invoice6')"
+        >
+          <img src="/assets/page/INVOICE6.png" alt="Invoice 6" />
+          <h4>Sticker Print </h4>
+          <button type="button" [disabled]="dataForm.value.selectedInvoice === 'invoice6'">Active</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Order Invoice Setting -->
+    <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Disable Invoice Price Section ( Admin Order Print Page ) </mat-label>
+
+    <mat-checkbox  style="margin-bottom: 20px;" formControlName="isDisableInvoicePriceSection" color="primary">
+      Disable Invoice Price Section?
+    </mat-checkbox>
+
+    <!-- Blog -->
+    <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Enable Invoice Courier Id</mat-label>
+
+    <mat-checkbox  style="margin-bottom: 20px;" formControlName="isEnableInvoiceCourierId" color="primary">
+      Enable Invoice Courier Id?
+    </mat-checkbox>
+
+
+
+    @if (!isLoading) {
+      <button mat-button class="add-product-btn" color="primary">
+        <mat-icon>check</mat-icon>
+        Save Changes
+      </button>
+    } @else {
+      <button class="btn-loader" mat-raised-button type="button" color="primary">
+        <div><span class="loader"></span></div>
+        <div><span class="txt">Save Changes</span></div>
+      </button>
+    }
+
+  </form>
+
+</div>
+
+
+

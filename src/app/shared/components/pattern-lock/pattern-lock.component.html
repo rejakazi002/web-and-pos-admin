@@ -1,0 +1,72 @@
+<div class="pattern-lock-container">
+  <div class="pattern-header">
+    <h3>Security Pattern</h3>
+    <button mat-icon-button (click)="onClose()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="pattern-content">
+    <label class="pattern-label">Pattern:</label>
+    <div class="pattern-grid-container">
+      <svg class="pattern-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path 
+          *ngIf="selectedPattern.length >= 2"
+          [attr.d]="getLinePath()" 
+          class="pattern-line"
+          stroke="#2196F3"
+          stroke-width="3"
+          fill="none"
+        />
+      </svg>
+      <div 
+        #patternGrid
+        class="pattern-grid"
+        (mouseup)="onPatternEnd()"
+        (mouseleave)="onPatternEnd()"
+        (touchend)="onPatternEnd()"
+        (touchcancel)="onPatternEnd()"
+      >
+        <div
+          *ngFor="let dot of dots; let i = index"
+          class="pattern-dot"
+          [class.selected]="isDotSelected(i)"
+          [class.active]="isDotActive(i)"
+          [class.hover]="currentHoverDot === i && isDrawing"
+          (mousedown)="onDotMouseDown(i, $event)"
+          (mouseenter)="onDotMouseEnter(i, $event)"
+          (mouseleave)="onDotMouseLeave(i)"
+          (touchstart)="onDotTouchStart(i, $event)"
+          (touchmove)="onDotTouchMove($event)"
+        >
+          <div class="dot-inner"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-info" *ngIf="selectedPattern.length > 0">
+      <p>Pattern: {{ selectedPattern.length }} dots selected</p>
+      <p class="hint">Minimum 4 dots required</p>
+    </div>
+  </div>
+
+  <div class="pattern-actions">
+    <button mat-stroked-button (click)="clearPattern()" [disabled]="selectedPattern.length === 0">
+      <mat-icon>refresh</mat-icon>
+      Clear
+    </button>
+    <button mat-stroked-button (click)="onClose()">
+      Close
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onSave()"
+      [disabled]="selectedPattern.length < 4"
+    >
+      <mat-icon>save</mat-icon>
+      Save
+    </button>
+  </div>
+</div>
+

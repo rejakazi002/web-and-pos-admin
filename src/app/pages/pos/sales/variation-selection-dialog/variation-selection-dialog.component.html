@@ -1,0 +1,64 @@
+<div class="variation-selection-dialog">
+  <div class="dialog-header">
+    <h2 mat-dialog-title style="margin: 0; display: flex; align-items: center; gap: 8px;">
+      <mat-icon>inventory_2</mat-icon>
+      Select Variation
+    </h2>
+    <button mat-icon-button (click)="onCancel()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    <div class="product-info">
+      <h3>{{ product.name }}</h3>
+      <p *ngIf="product.sku" class="product-sku">SKU: {{ product.sku }}</p>
+    </div>
+
+    <div class="variations-list">
+      <div
+        *ngFor="let variation of variations"
+        class="variation-item"
+        [class.selected]="selectedVariation?._id === variation._id"
+        (click)="onSelectVariation(variation)">
+        <div class="variation-content">
+          <div class="variation-image" *ngIf="variation.image">
+            <img [src]="variation.image" [alt]="variation.name" />
+          </div>
+          <div class="variation-details">
+            <div class="variation-name">{{ variation.name || 'Unnamed Variation' }}</div>
+            <div class="variation-meta">
+              <span class="variation-sku" *ngIf="variation.sku">SKU: {{ variation.sku }}</span>
+              <span class="variation-barcode" *ngIf="variation.barcode">Barcode: {{ variation.barcode }}</span>
+            </div>
+            <div class="variation-info">
+              <span class="variation-price">Price: ৳ {{ getVariationPrice(variation).toFixed(2) }}</span>
+              <span class="variation-stock" [class.low-stock]="getVariationStock(variation) < 10">
+                Stock: {{ getVariationStock(variation) }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <mat-icon class="check-icon" *ngIf="selectedVariation?._id === variation._id">check_circle</mat-icon>
+      </div>
+    </div>
+
+    <div class="no-variations" *ngIf="variations.length === 0">
+      <mat-icon>info</mat-icon>
+      <p>No variations available for this product</p>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onConfirm()"
+      [disabled]="!selectedVariation">
+      <mat-icon>add_shopping_cart</mat-icon>
+      Add to Cart
+    </button>
+  </mat-dialog-actions>
+</div>
+

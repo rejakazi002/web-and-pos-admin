@@ -1,0 +1,143 @@
+<div class="exchange-dialog">
+  <div class="dialog-header">
+    <h2>
+      <mat-icon>swap_horiz</mat-icon>
+      Product Exchange
+    </h2>
+    <button mat-icon-button (click)="onCancel()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <!-- Search Sale -->
+    <div class="search-section">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search Original Sale</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="searchQuery"
+          (input)="onSearchSale()"
+          (keyup)="onSearchSale()"
+          (keyup.enter)="onSearchSale()"
+          placeholder="Search by invoice number or customer phone"
+        />
+        <mat-icon matPrefix>search</mat-icon>
+        <button matSuffix mat-icon-button (click)="onSearchSale()" *ngIf="searchQuery">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+      
+      <!-- Loading indicator -->
+      <div *ngIf="isLoading" class="loading-indicator">
+        <mat-progress-spinner mode="indeterminate" diameter="20"></mat-progress-spinner>
+        <span>Searching...</span>
+      </div>
+      
+      <!-- No results message -->
+      <div *ngIf="!isLoading && searchQuery.length >= 3 && searchResults.length === 0" class="no-results">
+        <mat-icon>search_off</mat-icon>
+        <span>No sales found</span>
+      </div>
+
+      <!-- Search Results -->
+      <div class="search-results" *ngIf="searchResults.length > 0">
+        <div
+          *ngFor="let sale of searchResults"
+          (click)="selectSale(sale)"
+          class="sale-result-item">
+          <div class="sale-info">
+            <mat-icon>receipt</mat-icon>
+            <div>
+              <div class="invoice-no">{{sale.invoiceNo}}</div>
+              <div class="sale-details">
+                <span>{{sale.customer?.phone || 'Walk-in'}}</span>
+                <span>{{sale.soldDate | date:'short'}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Sale Info -->
+    <div class="selected-sale-section" *ngIf="selectedSale">
+      <div class="selected-sale-card">
+        <div class="sale-header">
+          <mat-icon>receipt</mat-icon>
+          <div>
+            <div class="invoice-title">Original Sale</div>
+            <div class="invoice-number">{{selectedSale.invoiceNo}}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exchange Products List -->
+      <div class="exchange-products-section">
+        <h3>Select Products to Exchange</h3>
+        <div class="products-list">
+          <div
+            *ngFor="let product of selectedSale.products"
+            class="product-item"
+            (click)="addExchangeProduct(product)">
+            <div class="product-image" *ngIf="product.images && product.images.length > 0">
+              <img [src]="product.images[0]" [alt]="utilsService.getProductName(product)" />
+            </div>
+            <div class="product-image-placeholder" *ngIf="!product.images || product.images.length === 0">
+              <mat-icon>image</mat-icon>
+            </div>
+            <div class="product-info">
+              <div class="product-name">{{utilsService.getProductName(product)}}</div>
+              <div class="product-details">
+                <span>SKU: {{product.sku || 'N/A'}}</span>
+                <span>Qty: {{product.soldQuantity || 1}}</span>
+                <span>Price: {{product.salePrice | number:'1.2-2'}}</span>
+              </div>
+            </div>
+            <button mat-icon-button color="primary">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Exchange Products -->
+      <div class="selected-exchange-section" *ngIf="exchangeProducts.length > 0">
+        <h3>Selected for Exchange</h3>
+        <div class="exchange-list">
+          <div *ngFor="let product of exchangeProducts; let i = index" class="exchange-item">
+            <div class="product-info">
+              <div class="product-name">{{utilsService.getProductName(product)}}</div>
+              <div class="product-details">
+                <span>Max: {{product.maxReturnQuantity || 1}}</span>
+              </div>
+            </div>
+            <div class="quantity-controls">
+              <button mat-icon-button (click)="decrementQty(i)">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="quantity">{{product.soldQuantity}}</span>
+              <button mat-icon-button (click)="incrementQty(i)">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-stroked-button (click)="onCancel()">Cancel</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onConfirm()"
+      [disabled]="!selectedSale || exchangeProducts.length === 0">
+      Confirm Exchange
+    </button>
+  </div>
+</div>
+
+

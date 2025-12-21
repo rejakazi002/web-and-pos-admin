@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+@defer (when !isLoading) {
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="printInvoice()" class="print-button">
+      <mat-icon>print</mat-icon>
+      Print
+    </button>
+  </div>
+
+  <div class="preview-container" id="preview-container" [style.--bill-invoice-color]="invoice?.color ?? '#5d36ff'">
+    <div id="print-section" class="invoice-container">
+      <div class="data">
+        <!-- From Section -->
+        <div class="row">
+          @if (invoice?.shopLogo) {
+            <img class="logo" [src]="invoice?.shopLogo" alt="image"  loading="lazy">
+          } @else {
+            <p>{{ invoice?.shopName }}</p>
+          }
+          <div class="from-section">
+            <div class="bold">Shipped From:</div>
+            <div class="small">{{ invoice?.shopAddress }}</div>
+            <div class="small">{{ invoice?.shopPhoneNo }}</div>
+          </div>
+        </div>
+
+        <!-- To Section -->
+        <div class="row">
+          <div class="to-section">
+
+            @if(isAllowedShop()){
+              <div  style="margin-top: 6px" class="bold">Am Safe Skin</div>
+            }@else{
+              <div class="bold">{{ invoice?.shopName | titlecase }}</div>
+            }
+
+            @if(isAllowedShop()){
+              <div class="bold">Shipped To: {{ invoice?.name }}</div>
+              <div>Phone: <span style="font-size: 20px">{{ invoice?.phoneNo }}</span> </div>
+
+            }@else{
+              <div class="bold">Shipped To: {{ invoice?.name }}</div>
+              <div>Phone: {{ invoice?.phoneNo }}</div>
+              <div>Secondary Phone: N/A</div>
+              <div>Address: {{ invoice?.shippingAddress }}</div>
+            }
+
+          </div>
+          <div>
+            <img class="qr" [src]="qrImageUrl" alt="">
+            <div *ngIf="invoiceSetting?.isEnableInvoiceCourierId" class="" style="text-align: center;padding-right: 5px">{{ invoice?.trackingId  }}</div>
+
+          </div>
+       </div>
+
+      </div>
+
+<!--      <div class="thanks">-->
+<!--        <p>Thank you for your order from {{ invoice?.domain }}</p>-->
+<!--      </div>-->
+
+    </div>
+
+  </div>
+
+
+  </body>
+  </html>
+
+} @placeholder (minimum 200ms) {
+  <app-page-loader></app-page-loader>
+}
+
+
+
+
+
+
+
+

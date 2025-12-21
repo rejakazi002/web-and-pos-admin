@@ -1,0 +1,168 @@
+@defer (when !isLoading) {
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="printInvoice()" class="print-button">
+      <mat-icon>print</mat-icon>
+      Print
+    </button>
+  </div>
+
+  <div class="preview-container">
+    <div id="print-section" class="invoice-a4">
+
+      <!-- Header -->
+      <header class="hdr">
+
+        <div class="left-head">
+          <div class="img">
+            <img [src]="invoice?.shopLogo" [alt]="invoice?.shopName">
+          </div>
+          <div class="brand">
+            <h2 class="company">{{ invoice?.websiteName || invoice?.shopName }}</h2>
+            <div class="addr">
+              <div>{{ invoice?.shopAddress }}</div>
+              <div>Mobile: {{ invoice?.shopPhoneNo }}</div>
+              <div *ngIf="invoice?.shopEmail">Email: {{ invoice?.shopEmail }}</div>
+              <div *ngIf="invoice?.domain">Website: {{ invoice?.domain }}</div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="right-meta">
+          <div class="barcode">
+            <!-- Barcode -->
+            <ngx-barcode6 [bc-value]="invoice?.orderId" [bc-display-value]="false" [bc-width]="2" [bc-height]="50" ></ngx-barcode6>
+            <!--            <ngx-barcode [bc-value]="invoice?.orderId" [bc-display-value]="false" [bc-width]="2" [bc-height]="50"></ngx-barcode>-->
+          </div>
+          <div class="code">INV: {{ invoice?.orderId }}</div>
+        </div>
+      </header>
+
+      <!-- Title -->
+<!--      <div class="doc-title">-->
+<!--        <span>Invoice</span>-->
+<!--      </div>-->
+
+      <!-- Sales Meta -->
+      <section class="sales-meta">
+        <div class="sales-meta-box">
+          <div class="left">
+            <p><strong>Customer ID</strong> : {{ invoice?.customerId || '-' }}</p>
+            <p><strong>Name</strong> : {{ invoice?.name || '-' }}</p>
+            <p><strong>Address</strong> : {{ invoice?.shippingAddress || '-' }}</p>
+            <p><strong>Mobile</strong> : {{ invoice?.phoneNo || '-' }}</p>
+          </div>
+          <div class="right">
+            <p><strong>Date:</strong> {{ invoice?.date }}</p>
+            <p><strong>Invoice:</strong> {{ invoice?.orderId }}</p>
+            <p><strong>Sales by:</strong> {{ invoice?.salesBy || '-' }}</p>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- Items -->
+      <section class="items">
+        <table class="tbl">
+          <thead>
+          <tr>
+            <th>Sl.</th>
+            <th>Description</th>
+            <th >SKU</th>
+            <th>Qty</th>
+            <th>Unit</th>
+            <th>Rate</th>
+            <th>Discount</th>
+            <th>Total (BDT)</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let it of invoice?.items; let i = index">
+            <td>{{ i+1 }}</td>
+            <td>
+              <div class="product-info">
+                <div class="product-image" *ngIf="it?.image">
+                  <img [src]="it?.image" [alt]="it?.name" />
+                </div>
+                <div class="product-details">
+                  {{ it?.name }}
+                  <ng-container *ngIf="it?.variation">– {{ it?.variation?.name }}</ng-container>
+                  <ng-container *ngIf="it?.phoneModel">– {{ it?.phoneModel }}</ng-container>
+                </div>
+              </div>
+            </td>
+            <td  class="ta-r" style="text-align: center">{{ it?.sku ?? '-' }}</td>
+            <td class="ta-r" style="text-align: center">{{ it?.quantity }}</td>
+            <td>{{ it?.unit || 'Pcs' }}</td>
+            <td class="ta-r" style="text-align: center">{{ (it?.salePrice) | shopCurrency }}</td>
+            <td class="ta-r" style="text-align: center">{{ it?.discountAmount ? ('-' + (it?.discountAmount | shopCurrency)) : '0' }}</td>
+            <td class="ta-r" style="text-align: center">{{ ((it?.quantity||0)*(it?.salePrice||0) - (it?.discountAmount||0)) | shopCurrency }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Summary -->
+      <section class="summary">
+        <div class="left">
+          <div class="block">
+            <div class="line"><label>Previous Due:</label><div class="val ta-r">{{ invoice?.previousDue || 0 | shopCurrency }}</div></div>
+            <div class="line"><label>Current Due:</label><div class="val ta-r">{{ ((invoice?.grandTotal||0) - (invoice?.paidAmount||0)) | shopCurrency }}</div></div>
+            <div class="line"><label>Total Due:</label><div class="val ta-r">{{ ((invoice?.previousDue||0)+((invoice?.grandTotal||0)-(invoice?.paidAmount||0))) | shopCurrency }}</div></div>
+          </div>
+          <div class="blocks">
+            <div class="line"><label>In Word:</label><div class="val">{{ invoice?.amountInWords }}</div></div>
+            <div class="line"><label>Note:</label><div class="val">{{ invoice?.deliveryNote  }}</div></div>
+          </div>
+        </div>
+        <div class="right">
+          <table class="totals">
+            <tr><td>Sub Total:</td><td class="ta-r">{{ invoice?.subTotal | shopCurrency }}</td></tr>
+            <tr><td>Discount (-):</td><td class="ta-r">{{ (invoice?.discount||0) | shopCurrency }}</td></tr>
+<!--            <tr><td>Vat (+):</td><td class="ta-r">{{ (invoice?.vat||0) | shopCurrency }}</td></tr>-->
+            <tr><td>Delivery Charge (+):</td><td class="ta-r">{{ (invoice?.deliveryCharge||0) | shopCurrency }}</td></tr>
+            <tr class="strong"><td>Total:</td><td class="ta-r">{{ invoice?.grandTotal | shopCurrency }}</td></tr>
+            <tr><td>Paid:</td><td class="ta-r">{{ invoice?.paidAmount || 0 | shopCurrency }}</td></tr>
+            <tr><td>Due:</td><td class="ta-r">{{ ((invoice?.grandTotal||0) - (invoice?.paidAmount||0)) | shopCurrency }}</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <div *ngIf="invoice?.providerName || invoice?.consignmentId || invoice?.trackingId" class="courier-info">
+        <div *ngIf="invoice?.providerName" class="provider"><p>Provider:</p> <span>{{invoice?.providerName}}</span></div>
+        <div *ngIf="invoice?.consignmentId ?? invoice?.trackingId" class="provider"><p>Consignment ID:</p> <span>{{ invoice?.consignmentId ?? invoice?.trackingId }}</span></div>
+      </div>
+
+      <!-- Footer -->
+      <section class="footer-row">
+        <div class="received">Received by</div>
+<!--        <div class="qr" *ngIf="qrImageUrl"><img [src]="qrImageUrl" alt="QR"></div>-->
+        <div class="sign">
+          <div class="line"></div>
+          <div class="cap">Authorized Signature</div>
+          <!--          <div class="contact">Contact no: {{ invoice?.shopPhoneNo }}</div>-->
+        </div>
+      </section>
+
+<!--      <div class="print-meta">-->
+<!--        <span>Print Date: {{ invoice?.date }}, Printed by: {{ invoice?.salesBy || '-' }}</span>-->
+<!--        &lt;!&ndash;        <span>Printed by: {{ invoice?.salesBy || '-' }}</span>&ndash;&gt;-->
+<!--        &lt;!&ndash;        <span>Page 1/1</span>&ndash;&gt;-->
+<!--        <div class="contact">Contact no: {{ invoice?.shopPhoneNo }}</div>-->
+<!--      </div>-->
+
+    </div>
+  </div>
+
+  </body>
+  </html>
+} @placeholder (minimum 200ms) {
+  <app-page-loader></app-page-loader>
+}
+

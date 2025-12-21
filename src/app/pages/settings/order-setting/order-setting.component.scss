@@ -1,0 +1,52 @@
+@import "common/settings";
+.mat-mdc-tooltip-trigger{
+  svg{
+    max-width: 40px;
+    max-height: 40px;
+  }
+}
+.buttons{
+  display: flex;
+  gap: 1rem;
+  .button{
+    background: #0b9edd;
+    padding: 10px;
+    cursor: pointer;
+  }
+}
+.row {
+  display: flex;
+  gap: 5px;
+  //align-items: center;
+
+  mat-form-field {
+    flex: 1;
+  }
+
+  button {
+    width: 60px;
+  }
+}
+
+
+.ip-block-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.full-width {
+  width: 100%;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.add-product-btn{
+  margin-bottom: 50px;
+}
+
+
+::ng-deep .mdc-form-field>label{
+  white-space: nowrap;
+}

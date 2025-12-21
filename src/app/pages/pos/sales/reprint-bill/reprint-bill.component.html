@@ -1,0 +1,45 @@
+<div class="reprint-bill-dialog">
+  <div class="dialog-header">
+    <h2>
+      <mat-icon>print</mat-icon>
+      Reprint Bill (Last 10 Sales)
+    </h2>
+    <button mat-icon-button (click)="closeDialog()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <app-page-loader *ngIf="isLoading"></app-page-loader>
+
+    <div class="sales-list" *ngIf="!isLoading">
+      <div *ngIf="recentSales.length === 0" class="no-sales">
+        <mat-icon>receipt_long</mat-icon>
+        <p>No recent sales found</p>
+      </div>
+
+      <div *ngFor="let sale of recentSales" class="sale-item" (click)="printInvoice(sale)">
+        <div class="sale-info">
+          <div class="invoice-number">
+            <mat-icon>receipt</mat-icon>
+            <span>{{sale.invoiceNo}}</span>
+          </div>
+          <div class="sale-details">
+            <span class="date">{{sale.soldDateString | date:'short'}}</span>
+            <span class="customer">{{sale.customer?.phone || 'Walk-in'}}</span>
+            <span class="total">{{shopInformation?.currency | currencyIcon}}{{sale.total | number:'1.2-2'}}</span>
+          </div>
+        </div>
+        <button mat-icon-button color="primary" class="print-btn" (click)="printInvoice(sale); $event.stopPropagation()">
+          <mat-icon>print</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-stroked-button (click)="closeDialog()">Close</button>
+  </div>
+</div>
+
+

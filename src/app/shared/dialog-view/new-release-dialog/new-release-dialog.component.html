@@ -1,0 +1,20 @@
+<div class="modal-card">
+  <div class="modal-header">
+    <h2 class="modal-title">🚀 What's New</h2>
+    <button class="close-btn" (click)="closeModal()" mat-icon-button>
+      ✖
+    </button>
+  </div>
+
+  <div class="modal-body">
+<!--    <h3>{{ data.name }}</h3>-->
+    <p class="version-text">Version: <strong>{{ data.version }}</strong></p>
+    <div class="note" [innerHTML]="data.note"></div>
+  </div>
+
+  @if (environment.deploymentType === 'default') {
+  <div class="modal-footer">
+    <button class="view-more-btn" (click)="viewMore()">View More</button>
+  </div>
+  }
+</div>

@@ -1,0 +1,136 @@
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">money_off</mat-icon>
+          Expense Report
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="filter-section">
+  <div class="filter-card">
+    <div class="filter-content">
+      <mat-form-field appearance="outline">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onDateRangeChange()">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onDateRangeChange()">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="export-toolbar" *ngIf="!isLoading && expenseData">
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportCSV()"
+        matTooltip="Export CSV">
+        <mat-icon>description</mat-icon>
+        <span>Export CSV</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportExcel()"
+        matTooltip="Export Excel">
+        <mat-icon>table_chart</mat-icon>
+        <span>Export Excel</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="printReport()"
+        matTooltip="Print">
+        <mat-icon>print</mat-icon>
+        <span>Print</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="showColumnsInfo()"
+        matTooltip="Columns">
+        <mat-icon>view_column</mat-icon>
+        <span>Columns</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        class="export-btn"
+        (click)="exportPDF()"
+        matTooltip="Export PDF">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span>Export PDF</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<section class="content-section" *ngIf="!isLoading && expenseData">
+  <div class="report-card">
+    <div class="summary-grid">
+      <div class="summary-item highlight">
+        <h4>Total Expenses</h4>
+        <p class="large">{{ expenseData.summary.totalAmount || 0 | currency:'BDT ':'symbol':'1.2-2' }}</p>
+        <small>{{ expenseData.summary.totalCount || 0 }} transactions</small>
+      </div>
+    </div>
+
+    <div class="category-section" *ngIf="expenseData.categoryWise && expenseData.categoryWise.length > 0">
+      <h3>Category Wise Breakdown</h3>
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Total Amount</th>
+              <th>Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let category of expenseData.categoryWise" class="table-row">
+              <td>{{ category.categoryName || 'N/A' }}</td>
+              <td><strong>{{ category.totalAmount | currency:'BDT ':'symbol':'1.2-2' }}</strong></td>
+              <td>{{ category.count }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="daily-section" *ngIf="expenseData.dailyBreakdown && expenseData.dailyBreakdown.length > 0">
+      <h3>Daily Breakdown</h3>
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let day of expenseData.dailyBreakdown" class="table-row">
+              <td>{{ day._id }}</td>
+              <td><strong>{{ day.amount | currency:'BDT ':'symbol':'1.2-2' }}</strong></td>
+              <td>{{ day.count }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+

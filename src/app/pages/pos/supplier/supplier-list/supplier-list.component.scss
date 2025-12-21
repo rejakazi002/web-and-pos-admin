@@ -1,0 +1,279 @@
+@import "variables";
+
+// Page Header Section
+.page-header-section {
+  margin-bottom: 24px;
+}
+
+.page-header-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  color: #ffffff;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.header-title {
+  flex: 1;
+
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
+    .title-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  .page-subtitle {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.9;
+    font-weight: 400;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+
+  .add-btn {
+    background: #1976d2 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
+    transition: all 0.2s ease;
+    border: none;
+
+    mat-icon {
+      margin-right: 8px;
+      color: #ffffff !important;
+    }
+
+    &:hover:not(:disabled) {
+      background: #1565c0 !important;
+      box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
+      transform: translateY(-1px);
+    }
+  }
+
+  .export-btn {
+    background: #388e3c !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(56, 142, 60, 0.2);
+    transition: all 0.2s ease;
+    border: none;
+
+    mat-icon {
+      margin-right: 8px;
+      color: #ffffff !important;
+    }
+
+    &:hover:not(:disabled) {
+      background: #2e7d32 !important;
+      box-shadow: 0 4px 8px rgba(56, 142, 60, 0.3);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// Filter Section
+.filter-section {
+  margin-bottom: 24px;
+}
+
+.filter-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+}
+
+.filter-content {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.search-container {
+  flex: 1;
+  min-width: 250px;
+
+  .search-field {
+    width: 100%;
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  .filter-btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+    }
+
+    &.due-btn.active {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    mat-icon {
+      margin-right: 4px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Table Section
+.table-section {
+  margin-bottom: 24px;
+}
+
+.table-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+  overflow-x: auto;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+
+    th {
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f8f9fa;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      padding: 16px;
+      vertical-align: middle;
+    }
+  }
+}
+
+// Supplier Info
+.supplier-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .supplier-icon {
+    color: #667eea;
+  }
+
+  .supplier-name {
+    font-weight: 500;
+  }
+}
+
+.phone-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .phone-icon {
+    color: #4caf50;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// Due & Paid Values
+.due-value {
+  font-weight: 600;
+  color: #6c757d;
+
+  &.has-due {
+    color: #f44336;
+  }
+}
+
+.paid-value {
+  font-weight: 600;
+  color: #4caf50;
+}
+
+// Action Buttons
+.action-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-content {
+    flex-direction: column;
+  }
+
+  .table-card {
+    overflow-x: auto;
+  }
+
+  .modern-table {
+    min-width: 800px;
+  }
+}
+

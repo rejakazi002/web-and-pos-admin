@@ -1,0 +1,60 @@
+<div class="container">
+
+  <div class="content add-page">
+    <form #formElement="ngForm" [formGroup]="dataForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Brand <sup>*</sup></mat-label>
+          <mat-select formControlName="brand" placeholder="Choose brand" required>
+            <mat-option class="search-option">
+              <div class="brand-search-container" (click)="$event.stopPropagation()">
+                <input 
+                  type="text" 
+                  [formControl]="brandSearchControl" 
+                  placeholder="Search brand..." 
+                  class="brand-search-input"
+                  (click)="$event.stopPropagation()"
+                  (keydown)="$event.stopPropagation()">
+                <mat-icon class="search-icon">search</mat-icon>
+              </div>
+            </mat-option>
+            <mat-divider></mat-divider>
+            @if (filterBrandData.length === 0) {
+              <mat-option disabled>
+                <span>No brand found</span>
+              </mat-option>
+            } @else {
+              @for (data of filterBrandData; track data._id) {
+                <mat-option [value]="data._id">
+                  {{ data.name }}
+                </mat-option>
+              }
+            }
+          </mat-select>
+          <mat-error>This field is required</mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Model Name</mat-label>
+        <input formControlName="name" matInput placeholder="Enter model name" required>
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+
+      <div class="d-row">
+        <button mat-button class="add-product-btn" color="primary" type="submit">
+          <mat-icon>check</mat-icon>
+          {{ id ? 'Update' : 'Submit' }}
+        </button>
+        <button mat-button type="button" [routerLink]="['/repair/model-list']">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+      </div>
+
+    </form> <!-- END! Form -->
+
+  </div>
+</div>
+

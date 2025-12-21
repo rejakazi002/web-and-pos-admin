@@ -1,0 +1,360 @@
+@import "variables";
+
+// ============================================
+// GLOBAL PROFESSIONAL BUTTON STYLES
+// ============================================
+
+// Primary Button (Add, Create, Save)
+.mat-raised-button[color="primary"],
+button.add-btn,
+button.create-btn,
+button.save-btn {
+  background: #1976d2 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
+  transition: all 0.2s ease;
+  border: none;
+
+  mat-icon {
+    margin-right: 8px;
+    color: #ffffff !important;
+  }
+
+  &:hover:not(:disabled) {
+    background: #1565c0 !important;
+    box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    background: #0d47a1 !important;
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #e0e0e0 !important;
+    color: #9e9e9e !important;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+// Warn Button (Delete, Remove)
+.mat-raised-button[color="warn"],
+button.delete-btn,
+button.remove-btn {
+  background: #d32f2f !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(211, 47, 47, 0.2);
+  transition: all 0.2s ease;
+  border: none;
+
+  mat-icon {
+    margin-right: 8px;
+    color: #ffffff !important;
+  }
+
+  &:hover:not(:disabled) {
+    background: #c62828 !important;
+    box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    background: #b71c1c !important;
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #e0e0e0 !important;
+    color: #9e9e9e !important;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+// Success Button (Export, Download, Approve)
+button.export-btn,
+button.download-btn,
+button.approve-btn {
+  background: #388e3c !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(56, 142, 60, 0.2);
+  transition: all 0.2s ease;
+  border: none;
+
+  mat-icon {
+    margin-right: 8px;
+    color: #ffffff !important;
+  }
+
+  &:hover:not(:disabled) {
+    background: #2e7d32 !important;
+    box-shadow: 0 4px 8px rgba(56, 142, 60, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    background: #1b5e20 !important;
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #e0e0e0 !important;
+    color: #9e9e9e !important;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+// Info Button (View, Details)
+button.view-btn,
+button.details-btn,
+button.info-btn {
+  background: #0288d1 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(2, 136, 209, 0.2);
+  transition: all 0.2s ease;
+  border: none;
+
+  mat-icon {
+    margin-right: 8px;
+    color: #ffffff !important;
+  }
+
+  &:hover:not(:disabled) {
+    background: #0277bd !important;
+    box-shadow: 0 4px 8px rgba(2, 136, 209, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    background: #01579b !important;
+    transform: translateY(0);
+  }
+}
+
+// Warning Button (Edit, Update)
+button.edit-btn,
+button.update-btn {
+  background: #f57c00 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(245, 124, 0, 0.2);
+  transition: all 0.2s ease;
+  border: none;
+
+  mat-icon {
+    margin-right: 8px;
+    color: #ffffff !important;
+  }
+
+  &:hover:not(:disabled) {
+    background: #ef6c00 !important;
+    box-shadow: 0 4px 8px rgba(245, 124, 0, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    background: #e65100 !important;
+    transform: translateY(0);
+  }
+}
+
+// Filter Button (Outline style)
+button.filter-btn,
+button.search-btn {
+  background: #ffffff !important;
+  color: #1976d2 !important;
+  border: 1px solid #1976d2 !important;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  mat-icon {
+    margin-right: 8px;
+    color: #1976d2 !important;
+  }
+
+  &:hover:not(:disabled) {
+    background: #1976d2 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
+
+    mat-icon {
+      color: #ffffff !important;
+    }
+  }
+}
+
+// Cancel Button (Outline style)
+button.cancel-btn {
+  background: #ffffff !important;
+  color: #757575 !important;
+  border: 1px solid #bdbdbd !important;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  mat-icon {
+    margin-right: 8px;
+    color: #757575 !important;
+  }
+
+  &:hover:not(:disabled) {
+    background: #f5f5f5 !important;
+    border-color: #9e9e9e !important;
+    transform: translateY(-1px);
+  }
+}
+
+// ============================================
+// ICON BUTTONS IN TABLES
+// ============================================
+
+.mat-icon-button[color="primary"],
+button.edit-icon-btn {
+  background-color: #e3f2fd !important;
+  color: #1976d2 !important;
+  border: 1px solid #90caf9 !important;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  mat-icon {
+    color: #1976d2 !important;
+    font-size: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #bbdefb !important;
+    border-color: #64b5f6 !important;
+    transform: scale(1.05);
+  }
+}
+
+.mat-icon-button[color="warn"],
+button.delete-icon-btn {
+  background-color: #ffebee !important;
+  color: #d32f2f !important;
+  border: 1px solid #ef9a9a !important;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  mat-icon {
+    color: #d32f2f !important;
+    font-size: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #ffcdd2 !important;
+    border-color: #e57373 !important;
+    transform: scale(1.05);
+  }
+}
+
+.mat-icon-button[color="accent"],
+button.view-icon-btn {
+  background-color: #e8f5e9 !important;
+  color: #388e3c !important;
+  border: 1px solid #a5d6a7 !important;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  mat-icon {
+    color: #388e3c !important;
+    font-size: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #c8e6c9 !important;
+    border-color: #81c784 !important;
+    transform: scale(1.05);
+  }
+}
+
+// ============================================
+// PAGE HEADER BUTTONS
+// ============================================
+
+.page-header-card,
+.header-actions {
+  .add-btn,
+  .export-btn,
+  .create-btn {
+    background: #1976d2 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
+    transition: all 0.2s ease;
+    border: none;
+
+    mat-icon {
+      margin-right: 8px;
+      color: #ffffff !important;
+    }
+
+    &:hover:not(:disabled) {
+      background: #1565c0 !important;
+      box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
+      transform: translateY(-1px);
+    }
+  }
+
+  .export-btn {
+    background: #388e3c !important;
+    box-shadow: 0 2px 4px rgba(56, 142, 60, 0.2);
+
+    &:hover:not(:disabled) {
+      background: #2e7d32 !important;
+      box-shadow: 0 4px 8px rgba(56, 142, 60, 0.3);
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE BUTTONS
+// ============================================
+
+@media (max-width: 768px) {
+  .mat-raised-button,
+  button.add-btn,
+  button.delete-btn,
+  button.export-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+
+    mat-icon {
+      font-size: 18px;
+      margin-right: 4px;
+    }
+  }
+}
+

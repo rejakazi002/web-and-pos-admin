@@ -1,0 +1,220 @@
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">print</mat-icon>
+          Printer Settings
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<section class="content-section" *ngIf="!isLoading">
+  <form [formGroup]="printerSettingsForm" (ngSubmit)="onSubmit()">
+    <div class="settings-card">
+      <h2>Printer Configuration</h2>
+      
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Print Type</mat-label>
+          <mat-select formControlName="printType">
+            <mat-option value="pos">POS Print (Thermal Receipt)</mat-option>
+            <mat-option value="a4">A4 Print (Standard Paper)</mat-option>
+            <mat-option value="label">Label Printer</mat-option>
+          </mat-select>
+          <mat-hint>Select A4 for standard paper, POS for thermal receipt, or Label for label printers</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="printerSettingsForm.get('printType')?.value === 'pos'">
+          <mat-label>Paper Size</mat-label>
+          <mat-select formControlName="paperSize">
+            <mat-option value="58mm">58mm</mat-option>
+            <mat-option value="80mm">80mm</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="printerSettingsForm.get('printType')?.value === 'label'">
+          <mat-label>Label Size (Width x Height)</mat-label>
+          <input matInput formControlName="labelSize" placeholder="3in 10in" 
+                 matTooltip="Enter label size in format: width height (e.g., 3in 10in, 4in 6in)">
+          <mat-hint>Format: width height (e.g., 3in 10in)</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="printerSettingsForm.get('printType')?.value === 'label'">
+          <mat-label>Orientation</mat-label>
+          <mat-select formControlName="orientation">
+            <mat-option value="portrait">Portrait</mat-option>
+            <mat-option value="landscape">Landscape</mat-option>
+            <mat-option value="portrait-180">Portrait 180°</mat-option>
+            <mat-option value="landscape-180">Landscape 180°</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="printerSettingsForm.get('printType')?.value === 'pos'">
+          <mat-label>Printer Type</mat-label>
+          <mat-select formControlName="printerType">
+            <mat-option value="usb">USB</mat-option>
+            <mat-option value="network">Network</mat-option>
+            <mat-option value="webusb">WebUSB</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row" *ngIf="printerSettingsForm.get('printType')?.value === 'pos' && printerSettingsForm.get('printerType')?.value === 'network'">
+        <mat-form-field appearance="outline">
+          <mat-label>Printer Address (IP)</mat-label>
+          <input matInput formControlName="printerAddress" placeholder="192.168.1.100">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Port</mat-label>
+          <input matInput type="number" formControlName="printerPort" placeholder="9100">
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" *ngIf="printerSettingsForm.get('printType')?.value === 'pos'">
+        <mat-label>Printer Name</mat-label>
+        <input matInput formControlName="printerName" placeholder="Optional printer name">
+      </mat-form-field>
+
+      <div class="info-box" *ngIf="printerSettingsForm.get('printType')?.value === 'a4'">
+        <mat-icon>info</mat-icon>
+        <div>
+          <p><strong>A4 Print Mode:</strong> When A4 print is selected, invoices will be printed on standard A4 paper using the default system printer. No thermal printer configuration is needed.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <h2>Receipt Design</h2>
+      
+      <div class="checkbox-group">
+        <mat-checkbox formControlName="showShopLogo">Show Shop Logo</mat-checkbox>
+        <mat-checkbox formControlName="showShopName">Show Shop Name</mat-checkbox>
+        <mat-checkbox formControlName="showShopAddress">Show Shop Address</mat-checkbox>
+        <mat-checkbox formControlName="showShopPhone">Show Shop Phone</mat-checkbox>
+        <mat-checkbox formControlName="showInvoiceNumber">Show Invoice Number</mat-checkbox>
+        <mat-checkbox formControlName="showDate">Show Date</mat-checkbox>
+        <mat-checkbox formControlName="showTime">Show Time</mat-checkbox>
+        <mat-checkbox formControlName="showCustomerInfo">Show Customer Info</mat-checkbox>
+        <mat-checkbox formControlName="showSalesmanInfo">Show Salesman Info</mat-checkbox>
+        <mat-checkbox formControlName="showProductTable">Show Product Table</mat-checkbox>
+        <mat-checkbox formControlName="showTotals">Show Totals</mat-checkbox>
+        <mat-checkbox formControlName="showPaymentInfo">Show Payment Info</mat-checkbox>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <h2>QR Code & Barcode</h2>
+      
+      <mat-checkbox formControlName="showQRCode">Show QR Code</mat-checkbox>
+      
+      <div *ngIf="printerSettingsForm.get('showQRCode')?.value">
+        <mat-form-field appearance="outline">
+          <mat-label>QR Code Type</mat-label>
+          <mat-select formControlName="qrCodeType">
+            <mat-option value="invoice">Invoice Number</mat-option>
+            <mat-option value="url">Shop URL</mat-option>
+            <mat-option value="custom">Custom Text</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="printerSettingsForm.get('qrCodeType')?.value === 'custom'">
+          <mat-label>Custom QR Code Text</mat-label>
+          <input matInput formControlName="qrCodeCustomText" placeholder="Enter custom text">
+        </mat-form-field>
+      </div>
+
+      <mat-checkbox formControlName="showBarcode" style="margin-top: 15px;">Show Barcode</mat-checkbox>
+      
+      <div *ngIf="printerSettingsForm.get('showBarcode')?.value">
+        <mat-form-field appearance="outline">
+          <mat-label>Barcode Type</mat-label>
+          <mat-select formControlName="barcodeType">
+            <mat-option value="invoice">Invoice Number</mat-option>
+            <mat-option value="custom">Custom Text</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="printerSettingsForm.get('barcodeType')?.value === 'custom'">
+          <mat-label>Custom Barcode Text</mat-label>
+          <input matInput formControlName="barcodeCustomText" placeholder="Enter custom text">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <h2>Barcode Label Settings</h2>
+      <p class="section-description">Configure what information appears on product barcode labels</p>
+      
+      <div class="checkbox-group">
+        <mat-checkbox formControlName="barcodeLabelShowProductName">Show Product Name</mat-checkbox>
+        <mat-checkbox formControlName="barcodeLabelShowVariationName">Show Variation Name</mat-checkbox>
+        <mat-checkbox formControlName="barcodeLabelShowPrice">Show Price</mat-checkbox>
+        <mat-checkbox formControlName="barcodeLabelShowShopName">Show Shop Name</mat-checkbox>
+        <mat-checkbox formControlName="barcodeLabelShowBarcodeCode">Show Barcode Code</mat-checkbox>
+      </div>
+
+      <div class="form-row" style="margin-top: 20px;">
+        <mat-form-field appearance="outline">
+          <mat-label>Barcode Width</mat-label>
+          <input matInput type="number" formControlName="barcodeWidth" min="1" max="10" step="0.1">
+          <mat-hint>Line width of barcode (1-10, default: 2.5)</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Barcode Height</mat-label>
+          <input matInput type="number" formControlName="barcodeHeight" min="20" max="200" step="5">
+          <mat-hint>Height of barcode in pixels (20-200, default: 60)</mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <h2>Return Policy & Signature</h2>
+      
+      <mat-checkbox formControlName="showReturnPolicy">Show Return Policy</mat-checkbox>
+      
+      <mat-form-field appearance="outline" *ngIf="printerSettingsForm.get('showReturnPolicy')?.value">
+        <mat-label>Return Policy Text</mat-label>
+        <textarea matInput formControlName="returnPolicyText" rows="3" placeholder="Enter return policy text"></textarea>
+      </mat-form-field>
+
+      <mat-checkbox formControlName="showSignatureArea" style="margin-top: 15px;">Show Signature Area</mat-checkbox>
+      
+      <mat-form-field appearance="outline" *ngIf="printerSettingsForm.get('showSignatureArea')?.value">
+        <mat-label>Signature Label</mat-label>
+        <input matInput formControlName="signatureLabel" placeholder="Customer Signature">
+      </mat-form-field>
+    </div>
+
+    <div class="settings-card">
+      <h2>Print Settings</h2>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Footer Text</mat-label>
+        <input matInput formControlName="footerText" placeholder="Thank you for your business!">
+      </mat-form-field>
+
+      <mat-checkbox formControlName="printWithoutPreview">Print Without Preview (Direct Thermal Print)</mat-checkbox>
+      <mat-checkbox formControlName="autoPrint">Auto Print After Sale</mat-checkbox>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Number of Copies</mat-label>
+        <input matInput type="number" formControlName="copies" min="1" max="5">
+      </mat-form-field>
+    </div>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="isLoading">
+        <mat-icon>save</mat-icon>
+        Save Settings
+      </button>
+    </div>
+  </form>
+</section>
+

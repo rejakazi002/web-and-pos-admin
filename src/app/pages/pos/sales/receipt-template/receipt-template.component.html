@@ -1,0 +1,112 @@
+<div class="receipt-container" [ngClass]="'receipt-' + (printerSettings?.paperSize || '58mm')" [ngStyle]="getCustomStyles()">
+  <!-- Header -->
+  <div class="receipt-header" *ngIf="printerSettings?.showShopName !== false || printerSettings?.showShopAddress !== false">
+    <img *ngIf="printerSettings?.showShopLogo && shopInfo?.logo" [src]="shopInfo.logo" alt="Logo" class="shop-logo">
+    <h1 *ngIf="printerSettings?.showShopName !== false" class="shop-name">{{ shopInfo?.siteName || shopInfo?.websiteName || 'Shop Name' }}</h1>
+    <p *ngIf="printerSettings?.showShopAddress !== false" class="shop-address">{{ shopInfo?.addresses?.[0]?.value }}</p>
+    <p *ngIf="printerSettings?.showShopPhone !== false" class="shop-phone">Phone: {{ shopInfo?.phones?.[0]?.value }}</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Invoice Info -->
+  <div class="invoice-info">
+    <p *ngIf="printerSettings?.showInvoiceNumber !== false"><strong>Invoice:</strong> {{ saleData?.invoiceNo }}</p>
+    <p *ngIf="printerSettings?.showDate !== false"><strong>Date:</strong> {{ saleData?.soldDate | date:'shortDate' }}</p>
+    <p *ngIf="printerSettings?.showTime !== false && saleData?.soldTime"><strong>Time:</strong> {{ saleData.soldTime }}</p>
+  </div>
+
+  <!-- Customer Info -->
+  <div class="customer-info" *ngIf="printerSettings?.showCustomerInfo !== false">
+    <p *ngIf="saleData?.customer?.name"><strong>Customer:</strong> {{ saleData.customer.name }}</p>
+    <p *ngIf="saleData?.customer?.phone"><strong>Phone:</strong> {{ saleData.customer.phone }}</p>
+  </div>
+
+  <!-- Salesman Info -->
+  <div class="salesman-info" *ngIf="printerSettings?.showSalesmanInfo !== false && saleData?.salesman?.name">
+    <p><strong>Salesman:</strong> {{ saleData.salesman.name }}</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Products Table -->
+  <table class="products-table" *ngIf="printerSettings?.showProductTable !== false && saleData?.products">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of saleData.products">
+        <td>{{ product.name }}</td>
+        <td>{{ product.soldQuantity }}</td>
+        <td>{{ shopInfo?.currency || '৳' }}{{ product.salePrice | number:'1.2-2' }}</td>
+        <td>{{ shopInfo?.currency || '৳' }}{{ (product.salePrice * product.soldQuantity) | number:'1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- Totals -->
+  <div class="totals" *ngIf="printerSettings?.showTotals !== false">
+    <div class="total-row">
+      <span>Sub Total:</span>
+      <span>{{ shopInfo?.currency || '৳' }}{{ saleData?.subTotal | number:'1.2-2' }}</span>
+    </div>
+    <div class="total-row" *ngIf="saleData?.discount > 0">
+      <span>Discount:</span>
+      <span>-{{ shopInfo?.currency || '৳' }}{{ saleData.discount | number:'1.2-2' }}</span>
+    </div>
+    <div class="total-row" *ngIf="saleData?.vatAmount > 0">
+      <span>VAT:</span>
+      <span>{{ shopInfo?.currency || '৳' }}{{ saleData.vatAmount | number:'1.2-2' }}</span>
+    </div>
+    <div class="total-row grand-total">
+      <span>Total:</span>
+      <span>{{ shopInfo?.currency || '৳' }}{{ saleData?.total | number:'1.2-2' }}</span>
+    </div>
+  </div>
+
+  <!-- Payment Info -->
+  <div class="payment-info" *ngIf="printerSettings?.showPaymentInfo !== false">
+    <p><strong>Payment:</strong> {{ saleData?.paymentType || 'Cash' }}</p>
+    <p><strong>Received:</strong> {{ shopInfo?.currency || '৳' }}{{ (saleData?.receivedFromCustomer || saleData?.total) | number:'1.2-2' }}</p>
+    <p *ngIf="saleData?.receivedFromCustomer > saleData?.total">
+      <strong>Change:</strong> {{ shopInfo?.currency || '৳' }}{{ (saleData.receivedFromCustomer - saleData.total) | number:'1.2-2' }}
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- QR Code -->
+  <div class="qr-code" *ngIf="printerSettings?.showQRCode !== false && qrCodeDataUrl">
+    <img [src]="qrCodeDataUrl" alt="QR Code">
+  </div>
+
+  <!-- Barcode -->
+  <div class="barcode" *ngIf="printerSettings?.showBarcode !== false && barcodeDataUrl">
+    <img [src]="barcodeDataUrl" alt="Barcode">
+  </div>
+
+  <!-- Return Policy -->
+  <div class="return-policy" *ngIf="printerSettings?.showReturnPolicy !== false && printerSettings?.returnPolicyText">
+    <p class="return-policy-title"><strong>Return Policy:</strong></p>
+    <p class="return-policy-text">{{ printerSettings.returnPolicyText }}</p>
+  </div>
+
+  <!-- Signature Area -->
+  <div class="signature-area" *ngIf="printerSettings?.showSignatureArea !== false">
+    <div class="signature-line"></div>
+    <p class="signature-label">{{ printerSettings?.signatureLabel || 'Customer Signature' }}</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="receipt-footer" *ngIf="printerSettings?.footerText">
+    <p>{{ printerSettings.footerText }}</p>
+  </div>
+</div>
+

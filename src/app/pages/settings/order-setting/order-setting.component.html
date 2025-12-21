@@ -1,0 +1,251 @@
+<div class="container">
+  <div class="full-sec">
+    <h3>Order Setting</h3>
+  </div>
+
+
+  <form [formGroup]="dataForm" (ngSubmit)="onSubmit()">
+
+    <div class="input-fields">
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Enable Order Note</mat-label>
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableOrderNote" color="primary">
+        Enable Order Note?
+      </mat-checkbox>
+
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Disable Order Success Page Order Id
+      </mat-label>
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableOrderSuccessPageOrderId" color="primary">
+        Disable Order Success Page Order Id?
+      </mat-checkbox>
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Enable Order Otp</mat-label>
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableOtp" color="primary">
+        Enable Order Otp?
+      </mat-checkbox>
+
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Enable Order Notification</mat-label>
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableSMSNotification" color="primary">
+        Enable SMS Notification?
+      </mat-checkbox>
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableEmailNotification" color="primary">
+        Enable Email Notification?
+      </mat-checkbox>
+
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnablePersonalNotification" color="primary">
+        Use Personal email for send notification?
+      </mat-checkbox>
+
+      <div *ngIf="dataForm?.value.isEnablePersonalNotification">
+        <a mattooltip="Tutorial Guide"
+           (click)="openYoutubeVideoDialog($event,'https://www.youtube.com/embed/el-Pu0JZvqI?si=VTJTMe1gGNUuvtTr')"
+           class="mat-mdc-tooltip-trigger" aria-describedby="cdk-describedby-message-ng-1-3">
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1"
+               x="0px" y="0px" viewBox="0 0 24 24" xml:space="preserve" width="300" height="300"
+               style="enable-background: new 0 0 24 24;"><g  width="100%" height="100%" transform="matrix(1,0,0,1,0,0)"><g id="XMLID_184_"><path  d="M23.498,6.186c-0.276-1.039-1.089-1.858-2.122-2.136C19.505,3.546,12,3.546,12,3.546s-7.505,0-9.377,0.504   C1.591,4.328,0.778,5.146,0.502,6.186C0,8.07,0,12,0,12s0,3.93,0.502,5.814c0.276,1.039,1.089,1.858,2.122,2.136   C4.495,20.454,12,20.454,12,20.454s7.505,0,9.377-0.504c1.032-0.278,1.845-1.096,2.122-2.136C24,15.93,24,12,24,12   S24,8.07,23.498,6.186z M9.546,15.569V8.431L15.818,12L9.546,15.569z" fill="#a31a1a" fill-opacity="1" data-original-color="#000000ff" stroke="none" stroke-opacity="1"></path></g></g></svg>
+          <p>Tutorial Guide</p></a>
+        <mat-form-field appearance="outline" class="no-underline">
+          <input formControlName="appEmail" matInput placeholder="Ex: test@gmail.com"/>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="no-underline">
+          <input formControlName="appPassword" matInput placeholder="Ex: jhtq ppa4 briw cnd4"/>
+        </mat-form-field>
+      </div>
+
+      <!-- Incomplete Order -->
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Enable Incomplete Order</mat-label>
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableIncompleteOrder" color="primary">
+        Enable Incomplete Order?
+      </mat-checkbox>
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnablePrescriptionOrder" color="primary">
+        Enable Prescription Order?
+      </mat-checkbox>
+
+
+      <div class="general-info-area main-area">
+        <mat-checkbox formControlName="isEnableCheckoutOrderModal" color="primary">
+          Enable order now button checkout
+        </mat-checkbox>
+      </div>
+
+
+      <!-- Order Invoice Setting -->
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Enable phone validation</mat-label>
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableOutsideBd" color="primary">
+        Enable Checkout page phone number custom range validation?
+      </mat-checkbox>
+
+      <mat-form-field *ngIf="dataForm?.value.isEnableOutsideBd" appearance="outline" class="no-underline">
+        <input formControlName="minLength" matInput placeholder="Ex: 6"/>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="dataForm?.value.isEnableOutsideBd" appearance="outline" class="no-underline">
+        <input formControlName="maxLength" matInput placeholder="Ex: 11"/>
+      </mat-form-field>
+
+
+      <!-- Incomplete Order -->
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Delivery Option Type</mat-label>
+      <div formGroupName="deliveryOptionType">
+        <mat-radio-group formControlName="selection" style="display: flex; gap: 20px; margin-bottom: 20px;">
+          <mat-radio-button value="division">Enable Division?</mat-radio-button>
+          <mat-radio-button value="insideCity">Enable Inside City/Outside City?</mat-radio-button>
+          <mat-radio-button *ngIf="isAllowedShopForSubArea()" value="subArea">Enable Inside City/Sub Area/Outside
+            City?
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <!-- Conditional Inputs -->
+      <div *ngIf="dataForm.get('deliveryOptionType')?.value?.selection === 'insideCity'" class="ip-block-fields">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Delivery Option Title</mat-label>
+          <input matInput type="text" formControlName="deliveryOptionTitle"/>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Inside Dhaka Custom Text</mat-label>
+          <input matInput type="text" formControlName="insideCityText"/>
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Outside Dhaka Custom Text</mat-label>
+          <input matInput type="text" formControlName="outsideCityText"/>
+
+        </mat-form-field>
+      </div>
+
+
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Block Single User IP</mat-label>
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableSingleIpBlock" color="primary">
+        Is Enable Block Single User IP?
+      </mat-checkbox>
+
+
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">User Ip Wise Order Limit And Block Time
+      </mat-label>
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableIpWiseOrderLimitAndBlockTime" color="primary">
+        Is Enable IP-wise Order Limit & Block?
+      </mat-checkbox>
+
+      <!-- Conditional Inputs -->
+      <div *ngIf="dataForm.get('isEnableIpWiseOrderLimitAndBlockTime')?.value" class="ip-block-fields">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Max Order Per IP</mat-label>
+          <input matInput type="number" formControlName="ipWiseOrderLimit" placeholder="Ex: 3" min="1"/>
+          <mat-icon matSuffix>shopping_cart</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Block Time (minutes)</mat-label>
+          <input matInput type="number" formControlName="ipWiseOrderBlockTime" placeholder="Ex: 60" min="1"/>
+          <mat-icon matSuffix>schedule</mat-icon>
+        </mat-form-field>
+      </div>
+
+
+      <!-- Incomplete Order -->
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Swap Payment And Order Item</mat-label>
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isSwapPaymentAndOrderItem" color="primary">
+        Is swap Payment and order item?
+      </mat-checkbox>
+
+
+      <div *ngIf="isAllowedShop()">
+        <!-- Incomplete Order -->
+        <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Enable ui home page recent order
+        </mat-label>
+
+        <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableHomeRecentOrder" color="primary">
+          Enable ui home page recent order?
+        </mat-checkbox>
+      </div>
+
+
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Enable Previous Order Count ( Admin
+        Orders List Page )
+      </mat-label>
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnablePreviousOrderCount" color="primary">
+        Is Enable Previous Order Count?
+      </mat-checkbox>
+
+
+      <!-- Enable SL -->
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;">Enable SL ( Admin Orders List Page )
+      </mat-label>
+
+
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isSLEnable" color="primary">
+        Enable SL?
+      </mat-checkbox>
+      <!-- Enable Product SKU -->
+      <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;"> Enable Product SKU ( Admin Orders List
+        Page )
+      </mat-label>
+      <mat-checkbox style="margin-bottom: 20px;" formControlName="isProductSkuEnable" color="primary">
+        Enable Product SKU?
+      </mat-checkbox>
+
+      <div *ngIf="isAllowedShopForCheckoutMessage()">
+        <mat-label style="font-weight: 500; display: block; margin-bottom: 8px;"> Enable Checkout Message</mat-label>
+        <mat-checkbox style="margin-bottom: 20px;" formControlName="isEnableCheckoutMessage" color="primary">
+          Enable Checkout Message?
+        </mat-checkbox>
+
+        <div *ngIf="dataForm?.value.isEnableCheckoutMessage">
+          <app-html-editor formControlName="checkoutMessage"></app-html-editor>
+        </div>
+      </div>
+
+      <div class="description-area">
+        <p>Order Success Page Message</p>
+
+        <!-- Dynamic Placeholders Helper -->
+        <div class="placeholder-helper"
+             style="margin-bottom: 15px; padding: 15px; background-color: #f5f5f5; border-radius: 8px; border-left: 4px solid #2196F3;">
+          <h4 style="margin: 0 0 10px 0; color: #333; font-size: 14px; font-weight: 600;">
+            <mat-icon style="vertical-align: middle; margin-right: 5px; font-size: 18px;">info</mat-icon>
+            Available Dynamic Placeholders
+          </h4>
+          <p style="margin: 0 0 10px 0; color: #666; font-size: 12px;">
+            Click on any placeholder below to insert it into your message:
+          </p>
+          <div class="buttons">
+            <div class="placeholder-buttons">
+              <div class="button"
+                   *ngFor="let placeholder of dynamicPlaceholders"
+                   (click)="insertPlaceholder(placeholder.key)"
+                   matTooltip="{{placeholder.description}}"
+                   matTooltipPosition="above">
+                {{ placeholder.key }}
+              </div>
+            </div>
+            <div>
+              <div class="button"
+                   (click)="insertSampleMessage()">
+                Insert Sample Message
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <app-html-editor formControlName="successPageMessage"></app-html-editor>
+      </div>
+
+    </div>
+
+    <button mat-button class="add-product-btn" color="primary" type="submit">Save</button>
+  </form>
+
+</div>

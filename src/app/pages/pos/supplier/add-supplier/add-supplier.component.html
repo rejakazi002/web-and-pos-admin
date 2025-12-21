@@ -1,0 +1,232 @@
+<!-- Page Header -->
+<section class="page-header-section">
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">business</mat-icon>
+          {{id ? 'Edit Supplier' : 'Add New Supplier'}}
+        </h1>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          routerLink="/pos/supplier/supplier-list"
+          mat-stroked-button
+          class="back-btn">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Back to List</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main Form Section -->
+<section class="form-section">
+  <div class="form-container">
+    <form
+      #formElement="ngForm"
+      [formGroup]="dataForm"
+      (ngSubmit)="onSubmit()"
+      class="supplier-form">
+      
+      <!-- Basic Information -->
+      <div class="form-section-card">
+        <h3 class="section-title">
+          <mat-icon>business</mat-icon>
+          Basic Information
+        </h3>
+        <div class="form-row">
+          <div class="form-group">
+            <mat-label class="form-label">Supplier Name *</mat-label>
+            <mat-form-field appearance="outline">
+              <input
+                formControlName="name"
+                matInput
+                placeholder="Enter supplier name"
+                required
+              />
+              <mat-icon matPrefix>business</mat-icon>
+              <mat-error *ngIf="dataForm.get('name')?.hasError('required')">
+                Name is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-label class="form-label">Phone Number</mat-label>
+            <mat-form-field appearance="outline">
+              <input
+                formControlName="phone"
+                matInput
+                type="text"
+                digitOnly
+                placeholder="Enter phone number"
+              />
+              <mat-icon matPrefix>phone</mat-icon>
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-label class="form-label">Email</mat-label>
+            <mat-form-field appearance="outline">
+              <input
+                formControlName="email"
+                matInput
+                type="email"
+                placeholder="Enter email address"
+              />
+              <mat-icon matPrefix>email</mat-icon>
+              <mat-error *ngIf="dataForm.get('email')?.hasError('email')">
+                Invalid email format
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-label class="form-label">Alternate Phone</mat-label>
+            <mat-form-field appearance="outline">
+              <input
+                formControlName="alternatePhone"
+                matInput
+                type="text"
+                digitOnly
+                placeholder="Enter alternate phone"
+              />
+              <mat-icon matPrefix>phone_android</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <mat-label class="form-label">Contact Person</mat-label>
+            <mat-form-field appearance="outline">
+              <input
+                formControlName="contactPerson"
+                matInput
+                placeholder="Enter contact person name"
+              />
+              <mat-icon matPrefix>person</mat-icon>
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-label class="form-label">Tax ID</mat-label>
+            <mat-form-field appearance="outline">
+              <input
+                formControlName="taxId"
+                matInput
+                placeholder="Enter tax ID"
+              />
+              <mat-icon matPrefix>receipt</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address Information -->
+      <div class="form-section-card">
+        <h3 class="section-title">
+          <mat-icon>location_on</mat-icon>
+          Address Information
+        </h3>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <mat-label class="form-label">Address</mat-label>
+            <mat-form-field appearance="outline">
+              <textarea
+                formControlName="address"
+                matInput
+                rows="3"
+                placeholder="Enter full address"
+              ></textarea>
+              <mat-icon matPrefix>home</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <mat-label class="form-label">City</mat-label>
+            <mat-form-field appearance="outline">
+              <input
+                formControlName="city"
+                matInput
+                placeholder="Enter city"
+              />
+              <mat-icon matPrefix>location_city</mat-icon>
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-label class="form-label">Country</mat-label>
+            <mat-form-field appearance="outline">
+              <input
+                formControlName="country"
+                matInput
+                placeholder="Enter country"
+              />
+              <mat-icon matPrefix>public</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Information -->
+      <div class="form-section-card">
+        <h3 class="section-title">
+          <mat-icon>note</mat-icon>
+          Additional Information
+        </h3>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <mat-label class="form-label">Description</mat-label>
+            <mat-form-field appearance="outline">
+              <textarea
+                formControlName="description"
+                matInput
+                rows="3"
+                placeholder="Enter supplier description"
+              ></textarea>
+              <mat-icon matPrefix>description</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <mat-label class="form-label">Notes</mat-label>
+            <mat-form-field appearance="outline">
+              <textarea
+                formControlName="notes"
+                matInput
+                rows="4"
+                placeholder="Enter any additional notes about this supplier"
+              ></textarea>
+              <mat-icon matPrefix>notes</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button
+          type="button"
+          mat-stroked-button
+          (click)="onCancel()"
+          class="cancel-btn">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          [disabled]="isLoading || dataForm.invalid"
+          class="submit-btn">
+          <mat-icon *ngIf="!isLoading">{{id ? 'update' : 'save'}}</mat-icon>
+          <mat-spinner *ngIf="isLoading" diameter="20" class="spinner"></mat-spinner>
+          <span>{{id ? 'Update Supplier' : 'Add Supplier'}}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Loading Spinner -->
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+

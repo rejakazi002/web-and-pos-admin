@@ -1,0 +1,603 @@
+<div class="container">
+  <div class="header">
+
+    <form class="table-search" #searchForm=ngForm>
+      <input type="text"
+             name="searchTerm"
+             autocomplete="off"
+             [(ngModel)]="searchQuery"
+             placeholder="Search">
+      @if (!searchQuery) {
+        <button>
+          <mat-icon>search</mat-icon>
+        </button>
+      } @else {
+        <button (click)="onClearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </form> <!-- END! table-search -->
+
+    <div class="right">
+      <button mat-button class="clear-filters-btn" color="warn"
+              (click)="onClearAllFilters()"
+              [disabled]="!filterStateService.hasActiveFilters()">
+        <mat-icon>clear_all</mat-icon>
+        Clear All Filters
+      </button>
+      <a mat-button class="add-product-btn" color="primary"
+         [routerLink]="['/order/add-order']">
+        <mat-icon>add</mat-icon>
+        Add Order
+      </a>
+    </div> <!-- END! right -->
+
+  </div> <!-- END! header -->
+
+  <div class="content">
+
+    <div class="table-tab-container">
+      <div class="table-tab-content">
+        @for (data of tableTabData; track $index) {
+          <p (click)="onTabChange(data.value)" [ngClass]="{'active-tab': selectedTab == data.value}">
+            {{ data.viewValue }} <span class="tab-data-count">{{ totalData }}</span>
+          </p>
+        }
+      </div>
+
+      <div class="right-area">
+
+<!--        <div class="download-box">-->
+<!--          <svg fill="#0a55e5" height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"-->
+<!--               viewBox="0 0 471.2 471.2" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g>-->
+<!--            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>-->
+<!--            <g id="SVGRepo_iconCarrier"> <g> <g> <path-->
+<!--              d="M457.7,230.15c-7.5,0-13.5,6-13.5,13.5v122.8c0,33.4-27.2,60.5-60.5,60.5H87.5c-33.4,0-60.5-27.2-60.5-60.5v-124.8 c0-7.5-6-13.5-13.5-13.5s-13.5,6-13.5,13.5v124.8c0,48.3,39.3,87.5,87.5,87.5h296.2c48.3,0,87.5-39.3,87.5-87.5v-122.8 C471.2,236.25,465.2,230.15,457.7,230.15z"></path>-->
+<!--              <path-->
+<!--                d="M226.1,346.75c2.6,2.6,6.1,4,9.5,4s6.9-1.3,9.5-4l85.8-85.8c5.3-5.3,5.3-13.8,0-19.1c-5.3-5.3-13.8-5.3-19.1,0l-62.7,62.8 V30.75c0-7.5-6-13.5-13.5-13.5s-13.5,6-13.5,13.5v273.9l-62.8-62.8c-5.3-5.3-13.8-5.3-19.1,0c-5.3,5.3-5.3,13.8,0,19.1 L226.1,346.75z"></path> </g> </g> </g></svg>-->
+<!--          <p style="color:#0a55e5;" (click)="downloadFiles()">Download</p>-->
+<!--        </div>-->
+
+
+        <div class="download-box">
+          <svg fill="#0a55e5" height="20px" width="20px" version="1.1" id="InventoryIcon"
+               xmlns="http://www.w3.org/2000/svg"
+               viewBox="0 0 512 512" xml:space="preserve">
+  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+    <!-- Box Base -->
+    <path
+      d="M64 160h384c17.673 0 32 14.327 32 32v224c0 35.346-28.654 64-64 64H96c-35.346 0-64-28.654-64-64V192c0-17.673 14.327-32 32-32z"/>
+
+              <!-- Box Flap -->
+              <path d="M64 160L144 80h224l80 80H64z"/>
+
+              <!-- Downward Arrow -->
+              <path d="M256 240v80m0 0l-24-24m24 24l24-24"
+                    stroke="white" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
+
+
+          <p style="color:#0a55e5;" (click)="openProductSummary()">Products</p>
+        </div>
+
+        <div class="sort">
+          <button mat-raised-button color="primary" [matMenuTriggerFor]="menuShow">
+            {{selectedPagination ? selectedPagination : '10'}}
+            <mat-icon>arrow_drop_down</mat-icon>
+          </button>
+          <mat-menu #menuShow="matMenu">
+            <button mat-menu-item (click)="onChangePerPage(10)" [class.dropdown-active]="selectedPagination === 10">10</button>
+            <button mat-menu-item (click)="onChangePerPage(20)" [class.dropdown-active]="selectedPagination === 20">20</button>
+            <button mat-menu-item (click)="onChangePerPage(30)" [class.dropdown-active]="selectedPagination === 30">30</button>
+            <button mat-menu-item (click)="onChangePerPage(40)" [class.dropdown-active]="selectedPagination === 40">40</button>
+            <button mat-menu-item (click)="onChangePerPage(50)" [class.dropdown-active]="selectedPagination === 50">50</button>
+            <button mat-menu-item (click)="onChangePerPage(60)" [class.dropdown-active]="selectedPagination === 50">60</button>
+            <button mat-menu-item (click)="onChangePerPage(70)" [class.dropdown-active]="selectedPagination === 50">70</button>
+            <button mat-menu-item (click)="onChangePerPage(80)" [class.dropdown-active]="selectedPagination === 50">80</button>
+            <button mat-menu-item (click)="onChangePerPage(100)" [class.dropdown-active]="selectedPagination === 100">100</button>
+            <button mat-menu-item (click)="onChangePerPage(200)" [class.dropdown-active]="selectedPagination === 200">200</button>
+            <button mat-menu-item (click)="onChangePerPage(250)" [class.dropdown-active]="selectedPagination === 250">250</button>
+            <button mat-menu-item (click)="onChangePerPage(300)" [class.dropdown-active]="selectedPagination === 300">300</button>
+            <button mat-menu-item (click)="onChangePerPage(350)" [class.dropdown-active]="selectedPagination === 350">350</button>
+            <button mat-menu-item (click)="onChangePerPage(450)" [class.dropdown-active]="selectedPagination === 450">450</button>
+          </mat-menu>
+        </div>
+
+        @if (selectedTab === 'trash' && adminRole === 'owner') {
+          <button (click)="openConfirmDialog('trash')">
+            <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 593.727 593.727"
+                 xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier"> <g> <g> <path
+                d="M491.362,593.727H102.374c-20.865,0-37.84-16.975-37.84-37.84v-448.5h464.668v448.5 C529.202,576.752,512.228,593.727,491.362,593.727z M79.677,122.529v433.357c0,12.516,10.182,22.697,22.697,22.697h388.989 c12.516,0,22.697-10.182,22.697-22.697V122.529H79.677z"></path> </g>
+                <g> <path
+                  d="M550.8,91.913H42.927V58.382c0-20.86,16.973-37.831,37.835-37.831h192.852C276.618,8.58,286.12,0,297.506,0 c11.399,0,20.907,8.578,23.905,20.551H512.97c20.859,0,37.83,16.971,37.83,37.831V91.913L550.8,91.913z M58.07,76.77h477.587 V58.382c0-12.51-10.178-22.688-22.688-22.688h-205.57l-0.148-7.42c-0.145-7.24-4.516-13.131-9.745-13.131 c-5.219,0-9.586,5.893-9.736,13.136l-0.154,7.415H80.762c-12.512,0-22.692,10.177-22.692,22.688V76.77z"></path> </g>
+                <g> <path
+                  d="M144.621,546.275c-15.949,0-28.924-12.977-28.924-28.926V196.011c0-15.95,12.975-28.926,28.924-28.926 c15.95,0,28.926,12.976,28.926,28.926V517.35C173.547,533.299,160.571,546.275,144.621,546.275z M144.621,182.228 c-7.599,0-13.781,6.183-13.781,13.783V517.35c0,7.6,6.183,13.783,13.781,13.783c7.601,0,13.783-6.184,13.783-13.783V196.011 C158.404,188.411,152.222,182.228,144.621,182.228z"></path> </g>
+                <g> <path
+                  d="M243.094,546.275c-15.95,0-28.925-12.977-28.925-28.926V196.011c0-15.95,12.976-28.926,28.925-28.926 c15.949,0,28.925,12.976,28.925,28.926V517.35C272.019,533.299,259.043,546.275,243.094,546.275z M243.094,182.228 c-7.6,0-13.782,6.183-13.782,13.783V517.35c0,7.6,6.183,13.783,13.782,13.783s13.782-6.184,13.782-13.783V196.011 C256.876,188.411,250.694,182.228,243.094,182.228z"></path> </g>
+                <g> <path
+                  d="M341.565,546.275c-15.949,0-28.926-12.977-28.926-28.926V196.011c0-15.95,12.977-28.926,28.926-28.926 s28.926,12.976,28.926,28.926V517.35C370.491,533.299,357.515,546.275,341.565,546.275z M341.565,182.228 c-7.6,0-13.783,6.183-13.783,13.783V517.35c0,7.6,6.184,13.783,13.783,13.783s13.783-6.184,13.783-13.783V196.011 C355.347,188.411,349.165,182.228,341.565,182.228z"></path> </g>
+                <g> <path
+                  d="M440.038,546.275c-15.955,0-28.934-12.977-28.934-28.926V196.011c0-15.95,12.979-28.926,28.934-28.926 c15.949,0,28.924,12.976,28.924,28.926V517.35C468.962,533.299,455.987,546.275,440.038,546.275z M440.038,182.228 c-7.605,0-13.791,6.183-13.791,13.783V517.35c0,7.6,6.186,13.783,13.791,13.783c7.6,0,13.781-6.184,13.781-13.783V196.011 C453.819,188.411,447.638,182.228,440.038,182.228z"></path> </g> </g> </g></svg>
+            Empty Trash
+          </button>
+        }
+        <app-pagination
+          [totalData]="totalData"
+          [dataPerPage]="dataPerPage"
+          [currentPage]="currentPage"
+          (pageChange)="onPageChanged($event)">
+        </app-pagination>
+      </div>
+
+    </div> <!-- END Tab & Pagination View -->
+
+
+    <div class="sub-content">
+      <div class="table-wrapper">
+        <table>
+          <tr class="td-border first-heading-row">
+            <th class="t-checkbox">
+              <mat-checkbox color="primary" [indeterminate]="isIndeterminate" #matCheckbox
+                            (change)="onAllSelectChange($event)"></mat-checkbox>
+            </th>
+            <th *ngIf="orderSetting?.isSLEnable  ?? true">SL</th>
+            <th>Image</th>
+            <th *ngIf="orderSetting?.isProductSkuEnable">Sku</th>
+            <th>Order Id</th>
+            <th>Name</th>
+            <th>Phone No</th>
+            <th>Order From</th>
+            <th>Order Date Time
+              <button color="primary" mat-button class="overview-filter-btn date-picker" (click)="picker.open()">
+                <!--              {{dateFilterTitle}}-->
+                <mat-icon>date_range</mat-icon>
+              </button>
+            </th>
+
+            <mat-form-field style="display: none" appearance="outline" (click)="picker.open()">
+              <mat-label>Filter In Date Range</mat-label>
+              <mat-date-range-input [rangePicker]="picker" [formGroup]="dataFormDateRange" [max]="today">
+                <input formControlName="start" matStartDate placeholder="Start date" readonly>
+                <input formControlName="end" matEndDate placeholder="End date" readonly
+                       (dateChange)="endChangeRegDateRange($event)">
+              </mat-date-range-input>
+              <mat-date-range-picker touchUi #picker></mat-date-range-picker>
+            </mat-form-field>
+
+            <!--            <th class="t-head-action">-->
+            <!--              <div class="filter">-->
+            <!--              <span>Payment Type</span>-->
+            <!--              <button [class.active]="activeFilter1 !== null" [matMenuTriggerFor]="menuStatus"-->
+            <!--                      [matTooltip]="activeFilter1 ? 'Filter Applied' : 'Apply Filter'">-->
+            <!--                <span class="material-icons">filter_alt</span>-->
+            <!--              </button>-->
+            <!--              <div class="sort">-->
+            <!--                <mat-menu #menuStatus="matMenu">-->
+            <!--                  <button mat-menu-item (click)="filterData(null, 'payment-type', null)">-->
+            <!--                    {{ 'None' }}-->
+            <!--                  </button>-->
+            <!--                  @for (data of paymentType; track $index) {-->
+            <!--                    <button mat-menu-item (click)="filterData(data.value, 'payment-type', $index)"-->
+            <!--                            [class.dropdown-active]="activeFilter1 === $index">-->
+            <!--                      {{ data.viewValue }}-->
+            <!--                    </button>-->
+            <!--                  }-->
+            <!--                </mat-menu>-->
+            <!--              </div>-->
+            <!--              </div>-->
+            <!--            </th>-->
+
+            <th class="t-head-action">
+              <span>Payment Type</span>
+              <button [class.active]="activeFilter2 !== null" [matMenuTriggerFor]="menuPaymentStatus"
+                      [matTooltip]="activeFilter2 ? 'Filter Applied' : 'Apply Filter'">
+                <span class="material-icons">filter_alt</span>
+              </button>
+              <div class="sort">
+                <mat-menu #menuPaymentStatus="matMenu">
+                  <button mat-menu-item (click)="filterData(null, 'payment-status', null)">
+                    {{ 'None' }}
+                  </button>
+                  @for (data of paymentStatus; track $index) {
+                    <button mat-menu-item (click)="filterData(data.value, 'payment-status', $index)"
+                            [class.dropdown-active]="activeFilter2 === $index">
+                      {{ data.viewValue }}
+                    </button>
+                  }
+                </mat-menu>
+              </div>
+            </th>
+
+
+            <th class="t-head-action">
+              <span>Order Status</span>
+
+              <!--              <button [class.active]="activeFilter3 !== null" [matMenuTriggerFor]="menuOrderStatus"-->
+              <!--                      [matTooltip]="activeFilter3 ? 'Filter Applied' : 'Apply Filter'">-->
+              <!--                <span class="material-icons">filter_alt</span>-->
+              <!--              </button>-->
+              <!--              <div class="sort">-->
+              <!--                <mat-menu #menuOrderStatus="matMenu">-->
+              <!--                  <button mat-menu-item (click)="filterData(null, 'order-status', null)">-->
+              <!--                    {{ 'None' }}-->
+              <!--                  </button>-->
+              <!--                  @for (data of orderStatus; track $index) {-->
+              <!--                    <button mat-menu-item (click)="filterData(data.value, 'order-status', $index)"-->
+              <!--                            [class.dropdown-active]="activeFilter3 === $index">-->
+              <!--                      {{ data.viewValue }}-->
+              <!--                    </button>-->
+              <!--                  }-->
+              <!--                </mat-menu>-->
+              <!--              </div>-->
+            </th>
+            @if (this.selectedTab === 'trash') {
+              <th>Deletion Days</th>
+            }
+
+            <!--            <th>Order Status</th>-->
+
+            <!--            <th class="t-head-action">-->
+            <!--              <span>Priority</span>-->
+            <!--              <button (click)="sortData({priority: -1}, 1)" [class.active]="activeSort === 1"-->
+            <!--                      [matTooltip]="activeSort === 1 ? 'Sort Applied' : 'Apply Sort'">-->
+            <!--                <span class="material-icons">arrow_downward</span>-->
+            <!--              </button>-->
+            <!--            </th>-->
+            <!--            <th>Status</th>-->
+            <th>
+              Courier
+              <button color="primary" mat-button class="overview-filter-btn date-picker" (click)="picker1.open()">
+                <!--              {{dateFilterTitle}}-->
+                <mat-icon>date_range</mat-icon>
+              </button>
+              <mat-form-field style="display: none" appearance="outline" (click)="picker1.open()">
+                <mat-label>Filter In Date Range</mat-label>
+                <mat-date-range-input [rangePicker]="picker1" [formGroup]="dataFormDateRangeCourier" [max]="today">
+                  <input formControlName="start" matStartDate placeholder="Start date" readonly>
+                  <input formControlName="end" matEndDate placeholder="End date" readonly
+                         (dateChange)="endChangeRegDateRangeCourier($event)">
+                </mat-date-range-input>
+                <mat-date-range-picker touchUi #picker1></mat-date-range-picker>
+              </mat-form-field>
+            </th>
+            <!--            <th>Courier Tracking Link</th>-->
+            <th>Grand Total</th>
+            <th>Note</th>
+            <th>Actions</th>
+          </tr> <!-- END Table Head -->
+
+          @defer (when !isLoading) {
+            <tr class="td-gap"></tr>
+            @if (allTableData.length) {
+              @for (data of allTableData; track data._id; let i = $index; ) {
+                <ng-container>
+                  <tr class="td-border" (click)="onTableRowClick(data._id)" [class.selected]="data.select">
+                    <td class="t-checkbox">
+                      <mat-checkbox
+                        color="primary"
+                        (click)="$event.stopPropagation()"
+                        class="t-mat-checkbox"
+                        [(ngModel)]="data.select"
+                        (ngModelChange)="onCheckChange($event, data._id)">
+                      </mat-checkbox>
+                    </td>
+                    <td *ngIf="orderSetting.isSLEnable  ?? true">{{ dataPerPage * (currentPage - 1) + i + 1 }}</td>
+                    <td class="img-wrapper">
+                      <img class="table-image"
+                           matTooltip="Click to preview image"
+                           (click)="openGallery($event, displayImages(data))"
+                           [src]="displayImages(data).length ? displayImages(data)[0] + '?&auto=format&w=384' : '/assets/images/png/placeholder.png'"
+                           [alt]="''">
+                    </td>
+
+                    <td *ngIf="orderSetting?.isProductSkuEnable">
+                      {{ data?.orderedItems | joinSkus }}
+                    </td>
+
+                    <td class="customer-status">
+                      <div class="order-data">
+                        <p class="hoverLink" [routerLink]="['/order/order-details', data._id]">{{ (data.orderId) }}</p>
+                        <p *ngIf="orderSetting?.isEnablePreviousOrderCount" class="hoverLink" [routerLink]="['/users/dashboard', data.phoneNo]">
+                        <span
+                          [ngClass]="data?.previousOrderCount > 0 ? 'old-order' : 'new-order'">
+                                 {{ data?.previousOrderCount == null ? '-' : (data.previousOrderCount > 0 ? 'Old Orders - ' + data.previousOrderCount : 'New Order') }}
+                        </span>
+                        </p>
+                      </div>
+
+                    </td>
+                    <td>
+                      <p class="hoverLink" [matTooltip]="data.name"
+                         [routerLink]="['/users/dashboard', data.phoneNo]">{{ (data.name | titlecase)| limitText: 45 }}</p>
+                    </td>
+                    <td><p class="hoverLink"
+                           [routerLink]="['/users/dashboard', data.phoneNo]">{{ data.phoneNo ?? '-' }}</p>
+                      <div class="wp-phone">
+                        <a
+                          *ngIf="data?.phoneNo"
+                          [href]="whatsAppLink(data.phoneNo)"
+                          target="_blank"
+                          rel="noopener"
+                          aria-label="Open WhatsApp chat"
+                          class="wa-link"
+                        >
+                          <!-- WhatsApp SVG -->
+                          <svg
+                            class="wa-icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 32 32"
+                            width="18" height="18" role="img" focusable="false"
+                          >
+                            <path d="M19.11 17.02c-.27-.14-1.59-.78-1.84-.87-.25-.09-.43-.14-.61.14-.18.27-.7.87-.86 1.05-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.17-1.34-.8-.71-1.34-1.59-1.5-1.86-.16-.27-.02-.41.12-.55.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.02-.22-.53-.45-.46-.61-.46h-.52c-.18 0-.48.07-.73.34-.25.27-.95.93-.95 2.27 0 1.34.98 2.63 1.12 2.81.14.18 1.93 2.95 4.69 4.13.66.28 1.18.45 1.58.57.66.21 1.26.18 1.73.11.53-.08 1.59-.65 1.82-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32zM16.04 4C9.93 4 5 8.93 5 15.04c0 1.94.51 3.76 1.4 5.33L5 27l6.79-1.77c1.53.84 3.28 1.31 5.14 1.31 6.11 0 11.04-4.93 11.04-11.04S22.15 4 16.04 4zm0 19.9c-1.7 0-3.28-.5-4.6-1.35l-.33-.21-4.03 1.05 1.08-3.93-.22-.34a8.88 8.88 0 0 1-1.41-4.86c0-4.93 4.01-8.94 8.94-8.94s8.94 4.01 8.94 8.94-4.01 8.94-8.94 8.94z"/>
+                          </svg>
+                        </a>
+                        <!-- Call -->
+                        <a
+                          *ngIf="data?.phoneNo"
+                          [href]="callLink(data.phoneNo)"
+                          aria-label="Call user"
+                          class="icon-link call-link"
+                        >
+                          <svg
+                            class="call-icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="18" height="18"
+                          >
+                            <path
+                              d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1v3.49a1 1 0 0 1-1 1C10.29 21 3 13.71 3 4.5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2z"
+                            />
+                          </svg>
+                        </a>
+                      </div>
+<!--                      Fraud checker-->
+                      <ng-container
+                        [ngSwitch]="getFraudSummary(data.phoneNo) === undefined ? 'loading' : (getFraudSummary(data.phoneNo) === null ? 'empty' : 'ok')">
+                        <span *ngSwitchCase="'loading'" class="muted">Checking…</span>
+                        <span *ngSwitchCase="'empty'" class="muted">No results</span>
+                        <span *ngSwitchCase="'ok'">
+                            <ng-container *ngIf="getFraudSummary(data.phoneNo) as s">
+                              <span><strong>{{ s.success_ratio | number:'1.0-2' }}
+                                %</strong> ({{ s.total_parcel?? 0 }})</span>
+                            </ng-container>
+                          </span>
+                      </ng-container>
+                    </td>
+
+                    <td><p class="hoverLink">{{ data.orderedFrom ?? '-' | titlecase }}</p></td>
+                    <td>
+                      <p>{{ data.checkoutDate | date }} {{ data.createdAt | date:'shortTime' }}</p>
+                    </td>
+                    <!--                    <td>-->
+                    <!--                      <p>{{ data.paymentType ?? '-' | titlecase }}</p>-->
+                    <!--                    </td>-->
+                    <td>
+                      <div class="payment-type-box">
+                        <p class="cod">{{ data.providerName | cod }}</p>
+                        <p class="payment-status"
+                           [ngClass]="data.paymentStatus == 'paid' ? 'capsule-green' : 'capsule-red'">{{ data | paymentStatus }}</p>
+                      </div>
+
+                    </td>
+                    <td class="order-status">
+                      <p [ngClass]="{
+                          'capsule-red': data.orderStatus === 'pending',
+                          'capsule-green': data.orderStatus === 'delivered',
+                          'capsule-orange': data.orderStatus === 'confirmed',
+                          'onHoldDesign': data.orderStatus === 'on_hold',
+                          'processingDesign': data.orderStatus === 'processing',
+                          'shippingDesign': data.orderStatus === 'shipped',
+                          'courierDesign': data.orderStatus === 'sent to courier',
+                          'cancelDesign': data.orderStatus === 'cancelled',
+                          'refundDesign': data.orderStatus === 'refunded',
+                          'returnDesign': data.orderStatus === 'returned',
+                          'capsule-light-green': data.orderStatus === 'returned receive',
+                        }">{{ data.orderStatus === 'on_hold' ? 'On Hold' : data.orderStatus | titlecase }}</p>
+                    </td>
+                    @if (this.selectedTab === 'trash') {
+                      <td>
+                        {{ data?.deleteDateString ? (data?.deleteDateString | daysRemaining) : '-' }}
+                      </td>
+                    }
+                    @if (data?.courierData) {
+                      <td>
+                        <p><span>{{ data?.courierData?.providerName }} </span></p>
+                        <p><span
+                          class="copy-area">{{ data.courierData.providerName === 'Steadfast Courier' ? data.courierData.trackingId : data?.courierData?.consignmentId }}
+                          <span
+                            (click)="copyToClipboard($event, data?.courierData?.trackingId )"> <mat-icon>content_copy</mat-icon></span></span>
+                        </p>
+                        <a [href]="trackingLink(data)" target="_blank" rel="noopener noreferrer">Tracking Link</a>
+                      </td>
+                    } @else {
+                      <td>
+                        <p>-</p>
+                      </td>
+                    }
+
+                    <!--                    @if (data?.courierData) {-->
+                    <!--                      <td>-->
+                    <!--                        <p>-->
+                    <!--                          <a [href]="trackingLink(data)" target="_blank" rel="noopener noreferrer">Tracking Link</a>-->
+                    <!--                        </p>-->
+                    <!--                      </td>-->
+                    <!--                    } @else {-->
+                    <!--                      <td>-->
+                    <!--                        <p>-</p>-->
+                    <!--                      </td>-->
+                    <!--                    }-->
+
+                    <td>
+                      <p>{{ data?.grandTotal ?? 0 | shopCurrency }}</p>
+                    </td>
+
+
+                    <td>
+                      <p>{{ (data?.customerNotes ? data?.customerNotes?.slice().reverse()[0]?.note : '-') }}</p>
+                      <a style="color: #0a55e5;padding: 3px;" (click)="openNoteDialog(data._id)">Add Note</a>
+                      <!--                  <mat-card-actions>-->
+                      <!--                    <button mat-raised-button color="primary" (click)="openNoteDialog(data._id)">Add Note</button>-->
+                      <!--                  </mat-card-actions>-->
+                    </td>
+                    <!--                    <td>-->
+                    <!--                      <p><span [ngClass]="getStatusClass(data.status)">{{ data.status | titlecase }}</span></p>-->
+                    <!--                    </td>-->
+                    <td class="action-drop-button">
+                      <button mat-icon-button [matMenuTriggerFor]="tableMenu" (click)="$event.stopPropagation()">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #tableMenu="matMenu">
+                        <button [routerLink]="['/order/edit-order', data._id]" mat-menu-item>
+                          <mat-icon>edit</mat-icon>
+                          Edit
+                        </button>
+                        <a mat-menu-item [routerLink]="getInvoiceRoute(data._id)">
+                          <mat-icon>print</mat-icon>
+                          Print Invoice
+                        </a>
+                        <button mat-menu-item [routerLink]="['/order/order-details', data._id]">
+                          <mat-icon>visibility</mat-icon>
+                          Details
+                        </button>
+                      </mat-menu>
+                    </td>
+                  </tr>
+                  <tr class="td-gap"></tr>
+                </ng-container>
+              }
+            } @else {
+              <tr>
+                <td colspan="12">
+                  <app-no-content
+                    [matIcon]="'summarize'"
+                    [title]="'No Data Found!'"
+                    [desc]="'Please add some data to show here.'">
+                  </app-no-content>
+                </td>
+
+              </tr>
+            }
+
+          } @placeholder (minimum 200ms) {
+            <tr>
+              <td colspan="12">
+                <app-page-loader></app-page-loader>
+              </td>
+            </tr>
+          }
+
+
+        </table>
+        <div class="pagination">
+          <app-pagination
+            [totalData]="totalData"
+            [dataPerPage]="dataPerPage"
+            [currentPage]="currentPage"
+            (pageChange)="onPageChanged($event)">
+          </app-pagination>
+        </div>
+      </div> <!-- END! table-wrapper -->
+
+    </div> <!-- END! sub-content -->
+
+  </div> <!-- END! content -->
+
+</div> <!-- END! container -->
+
+
+<!-- Bottom Action -->
+<div class="bottom-action" [class.active]="selectedIds.length || isFilterChange">
+  <div class="action-bar-left">
+    <!--    <button (click)="clearSelectedItemByClick()" class="close-btn">-->
+    <!--      <span class="material-icons">close</span>-->
+    <!--    </button>-->
+
+
+    <span class="items-selected">
+      @if (selectedIds.length) {
+        <span class="item-count">{{ selectedIds.length }}</span>
+      }
+      @if (isFilterChange && !selectedIds.length) {
+        Filter Applied
+      } @else if (selectedIds.length && isFilterChange) {
+        Items selected & Filter Applied
+      } @else {
+        Items selected
+      }
+    </span>
+
+  </div>
+  <div class="action-bar-right">
+    @if (isFilterChange) {
+      <button (click)="onClearDataQuery()" class="btn-black">
+        <span class="material-icons">filter_alt_off</span> Clear Filter
+      </button>
+    }
+
+
+    @if (selectedIds.length) {
+      <button (click)="onClearSelection()" class="btn-black">
+        <span class="material-icons">clear</span> Clear Selection
+      </button>
+
+      <button (click)="downloadFiles()"  class="btn-cerulean-blue">
+        <span class="material-icons">download</span> Download Excel
+      </button>
+
+      <button (click)="invoicePrint()"  class="btn-blue">
+        <span class="material-icons">print</span> Multiple print
+      </button>
+
+      @if (selectedTab === 'trash' && adminRole === 'owner'){
+        <button (click)="openConfirmDialog('restore')" class="btn-red">
+          <span class="material-icons">restore_from_trash</span> Restore from trash
+        </button>
+      }
+
+
+      <button [matMenuTriggerFor]="menuChangeStatus" class="btn-green">
+        Change Order Status
+        <span class="material-icons right-icon">arrow_drop_down</span>
+      </button>
+
+      <mat-menu #menuChangeStatus="matMenu">
+        @for (item of orderStatus; track $index) {
+          <button mat-menu-item (click)="openConfirmDialog('edit', {orderStatus: item.value})">{{ item.viewValue }}
+          </button>
+        }
+      </mat-menu>
+
+
+      <button (click)="openConfirmDialog('delete')" class="btn-red">
+        <span class="material-icons">delete</span> Delete
+      </button>
+    }
+
+
+  </div>
+</div>
+<!-- END! Bottom Action-->
+
+
+<!-- Galley View -->
+@if (isGalleryOpen) {
+  <app-gallery-image-viewer
+    [images]="galleryImages"
+    [startIndex]="selectedImageIndex"
+    (closeEvent)="closeGallery()">
+  </app-gallery-image-viewer>
+}
+<!-- END Galley View -->
+
+
+
+
+
+
+

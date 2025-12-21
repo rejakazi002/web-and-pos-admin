@@ -1,0 +1,476 @@
+<div class="container">
+  <div class="header" *ngIf="!viewOnly">
+    <button mat-raised-button color="primary" (click)="onSubmit()">
+      <mat-icon>done</mat-icon>
+      {{ id ? "Update" : "Save" }} Deal
+    </button>
+  </div>
+
+  <section class="admin-data-sec">
+    <div class="top-data-header" *ngIf="!viewOnly">
+      <div class="title">
+        <h2>{{ id ? "Update" : "Create New " }} Deal</h2>
+        <div class="checkbox">
+          <mat-checkbox
+            [(ngModel)]="autoSlug"
+            (change)="autoGenerateSlug()"
+            color="primary"
+          >Auto Slug</mat-checkbox
+          >
+        </div>
+      </div>
+    </div>
+    <!-- END TOP DATA HEADER -->
+
+<!--    <hr class="center-square" />-->
+
+    <form
+      #formElement="ngForm"
+      [formGroup]="dataForm"
+
+    >
+      <div class="gallery-picker">
+        <app-gallery-image-picker
+          [type]="'multiple'"
+          [maxImages]="1"
+          [isInvalid]="this.dataForm.get('bannerImage').touched && this.dataForm.get('bannerImage').invalid"
+          (onPicked)="onPickedImage($event)"
+          infoText="The 1st image for desktop (152px * 100px) "
+          [images]="pickedImages">
+        </app-gallery-image-picker>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-100 px-1" fxFlex="50">
+        <mat-label>Offer Type</mat-label>
+        <!--      <input formControlName="offerType" matInput placeholder="Enter title" required>-->
+        <mat-select formControlName="offerType">
+          <mat-option> none</mat-option>
+          <mat-option *ngFor="let data of offerTypes" [value]="data.value">
+            {{ data.viewValue }}
+          </mat-option>
+        </mat-select>
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100" fxFlex="50">
+        <mat-label>Select Status</mat-label>
+        <mat-select formControlName="status" required>
+          <mat-option *ngFor="let data of productStatus" [value]="data.value">
+            {{ data.viewValue }}
+          </mat-option>
+        </mat-select>
+        <mat-error>This field is required.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 px-1" fxFlex="100">
+        <mat-label>Title</mat-label>
+        <input
+          formControlName="title"
+          matInput
+          placeholder="Enter title"
+          required
+          maxlength="25"
+        />
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Slug</mat-label>
+        <input
+          [readonly]="autoSlug"
+
+          formControlName="slug"
+          matInput
+          placeholder="Enter slug"
+          required
+        />
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100 px-1" fxFlex="100">
+        <mat-label>Serial</mat-label>
+        <input
+          formControlName="serial"
+          digitOnly
+          matInput
+          placeholder="Enter serial"
+        />
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+
+      <!-- Start Date Time -->
+      <!--    &lt;!&ndash; Start Date &ndash;&gt;-->
+      <!--    <mat-form-field appearance="outline" class="w-100">-->
+      <!--      <mat-label>Start Date</mat-label>-->
+      <!--      <input matInput-->
+      <!--             [matDatepicker]="startDatePicker"-->
+      <!--             formControlName="startDate"-->
+      <!--             placeholder="Choose Start Date"-->
+      <!--             [min]="today"-->
+      <!--             readonly-->
+      <!--             (click)="startDatePicker.open()">-->
+      <!--      <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>-->
+      <!--      <mat-datepicker #startDatePicker></mat-datepicker>-->
+      <!--    </mat-form-field>-->
+
+      <!--    &lt;!&ndash; Start Time &ndash;&gt;-->
+      <!--    <mat-form-field appearance="outline" class="w-100">-->
+      <!--      <mat-label>Start Time</mat-label>-->
+      <!--      <input matInput-->
+      <!--             type="time"-->
+      <!--             formControlName="startTime"-->
+      <!--             step="60"-->
+      <!--             placeholder="HH:mm">-->
+      <!--    </mat-form-field>-->
+
+      <!--    &lt;!&ndash; End Date &ndash;&gt;-->
+      <!--    <mat-form-field appearance="outline" class="w-100">-->
+      <!--      <mat-label>End Date</mat-label>-->
+      <!--      <input matInput-->
+      <!--             [matDatepicker]="endDatePicker"-->
+      <!--             formControlName="endDate"-->
+      <!--             placeholder="Choose End Date"-->
+      <!--             [min]="minEndDate"-->
+      <!--             readonly-->
+      <!--             (click)="endDatePicker.open()">-->
+      <!--      <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>-->
+      <!--      <mat-datepicker #endDatePicker></mat-datepicker>-->
+      <!--    </mat-form-field>-->
+
+      <!--    &lt;!&ndash; End Time &ndash;&gt;-->
+      <!--    <mat-form-field appearance="outline" class="w-100">-->
+      <!--      <mat-label>End Time</mat-label>-->
+      <!--      <input matInput-->
+      <!--             type="time"-->
+      <!--             formControlName="endTime"-->
+      <!--             step="60"-->
+      <!--             placeholder="HH:mm">-->
+      <!--    </mat-form-field>-->
+      <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+      <!--    &lt;!&ndash; Start Date &ndash;&gt;-->
+      <!--    <mat-form-field appearance="outline" class="w-100">-->
+      <!--      <mat-label>Start Date</mat-label>-->
+      <!--      <input matInput-->
+      <!--             [matDatepicker]="startPicker"-->
+      <!--             formControlName="startDate"-->
+      <!--             placeholder="Choose Start Date"-->
+      <!--             readonly-->
+      <!--             (click)="startPicker.open()">-->
+      <!--      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>-->
+      <!--      <mat-datepicker #startPicker></mat-datepicker>-->
+      <!--    </mat-form-field>-->
+
+      <!--    &lt;!&ndash; Start Time &ndash;&gt;-->
+      <!--    <mat-form-field appearance="outline" class="w-100">-->
+      <!--      <mat-label>Start Time</mat-label>-->
+      <!--      <input matInput-->
+      <!--             [ngxTimepicker]="startTimePicker"-->
+      <!--             formControlName="startTime"-->
+      <!--             placeholder="Select time"-->
+      <!--             readonly>-->
+      <!--      <ngx-material-timepicker-->
+      <!--        #startTimePicker-->
+      <!--        [format]="12"-->
+      <!--        [minutesGap]="5"-->
+      <!--        [enableKeyboardInput]="true"-->
+      <!--        [disableAnimation]="false"-->
+      <!--      >-->
+
+      <!--      </ngx-material-timepicker>-->
+      <!--    </mat-form-field>-->
+
+
+
+      <!--    &lt;!&ndash; End Date &ndash;&gt;-->
+      <!--    <mat-form-field appearance="outline" class="w-100">-->
+      <!--      <mat-label>End Date</mat-label>-->
+      <!--      <input matInput-->
+      <!--             [matDatepicker]="endPicker"-->
+      <!--             formControlName="endDate"-->
+      <!--             placeholder="Choose End Date"-->
+      <!--             readonly-->
+      <!--             (click)="endPicker.open()">-->
+      <!--      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>-->
+      <!--      <mat-datepicker #endPicker></mat-datepicker>-->
+      <!--    </mat-form-field>-->
+
+      <!--    &lt;!&ndash; End Time &ndash;&gt;-->
+      <!--&lt;!&ndash;    <mat-form-field appearance="outline" class="w-100">&ndash;&gt;-->
+      <!--&lt;!&ndash;      <mat-label>End Time</mat-label>&ndash;&gt;-->
+      <!--&lt;!&ndash;      <input matInput&ndash;&gt;-->
+      <!--&lt;!&ndash;             type="time"&ndash;&gt;-->
+      <!--&lt;!&ndash;             formControlName="endTime"&ndash;&gt;-->
+      <!--&lt;!&ndash;             step="60"&ndash;&gt;-->
+      <!--&lt;!&ndash;             placeholder="HH:mm"&ndash;&gt;-->
+      <!--&lt;!&ndash;             (change)="mergeEnd()">&ndash;&gt;-->
+      <!--&lt;!&ndash;    </mat-form-field>&ndash;&gt;-->
+
+      <!--&lt;!&ndash;    <mat-form-field appearance="outline" class="w-100">&ndash;&gt;-->
+      <!--&lt;!&ndash;      <mat-label>Start Time</mat-label>&ndash;&gt;-->
+      <!--&lt;!&ndash;      <input matInput&ndash;&gt;-->
+      <!--&lt;!&ndash;             [ngxTimepicker]="endTimePicker"&ndash;&gt;-->
+      <!--&lt;!&ndash;             formControlName="endTime"&ndash;&gt;-->
+      <!--&lt;!&ndash;             placeholder="Select time"&ndash;&gt;-->
+      <!--&lt;!&ndash;             readonly>&ndash;&gt;-->
+      <!--&lt;!&ndash;      <ngx-material-timepicker #endTimePicker></ngx-material-timepicker>&ndash;&gt;-->
+      <!--&lt;!&ndash;    </mat-form-field>&ndash;&gt;-->
+
+      <!--    <mat-form-field appearance="outline" class="w-100">-->
+      <!--      <mat-label>End Time</mat-label>-->
+      <!--      <input matInput-->
+      <!--             [ngxTimepicker]="endTimePicker"-->
+      <!--             formControlName="endTime"-->
+      <!--             placeholder="Select time"-->
+      <!--             readonly>-->
+      <!--      <ngx-material-timepicker-->
+      <!--        #endTimePicker-->
+      <!--        [format]="12"-->
+      <!--        [minutesGap]="5"-->
+      <!--        [enableKeyboardInput]="true">-->
+      <!--      >-->
+      <!--      </ngx-material-timepicker>-->
+      <!--    </mat-form-field>-->
+
+
+
+      <!-- Start Date -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Start Date</mat-label>
+        <input matInput
+               [matDatepicker]="startPicker"
+               formControlName="startDate"
+               placeholder="Choose Start Date"
+               readonly
+               (click)="startPicker.open()">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Start Time (Material-style popup) -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Start Time</mat-label>
+        <input matInput
+               [ngxTimepicker]="startTimePicker"
+               formControlName="startTime"
+               placeholder="Select time"
+               readonly>
+        <ngx-material-timepicker
+          #startTimePicker
+          [format]="12"
+          [minutesGap]="5"
+          (timeSet)="onStartTimeSet($event)">
+        </ngx-material-timepicker>
+      </mat-form-field>
+
+      <!-- End Date -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>End Date</mat-label>
+        <input matInput
+               [matDatepicker]="endPicker"
+               formControlName="endDate"
+               placeholder="Choose End Date"
+               readonly
+               (click)="endPicker.open()">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- End Time -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>End Time</mat-label>
+        <input matInput
+               [ngxTimepicker]="endTimePicker"
+               formControlName="endTime"
+               placeholder="Select time"
+               readonly>
+        <ngx-material-timepicker
+          #endTimePicker
+          [format]="12"
+          [minutesGap]="5"
+          (timeSet)="onEndTimeSet($event)">
+        </ngx-material-timepicker>
+      </mat-form-field>
+
+
+
+
+      <!--    <mat-form-field appearance="outline" class="w-100 px-1" fxFlex="100" *ngIf="dataForm.value.offerType === 'Banner Offer'">-->
+      <!--      <mat-label>Description</mat-label>-->
+      <!--      <textarea formControlName="description" matInput placeholder="Enter description" [rows]="4"></textarea>-->
+      <!--    </mat-form-field>-->
+
+      <div class="" *ngIf="dataForm?.value?.offerType === 'Banner Offer'">
+        <h4>Description</h4>
+
+        <app-html-editor formControlName="description"></app-html-editor>
+        <!--      <quill-editor-->
+        <!--        #editor-->
+        <!--        [modules]="modules"-->
+        <!--        [sanitize]="true"-->
+        <!--        classes="additional"-->
+        <!--        formControlName="description"-->
+        <!--      ></quill-editor>-->
+      </div>
+
+      <!-- END CONTENT SIDEBAR 2 -->
+    </form>
+    <!-- User Info Form -->
+
+    <div
+      class="table-wrapper space"
+      *ngIf="dataForm?.value?.offerType === 'Product Offer'"
+    >
+      <div class="table-action dual" *ngIf="!viewOnly">
+        <div class="left"></div>
+        <div class="right">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="openProductListDialog()"
+          >
+            <mat-icon>add</mat-icon>
+            Add Product
+          </button>
+        </div>
+      </div>
+      <!-- END Table Action -->
+
+      <div class="table-action dual1" *ngIf="selectedIds?.length && !viewOnly">
+        <div class="left"></div>
+        <div class="right">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="openTitleAddDialog()"
+          >
+            Title Add
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+      <!-- END Table Action -->
+      <div class="table-wrapper">
+        <table>
+        <tr class="td-border first-heading-row">
+<!--          <th class="t-checkbox">-->
+<!--            <mat-checkbox-->
+<!--              color="primary"-->
+<!--              #matCheckbox-->
+<!--              (change)="onAllSelectChange($event)"-->
+<!--            ></mat-checkbox>-->
+<!--          </th>-->
+          <th>Show In Home</th>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Category</th>
+          <!--        <th>Sub Category</th>-->
+          <th>Brand</th>
+          <th>Regular Price</th>
+          <th>Discount</th>
+<!--          <th>Title</th>-->
+<!--          <th>Banner Image</th>-->
+          <th>Use Discount</th>
+          <th>Sale Price</th>
+          <th *ngIf="!viewOnly">Action</th>
+        </tr>
+        <tr *ngFor="let data of selectedProducts; let i = index">
+<!--          <td class="t-checkbox">-->
+<!--            <mat-checkbox-->
+<!--              class="t-mat-checkbox"-->
+<!--              [(ngModel)]="data.select"-->
+<!--              (ngModelChange)="onCheckChange($event, i, data._id)"-->
+<!--            ></mat-checkbox>-->
+<!--          </td>-->
+
+          <td class="t-checkbox">
+            <mat-checkbox
+              class="t-mat-checkbox"
+              [(ngModel)]="data.isShowInHome"
+            ></mat-checkbox>
+          </td>
+
+
+          <td>
+            <img
+              checkImageDefault
+              class="table-image"
+              [src]="data && data?.images ? data.images[0] : ''"
+              [alt]=""
+            />
+          </td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.category?.name }}</td>
+          <!--        <td>{{data.subCategory?.name}}</td>-->
+          <td>{{ data.brand?.name }}</td>
+
+
+          <td *ngIf="!data.isVariation">৳{{ data.regularPrice | number : "" : "bn" }}</td>
+          <td *ngIf="data.isVariation">৳{{ data.variationList[0]?.regularPrice | number : "" : "bn" }}</td>
+          <td>
+            <div class="input-area">
+              <mat-form-field
+                class="small-input"
+                appearance="outline"
+                style="margin-right: 5px"
+              >
+                <input
+                  matInput
+                  type="text"
+                  [(ngModel)]="data.offerDiscountAmount"
+                  digitOnly
+                  pattern="^\d+(\.\d{1,2})?$"
+                  [decimal]="true"
+                />
+              </mat-form-field>
+
+              <!--            <mat-form-field class="small-select" appearance="outline">-->
+              <!--              <mat-select [(ngModel)]="data.offerDiscountType">-->
+              <!--                <mat-option [value]="1">%</mat-option>-->
+              <!--                <mat-option [value]="2">৳</mat-option>-->
+              <!--              </mat-select>-->
+              <!--            </mat-form-field>-->
+            </div>
+            <!--          <a class="table-navigate" [style.color]="data.discountAmount && data.discountAmount > 0 ? 'green' : 'red'">-->
+            <!--            {{data | productDiscount : 'default'}}-->
+            <!--          </a>-->
+          </td>
+<!--          <td>{{ data.title ?? "-" }}</td>-->
+<!--          <td >-->
+<!--            <img-->
+<!--              checkImageDefault-->
+<!--              class="table-image"-->
+<!--              [src]="data && data.titleImg ? data.titleImg : ''"-->
+<!--              [alt]=""-->
+<!--            />-->
+<!--          </td>-->
+          <td class="t-checkbox">
+            <mat-checkbox
+              class="t-mat-checkbox"
+              [(ngModel)]="data.resetDiscount"
+            ></mat-checkbox>
+          </td>
+
+
+          <td>৳{{ getSalePrice(data) | number : "" : "bn" }}</td>
+
+          <td class="td-action" *ngIf="!viewOnly">
+            <button
+              mat-mini-fab
+              matTooltip="Remove"
+              color="warn"
+              (click)="removeProduct(i)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+      </div>
+    </div>
+
+    <!-- LOADING TEMPLATE -->
+
+  </section>
+
+</div>
