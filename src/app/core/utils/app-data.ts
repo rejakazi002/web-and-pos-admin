@@ -36,6 +36,7 @@ export const PAGES: Select[] = [
   { "value": "profile", "viewValue": "Profile" },
   { "value": "expense", "viewValue": "Expense" },
   { "value": "affiliate", "viewValue": "Affiliate" },
+  { "value": "accounts", "viewValue": "Accounts" },
   { "value": "pos", "viewValue": "Pos" },
 ]
 

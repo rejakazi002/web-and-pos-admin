@@ -223,14 +223,15 @@ export class PagesComponent implements OnInit, OnDestroy, OnChanges {
     // }
 
     // Blog
-    // if (this.blogSetting) {
-    //   menus = this.applyBlogMenu(menus, !!this.blogSetting?.isEnableBlog);
-    // }
+    if (this.blogSetting) {
+      menus = this.applyBlogMenu(menus, !!this.blogSetting?.isEnableBlog);
+    }
 
     // Campaign
     if (this.productSetting) {
       // menus = this.applyCampaignMenu(menus, !!this.productSetting?.isCampaignEnable);
       menus = this.applyPCBuilderMenu(menus, !!this.productSetting?.isEnablePCBuilder);
+      menus = this.applyServiceMenu(menus, !!this.productSetting?.isEnableService);
     }
 
     // Catalog conditional submenus
@@ -383,6 +384,42 @@ export class PagesComponent implements OnInit, OnDestroy, OnChanges {
 
     const cloned = menus.slice();
     cloned[idx] = updated;
+    return cloned;
+  }
+
+  private applyServiceMenu(menus: AdminMenu[], enable: boolean): AdminMenu[] {
+    const cloned = menus.slice();
+    const has = cloned.some(m => (m as any).id === 5377);
+    if (enable) {
+      if (!has) {
+        const pcBuilder: any = {
+          id: 5377,
+          name: 'Service',
+          hasSubMenu: true,
+          routerLink: null,
+          icon: 'web',
+          subMenus: [
+            {
+              id: 1,
+              name: 'Service',
+              hasSubMenu: true,
+              routerLink: 'service/all-service',
+              icon: 'arrow_right',
+            },
+            {
+              id: 2,
+              name: 'Booking',
+              hasSubMenu: true,
+              routerLink: 'booking/all-booking',
+              icon: 'arrow_right',
+            },
+          ],
+        };
+        cloned.splice(Math.min(5, cloned.length), 0, pcBuilder);
+      }
+    } else {
+      return cloned.filter(m => (m as any).id !== 5377);
+    }
     return cloned;
   }
 

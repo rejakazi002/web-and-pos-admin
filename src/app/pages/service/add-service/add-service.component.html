@@ -1,0 +1,275 @@
+<div class="container">
+
+  <div class="content add-page">
+    <form #formElement="ngForm" [formGroup]="dataForm" (ngSubmit)="onSubmit()" autocomplete="off">
+
+      <div class="gallery-picker">
+        <app-gallery-image-picker
+          [type]="'multiple'"
+          [maxImages]="3"
+          [isInvalid]="this.dataForm.get('images').touched && this.dataForm.get('images').invalid"
+          (onPicked)="onPickedImage($event)"
+          infoText = "Recommended Image Resolution: 1200×630px or 800×800px or 1000×1000px (ideal for eCommerce). Recommended File Size: Keep between 100KB to 200KB for optimal performance."
+          [images]="pickedImages">
+        </app-gallery-image-picker>
+      </div>
+
+
+
+<!--      <mat-form-field appearance="outline">-->
+<!--        <mat-label>Title</mat-label>-->
+<!--        <input formControlName="title1" matInput placeholder="Enter Title" required>-->
+<!--        <mat-error>This field is required</mat-error>-->
+<!--      </mat-form-field>-->
+
+
+<!--      <mat-form-field appearance="outline">-->
+<!--        <mat-label>Main Title</mat-label>-->
+<!--        <input formControlName="title2" matInput placeholder="Enter Title" required>-->
+<!--        <mat-error>This field is required</mat-error>-->
+<!--      </mat-form-field>-->
+
+<!--      <mat-form-field appearance="outline">-->
+<!--        <mat-label>Short Description</mat-label>-->
+<!--        <input formControlName="shortDesc" matInput placeholder="Enter description" required>-->
+<!--        <mat-error>This field is required</mat-error>-->
+<!--      </mat-form-field>-->
+
+
+      <mat-card class="w-100 px-1" style="margin-top: 20px;">
+        <div class="title">
+          <h4>Featured Services</h4>
+        </div>
+<!--        <div>-->
+<!--          <mat-form-field appearance="outline" class="w-100 px-1">-->
+<!--            <mat-label>Faq Title</mat-label>-->
+<!--            <input formControlName="faqTitle" matInput placeholder="Enter title" >-->
+<!--            <mat-error>This field is required</mat-error>-->
+<!--          </mat-form-field>-->
+<!--        </div>-->
+
+
+        <div class="form-array-container">
+          <div class="add-form-array-action" style="margin-top: 10px">
+            <button class="add-product-btn" type="button" mat-button color="primary" (click)="onAddNewService('services')">
+              <mat-icon>add</mat-icon>
+              Add New Services
+            </button>
+          </div>
+          <div formArrayName="services" class="form-array-input">
+            <div class="single-field"
+                 *ngFor="let data of servicesDataArray?.controls; let i = index"
+                 [formGroupName]="i">
+              <app-gallery-image-picker
+                [type]="'multiple'"
+                [maxImages]="1"
+                [isInvalid]="data.get('image')?.touched && data.get('image')?.invalid"
+                (onPicked)="onPickedService($event, i)"
+                infoText="The image for any (154px * 100px)"
+                [images]="dataForm.value.services[i].image ? [dataForm.value.services[i].image] : []">
+              </app-gallery-image-picker>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Title</mat-label>
+                <input formControlName="title" matInput/>
+                <mat-error>This field is required.</mat-error>
+              </mat-form-field>
+              <div class="desc">
+                <mat-form-field appearance="outline">
+                  <mat-label>Description</mat-label>
+<!--                  <textarea formControlName="description" matInput [placeholder]="'Enter description ' + i + 1" type="text"-->
+<!--                            [rows]="1"></textarea>-->
+                  <input formControlName="description" matInput/>
+                </mat-form-field>
+
+                <button type="button" mat-mini-fab color="warn" (click)="removeFormArrayField('services', i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div> <!-- END PHONES FORM ARRAY -->
+
+      </mat-card>
+
+      <mat-card class="w-100 px-1" style="margin-top: 20px;">
+        <div class="title">
+          <h4>Authorized Service Center</h4>
+        </div>
+
+        <div class="form-array-container">
+          <div class="add-form-array-action" style="margin-top: 10px">
+            <button class="add-product-btn" type="button" mat-button color="primary" (click)="onAddNewAuthorizedServiceCenter('authorizedServiceCenters')">
+              <mat-icon>add</mat-icon>
+              Add New Authorized Service Center
+            </button>
+          </div>
+          <div formArrayName="authorizedServiceCenters" class="form-array-input">
+            <div class="single-field"
+                 *ngFor="let data of authorizedServiceCentersDataArray?.controls; let i = index"
+                 [formGroupName]="i">
+              <app-gallery-image-picker
+                [type]="'multiple'"
+                [maxImages]="1"
+                [isInvalid]="data.get('image')?.touched && data.get('image')?.invalid"
+                (onPicked)="onPickedAuthorizedServiceCenter($event, i)"
+                infoText="The image for any (154px * 100px)"
+                [images]="dataForm.value.authorizedServiceCenters[i].image ? [dataForm.value.authorizedServiceCenters[i].image] : []">
+              </app-gallery-image-picker>
+
+              <div class="desc">
+                <mat-form-field appearance="outline">
+                  <mat-label>Title</mat-label>
+                  <input formControlName="title" matInput/>
+                  <mat-error>This field is required.</mat-error>
+                </mat-form-field>
+
+                <button type="button" mat-mini-fab color="warn" (click)="removeFormArrayField('authorizedServiceCenters', i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div> <!-- END AUTHORIZED SERVICE CENTER FORM ARRAY -->
+
+      </mat-card>
+
+      <!--      </mat-card>-->
+      <mat-card class="w-100 px-1" style="margin-top: 20px">
+        <div class="title">
+          <h4>Location</h4>
+        </div>
+
+<!--        <div>-->
+<!--          <mat-form-field appearance="outline" class="w-100 px-1">-->
+<!--            <mat-label>Review Title</mat-label>-->
+<!--            <input formControlName="reviewTitle" matInput placeholder="Enter title">-->
+<!--            <mat-error>This field is required</mat-error>-->
+<!--          </mat-form-field>-->
+<!--        </div>-->
+
+
+        <div class="form-array-container">
+          <div class="add-form-array-action" style="margin-top: 10px">
+            <button class="add-product-btn" type="button" mat-button color="primary" (click)="onAddNewLocation('locations')">
+              <mat-icon>add</mat-icon>
+              Add New Location
+            </button>
+          </div>
+          <div formArrayName="locations" class="form-array-input">
+            <div class="single-field"
+                 *ngFor="let data of locationsDataArray?.controls; let i = index"
+                 [formGroupName]="i">
+
+              <!-- <app-gallery-image-picker
+                [type]="'multiple'"
+                [maxImages]="1"
+                [isInvalid]="data.get('image')?.touched && data.get('image')?.invalid"
+                (onPicked)="onPickedLocation($event, i)"
+                infoText="The image for any (154px * 100px)"
+                [images]="dataForm.value.locations[i].image ? [dataForm.value.locations[i].image] : []">
+              </app-gallery-image-picker> -->
+
+              <mat-form-field appearance="outline">
+                <mat-label>Title</mat-label>
+                <input formControlName="title" matInput/>
+                <mat-error>This field is required.</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Address</mat-label>
+                <input formControlName="address" matInput/>
+                <mat-error>This field is required.</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Phone</mat-label>
+                <input formControlName="phone" matInput/>
+                <mat-error>This field is required.</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Map Link</mat-label>
+                <input formControlName="mapLink" matInput placeholder="Enter Google Maps link"/>
+                <mat-error>This field is required.</mat-error>
+              </mat-form-field>
+
+              <div class="desc">
+                <mat-form-field appearance="outline">
+                  <mat-label>Write off day</mat-label>
+                  <input formControlName="writeOffDay" matInput type="text"/>
+<!--                  <textarea formControlName="writeOffDay" matInput [placeholder]="'Enter write off day ' + i + 1" type="text"-->
+<!--                            [rows]="1"></textarea>-->
+                </mat-form-field>
+
+                <button type="button" mat-mini-fab color="warn" (click)="removeFormArrayField('locations', i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div> <!-- END PHONES FORM ARRAY -->
+
+      </mat-card>
+      <mat-card class="w-100 px-1" style="margin-top: 20px">
+        <div class="title">
+          <h4>Why Buy and Why Best</h4>
+        </div>
+
+        <div class="description-area">
+          <!--          <label>Description</label>-->
+          <div class="description-main">
+            <app-html-editor formControlName="whyBuyDescription"></app-html-editor>
+          </div>
+        </div>
+
+      </mat-card>
+
+<!--      <mat-form-field appearance="outline">-->
+<!--        <mat-label>Short Description</mat-label>-->
+<!--        <textarea formControlName="seoDescription" matInput placeholder="Enter description" required></textarea>-->
+<!--        <mat-error>This field is required</mat-error>-->
+<!--      </mat-form-field>-->
+
+<!--      <mat-form-field appearance="outline">-->
+<!--        <mat-label>Keyword</mat-label>-->
+<!--        <textarea formControlName="seoKeyword" matInput placeholder="Enter Keyword"></textarea>-->
+<!--        <mat-error>This field is required</mat-error>-->
+<!--      </mat-form-field>-->
+
+      <div class="d-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            @for(data of dataStatus; track data.value) {
+              <mat-option [value]="data.value">
+                {{ data.viewValue }}
+              </mat-option>
+            }
+          </mat-select>
+          <mat-error>This field is required.</mat-error>
+        </mat-form-field>
+      </div> <!-- END! d-row -->
+
+      <div class="action">
+        <button (click)="onDiscard()" mat-stroked-button color="warn" type="button" class="discard">
+          <mat-icon>arrow_back_ios</mat-icon>
+          Discard
+        </button>
+
+        @if(!isLoading) {
+          <button mat-button class="add-product-btn" color="primary" type="submit">
+            <mat-icon>check</mat-icon>
+            {{ id ? 'Update Service' : 'Add Service' }}
+          </button>
+        } @else {
+          <button class="btn-loader" mat-button type="button" color="primary">
+            <div><span class="loader"></span></div>
+            <div><span class="txt">{{ id ? 'Update Service' : 'Add Service' }}</span></div>
+          </button>
+        }
+      </div> <!-- END! action -->
+
+    </form> <!-- END! form -->
+  </div> <!-- END! content -->
+</div> <!-- END! container -->
