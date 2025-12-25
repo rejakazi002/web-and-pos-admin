@@ -171,11 +171,22 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
       .subscribe((brandId: string) => {
         // Reset model selection when brand changes
         this.dataForm?.patchValue({ modelNo: null });
+        // Enable/disable model field based on brand selection
+        if (brandId) {
+          this.dataForm?.get('modelNo')?.enable();
+        } else {
+          this.dataForm?.get('modelNo')?.disable();
+        }
         // Filter models by selected brand
         this.getAllModel(brandId, this.modelSearchControl.value || '');
       });
     if (subBrandChange) {
       this.subscriptions.push(subBrandChange);
+    }
+    
+    // Set initial disabled state for modelNo
+    if (!this.dataForm?.get('brand')?.value) {
+      this.dataForm?.get('modelNo')?.disable();
     }
   }
 
@@ -203,10 +214,10 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
       phoneNo: [null, Validators.required],
       status: ['Pending'],
       brand: [null, Validators.required],
-      modelNo: [null, Validators.required],
+      modelNo: [{value: null, disabled: true}, Validators.required], // Disabled by default until brand is selected
       color: [null], // Optional - ColorService not available
       imeiNo: [null],
-      problem: [null, Validators.required],
+      problem: [[], Validators.required],
       purchase: [null],
       condition: [null, Validators.required],
       password: [null],
@@ -270,6 +281,24 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
   }
 
   private setFormValue() {
+    // First, handle the problem field separately to ensure it's always an array
+    let problemValue: any[] = [];
+    if (this.repair?.problem) {
+      if (Array.isArray(this.repair.problem)) {
+        problemValue = this.repair.problem.map((p: any) => p._id || p);
+      } else {
+        // Single problem - convert to array for multiple select
+        const problemId = this.repair.problem._id || this.repair.problem;
+        if (problemId) {
+          problemValue = [problemId];
+        }
+      }
+    }
+
+    // Create a copy of repair object without the problem field to avoid non-array value
+    const repairData = { ...this.repair };
+    delete repairData.problem; // Remove problem from the object to handle separately
+
     const patchData: any = {};
     
     if (this.repair?.date) {
@@ -285,10 +314,18 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
     if (Object.keys(patchData).length > 0) {
       this.dataForm.patchValue(patchData);
     }
-    this.dataForm.patchValue(this.repair);
+    // Patch repair data without problem field
+    this.dataForm.patchValue(repairData);
+    
+    // Now set the problem field as an array
+    this.dataForm.patchValue({
+      problem: problemValue
+    });
 
     if (this.repair?.brand) {
       const brandId = this.repair.brand._id || this.repair.brand;
+      // Enable modelNo when brand is set
+      this.dataForm?.get('modelNo')?.enable();
       this.dataForm.patchValue({
         brand: brandId
       });
@@ -302,11 +339,6 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
       });
     }
 
-    if (this.repair?.problem) {
-      this.dataForm.patchValue({
-        problem: this.repair.problem._id || this.repair.problem
-      });
-    }
 
     if (this.repair?.color) {
       this.dataForm.patchValue({
@@ -358,16 +390,20 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
       }
     }
 
-    // Set problem object
-    if (this.dataForm.value.problem) {
-      const selectedProblem = this.problems.find((f) => f._id === this.dataForm.value.problem);
-      if (selectedProblem) {
+    // Set problem objects (handle array)
+    if (this.dataForm.value.problem && Array.isArray(this.dataForm.value.problem) && this.dataForm.value.problem.length > 0) {
+      const selectedProblems = this.dataForm.value.problem
+        .map((problemId: string) => this.problems.find((f) => f._id === problemId))
+        .filter((p: any) => p !== undefined)
+        .map((p: any) => ({
+          _id: p._id,
+          name: p.name,
+        }));
+      
+      if (selectedProblems.length > 0) {
         mData = {
           ...mData,
-          problem: {
-            _id: selectedProblem._id,
-            name: selectedProblem.name,
-          }
+          problem: selectedProblems.length === 1 ? selectedProblems[0] : selectedProblems, // Single problem as object, multiple as array
         };
       }
     }
@@ -924,12 +960,17 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
       address: null,
     } : null;
 
+    // Ensure date is a Date object
+    const saleDate = repairData.date 
+      ? (repairData.date instanceof Date ? repairData.date : new Date(repairData.date))
+      : new Date();
+
     // Prepare sale data
     const saleData: Sale = {
       customer: customerData,
       products: saleProducts,
-      soldDate: repairData.date || new Date(),
-      soldDateString: this.utilsService.getDateString(repairData.date || new Date()),
+      soldDate: saleDate,
+      soldDateString: this.utilsService.getDateString(saleDate),
       soldTime: this.utilsService.getCurrentTime(),
       discount: 0,
       discountAmount: 0,
@@ -948,8 +989,8 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
       paymentType: 'cash',
       status: 'Sale',
       referenceNo: repairId ? `Repair #${repairId.substring(0, 8)}` : 'Repair Parts', // Show repair reference
-      month: this.utilsService.getDateMonth(false, repairData.date || new Date()),
-      year: this.utilsService.getDateYear(repairData.date || new Date()),
+      month: this.utilsService.getDateMonth(false, saleDate),
+      year: this.utilsService.getDateYear(saleDate),
     };
 
     // Add repair reference to sale
