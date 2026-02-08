@@ -26,7 +26,7 @@ export class ProductSellReportComponent implements OnInit {
   };
   startDate: Date | null = null;
   endDate: Date | null = null;
-  
+
   // Date Range Filter
   today = new Date();
   dataFormDateRange = new FormGroup({
@@ -52,19 +52,19 @@ export class ProductSellReportComponent implements OnInit {
     private exportPrintService: ExportPrintService,
     private datePipe: DatePipe,
     private utilsService: UtilsService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const today = new Date();
     this.endDate = today;
     this.startDate = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-    
+
     // Initialize date range form
     this.dataFormDateRange.patchValue({
       start: this.startDate,
       end: this.endDate
     });
-    
+
     this.loadReport();
   }
 
@@ -82,7 +82,7 @@ export class ProductSellReportComponent implements OnInit {
         start.setHours(0, 0, 0, 0);
         const end = new Date(this.dataFormDateRange.value.end);
         end.setHours(23, 59, 59, 999);
-        
+
         this.startDate = start;
         this.endDate = end;
         this.loadReport();
@@ -91,14 +91,22 @@ export class ProductSellReportComponent implements OnInit {
   }
 
   loadReport() {
+    const start = this.dataFormDateRange.value.start;
+    const end = this.dataFormDateRange.value.end;
+
+    if (start && end) {
+      this.startDate = new Date(start);
+      this.endDate = new Date(end);
+    }
+
     if (!this.startDate || !this.endDate) {
       this.uiService.message('Please select date range', 'warn');
       return;
     }
 
     this.isLoading = true;
-    const startDateStr = this.startDate.toISOString().split('T')[0];
-    const endDateStr = this.endDate.toISOString().split('T')[0];
+    const startDateStr = this.utilsService.getDateString(this.startDate);
+    const endDateStr = this.utilsService.getDateString(this.endDate);
 
     console.log('Loading Product Sell Report:', { startDateStr, endDateStr });
 

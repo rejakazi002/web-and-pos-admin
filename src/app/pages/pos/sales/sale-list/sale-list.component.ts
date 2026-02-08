@@ -1,28 +1,28 @@
-import {Component, OnInit, ViewChild, OnDestroy} from '@angular/core';
-import {UiService} from "../../../../services/core/ui.service";
-import {Router} from "@angular/router";
-import {ReloadService} from "../../../../services/core/reload.service";
-import {EMPTY, Subscription} from "rxjs";
-import {FilterData} from "../../../../interfaces/gallery/filter-data";
-import {SaleService} from "../../../../services/common/sale.service";
-import {VendorPermissions} from '../../../../enum/vendor-permission.enum';
-import {MatCheckbox, MatCheckboxChange} from "@angular/material/checkbox";
-import {FormControl, FormGroup, NgForm} from "@angular/forms";
-import {UtilsService} from "../../../../services/core/utils.service";
-import {debounceTime, distinctUntilChanged, pluck, switchMap} from "rxjs/operators";
-import {MatDatepickerInputEvent} from "@angular/material/datepicker";
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { UiService } from "../../../../services/core/ui.service";
+import { Router } from "@angular/router";
+import { ReloadService } from "../../../../services/core/reload.service";
+import { EMPTY, Subscription } from "rxjs";
+import { FilterData } from "../../../../interfaces/gallery/filter-data";
+import { SaleService } from "../../../../services/common/sale.service";
+import { VendorPermissions } from '../../../../enum/vendor-permission.enum';
+import { MatCheckbox, MatCheckboxChange } from "@angular/material/checkbox";
+import { FormControl, FormGroup, NgForm } from "@angular/forms";
+import { UtilsService } from "../../../../services/core/utils.service";
+import { debounceTime, distinctUntilChanged, pluck, switchMap } from "rxjs/operators";
+import { MatDatepickerInputEvent } from "@angular/material/datepicker";
 import * as XLSX from 'xlsx';
-import {MatDialog} from "@angular/material/dialog";
-import {ConfirmDialogComponent} from "../../../../shared/components/ui/confirm-dialog/confirm-dialog.component";
-import {Select} from '../../../../interfaces/core/select';
-import {MONTHS, YEARS} from '../../../../core/utils/app-data';
-import {Sale, SaleCalculation} from '../../../../interfaces/common/sale.interface';
-import {VendorService} from '../../../../services/vendor/vendor.service';
-import {ShopInformation} from '../../../../interfaces/common/shop-information.interface';
-import {ShopInformationService} from '../../../../services/common/shop-information.service';
-import {PrinterSettingsService} from '../../../../services/common/printer-settings.service';
-import {ThermalPrinterService} from '../../../../services/common/thermal-printer.service';
-import {ReprintBillComponent} from '../reprint-bill/reprint-bill.component';
+import { MatDialog } from "@angular/material/dialog";
+import { ConfirmDialogComponent } from "../../../../shared/components/ui/confirm-dialog/confirm-dialog.component";
+import { Select } from '../../../../interfaces/core/select';
+import { MONTHS, YEARS } from '../../../../core/utils/app-data';
+import { Sale, SaleCalculation } from '../../../../interfaces/common/sale.interface';
+import { VendorService } from '../../../../services/vendor/vendor.service';
+import { ShopInformation } from '../../../../interfaces/common/shop-information.interface';
+import { ShopInformationService } from '../../../../services/common/shop-information.service';
+import { PrinterSettingsService } from '../../../../services/common/printer-settings.service';
+import { ThermalPrinterService } from '../../../../services/common/thermal-printer.service';
+import { ReprintBillComponent } from '../reprint-bill/reprint-bill.component';
 
 @Component({
   selector: 'app-sale-list',
@@ -165,9 +165,9 @@ export class SaleListComponent implements OnInit, OnDestroy {
 
           const filterData: FilterData = {
             pagination: null,
-            filter: {...this.filter, ...{status: 'Sale'}},
+            filter: { ...this.filter, ...{ status: 'Sale' } },
             select: mSelect,
-            sort: {invoiceNo: -1},
+            sort: { invoiceNo: -1 },
           };
 
           return this.saleService.getAllSale(
@@ -246,13 +246,13 @@ export class SaleListComponent implements OnInit, OnDestroy {
     };
 
     // Include Sale, Hold, Draft, and Exchange statuses
-    let mFilter = {...this.filter, ...{status: {$in: ['Sale', 'Hold', 'Draft', 'Exchange']}}};
+    let mFilter = { ...this.filter, ...{ status: { $in: ['Sale', 'Hold', 'Draft', 'Exchange'] } } };
 
     const filter: FilterData = {
       filter: mFilter,
       pagination: null,
       select: mSelect,
-      sort: {invoiceNo: -1},
+      sort: { invoiceNo: -1 },
     };
 
     this.subDataOne = this.saleService
@@ -349,7 +349,7 @@ export class SaleListComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'month': {
         this.isDefaultFilter = false;
-        this.filter = {'month': value};
+        this.filter = { 'month': value };
         this.activeFilterMonth = index;
         break;
       }
@@ -370,9 +370,9 @@ export class SaleListComponent implements OnInit, OnDestroy {
         this.dataFormDateRange.value.end
       );
 
-      const qData = {soldDateString: {$gte: startDate, $lte: endDate}};
+      const qData = { soldDateString: { $gte: startDate, $lte: endDate } };
       this.isDefaultFilter = false;
-      this.filter = {...this.filter, ...qData};
+      this.filter = { ...this.filter, ...qData };
 
       // Re fetch Data
       this.getAllSale();
@@ -389,7 +389,7 @@ export class SaleListComponent implements OnInit, OnDestroy {
     this.activeSort = null;
     this.activeFilter1 = null;
     this.activeFilterMonth = null;
-    this.sortQuery = {createdAt: -1};
+    this.sortQuery = { createdAt: -1 };
     this.filter = null;
     this.dataFormDateRange.reset();
     this.setDefaultFilter();
@@ -573,13 +573,13 @@ export class SaleListComponent implements OnInit, OnDestroy {
       // Check printer settings
       const settings = this.printerSettings || {};
       const printType = settings.printType || 'pos'; // Default to POS if not set
-      
+
       // If A4 print is selected, use HTML print (A4 format)
       if (printType === 'a4') {
         this.printInvoiceHTML(sale);
         return;
       }
-      
+
       // For POS print, check if thermal printing is enabled
       if (printType === 'pos' && settings.printWithoutPreview) {
         // Prepare sale data for thermal printer
@@ -631,22 +631,22 @@ export class SaleListComponent implements OnInit, OnDestroy {
     try {
       // Generate print content
       const printContent = this.generatePrintContent(sale);
-      
+
       if (!printContent || printContent.includes('Error:')) {
         console.error('Failed to generate print content');
         this.uiService.message('Failed to generate invoice content', 'warn');
         return;
       }
-      
+
       // Create a new window/tab for invoice
       const printWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
-      
+
       if (printWindow && !printWindow.closed) {
         // Write content to new window
         printWindow.document.open();
         printWindow.document.write(printContent);
         printWindow.document.close();
-        
+
         // Wait for content to load, then focus and print
         setTimeout(() => {
           try {
@@ -665,7 +665,7 @@ export class SaleListComponent implements OnInit, OnDestroy {
         // If popup blocked, show error message
         console.error('Print window blocked by browser');
         this.uiService.message('Please allow popups to print invoice. Invoice will open in new tab.', 'warn');
-        
+
         // Try alternative: create a blob URL and open it
         const blob = new Blob([printContent], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
@@ -691,11 +691,11 @@ export class SaleListComponent implements OnInit, OnDestroy {
     const settings = this.printerSettings || {};
     const date = new Date();
     const printType = settings.printType || 'pos'; // Default to POS if not set
-    
+
     // Get currency symbol
     let currencySymbol = '৳';
     if (shopInfo?.currency) {
-      switch(shopInfo.currency) {
+      switch (shopInfo.currency) {
         case 'BDT':
           currencySymbol = '৳';
           break;
@@ -709,19 +709,19 @@ export class SaleListComponent implements OnInit, OnDestroy {
           currencySymbol = '৳';
       }
     }
-    
+
     // Format values - Shop Information
     const shopName = shopInfo?.siteName || shopInfo?.websiteName || 'Shop Name';
     const shopAddress = shopInfo?.addresses?.[0]?.value || '';
     const shopPhone = shopInfo?.phones?.[0]?.value || '';
     const shopEmail = shopInfo?.emails?.[0]?.value || '';
     const shopWebsite = (shopInfo as any)?.website || '';
-    
+
     // Invoice Information
     const invoiceNo = sale?.invoiceNo || 'N/A';
     const saleDate = this.utilsService.getDateString(sale?.soldDate || new Date());
     const saleTime = sale?.soldTime || '';
-    
+
     // Customer Information
     const customerName = sale?.customer?.name || '';
     const customerPhone = sale?.customer?.phone || '';
@@ -729,17 +729,17 @@ export class SaleListComponent implements OnInit, OnDestroy {
     const customerAddress = sale?.customer?.address || '';
     const customerCity = sale?.customer?.city || '';
     const customerPostCode = sale?.customer?.postCode || '';
-    
+
     // Salesman Information
     const salesmanName = sale?.salesman?.name || 'N/A';
     const salesmanPhone = sale?.salesman?.phone || '';
-    
+
     // Paper size - A4 or POS or Label
     const isA4Print = printType === 'a4';
     const isLabelPrint = printType === 'label';
     const paperSize = isA4Print ? 'A4' : (isLabelPrint ? (settings.labelSize || '3in 10in') : (settings.paperSize || '58mm'));
     const orientation = settings.orientation || 'portrait'; // portrait, landscape, portrait-180, landscape-180
-    
+
     // Calculate paper width for POS thermal printers
     let calculatedPaperWidth = '58mm';
     if (!isA4Print && !isLabelPrint) {
@@ -750,7 +750,7 @@ export class SaleListComponent implements OnInit, OnDestroy {
     }
     const paperWidth = isA4Print ? '210mm' : calculatedPaperWidth;
     const customCss = settings.customCss || '';
-    
+
     // Generate products table rows
     let productsRows = '';
     if (sale?.products && sale.products.length > 0) {
@@ -768,23 +768,23 @@ export class SaleListComponent implements OnInit, OnDestroy {
         </tr>`;
       }).join('');
     }
-    
+
     // Format totals
-    const subTotal = (sale?.subTotal || 0).toLocaleString('bn-BD');
+    const subTotal = (sale?.subTotal || 0);
     const discountAmount = sale?.discountAmount || sale?.discount || 0;
-    const discount = discountAmount > 0 ? discountAmount.toLocaleString('bn-BD') : '0';
-    const vatAmount = (sale?.vatAmount || 0).toLocaleString('bn-BD');
-    const grandTotal = (sale?.total || 0).toLocaleString('bn-BD');
+    const discount = discountAmount > 0 ? discountAmount : '0';
+    const vatAmount = (sale?.vatAmount || 0);
+    const grandTotal = (sale?.total || 0);
     const totalAmount = sale?.total || 0;
     // Paid amount should be receivedFromCustomer if available, otherwise paidAmount, otherwise total (for full payment)
     const paidAmount = sale?.receivedFromCustomer || sale?.paidAmount || (sale?.paymentType === 'cash' && !sale?.receivedFromCustomer ? sale?.total : 0);
     const dueAmount = totalAmount - paidAmount;
-    const received = paidAmount > 0 ? paidAmount.toLocaleString('bn-BD') : (sale?.total || 0).toLocaleString('bn-BD');
-    const due = dueAmount > 0 ? dueAmount.toLocaleString('bn-BD') : '0';
-    const change = sale?.receivedFromCustomer && sale?.receivedFromCustomer > sale?.total 
-      ? (sale.receivedFromCustomer - sale.total).toFixed(2) 
+    const received = paidAmount > 0 ? paidAmount : (sale?.total || 0);
+    const due = dueAmount > 0 ? dueAmount : '0';
+    const change = sale?.receivedFromCustomer && sale?.receivedFromCustomer > sale?.total
+      ? (sale.receivedFromCustomer - sale.total).toFixed(2)
       : '0.00';
-    
+
     // A4 Invoice Template (Compact One-Page Design)
     if (isA4Print) {
       return `<!DOCTYPE html>
@@ -1273,7 +1273,7 @@ export class SaleListComponent implements OnInit, OnDestroy {
 </body>
 </html>`;
     }
-    
+
     // POS Invoice Template (Original Design)
     return `<!DOCTYPE html>
 <html>

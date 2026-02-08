@@ -20,7 +20,7 @@ export class BalanceSheetComponent implements OnInit {
     private uiService: UiService,
     private exportPrintService: ExportPrintService,
     private datePipe: DatePipe,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadBalanceSheet();
