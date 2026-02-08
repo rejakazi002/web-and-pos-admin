@@ -240,17 +240,30 @@
             </mat-form-field>
           </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Repair Amount (Service Charge)</mat-label>
-            <input
-              formControlName="amount"
-              matInput
-              digitOnly
-              pattern="^\d+(\.\d{1,2})?$"
-              [decimal]="true"
-              placeholder="Enter repair/service amount"
-            />
-          </mat-form-field>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status" placeholder="Choose status">
+                <mat-option value="Pending">Pending</mat-option>
+                <mat-option value="In Progress">In Progress</mat-option>
+                <mat-option value="Completed">Completed</mat-option>
+                <mat-option value="Delivered">Delivered</mat-option>
+                <mat-option value="Not Repairable">Not Repairable</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Repair Amount (Service Charge)</mat-label>
+              <input
+                formControlName="amount"
+                matInput
+                digitOnly
+                pattern="^\d+(\.\d{1,2})?$"
+                [decimal]="true"
+                placeholder="Enter repair/service amount"
+              />
+            </mat-form-field>
+          </div>
 
           <mat-form-field appearance="outline">
             <mat-label>Note / Description</mat-label>

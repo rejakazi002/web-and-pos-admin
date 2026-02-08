@@ -460,6 +460,11 @@ table {
             color: #ffffff;
           }
 
+          &.status-not-repairable {
+            background: #9e9e9e;
+            color: #ffffff;
+          }
+
           &.status-default {
             background: #e9ecef;
             color: #495057;

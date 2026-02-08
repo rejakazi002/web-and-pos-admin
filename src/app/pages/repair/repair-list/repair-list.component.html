@@ -90,6 +90,18 @@
           <span class="status-count">{{ statusCounts['Delivered'] || 0 }}</span>
         </div>
       </button>
+      
+      <button 
+        mat-stroked-button 
+        class="status-card"
+        [class.active]="selectedStatus === 'Not Repairable'"
+        (click)="filterByStatus('Not Repairable')">
+        <mat-icon>block</mat-icon>
+        <div class="status-info">
+          <span class="status-label">Not Repairable</span>
+          <span class="status-count">{{ statusCounts['Not Repairable'] || 0 }}</span>
+        </div>
+      </button>
     </div>
 
     <!-- Filter Section -->
@@ -165,6 +177,10 @@
           <mat-icon>local_shipping</mat-icon>
           <span>Delivered</span>
         </button>
+        <button mat-menu-item (click)="filterByStatus('Not Repairable')" [class.dropdown-active]="selectedStatus === 'Not Repairable'">
+          <mat-icon>block</mat-icon>
+          <span>Not Repairable</span>
+        </button>
       </mat-menu>
 
       <app-export-toolbar
@@ -235,6 +251,10 @@
             <button mat-menu-item (click)="openConfirmDialog('edit', {status: 'Delivered'})">
               <mat-icon>local_shipping</mat-icon>
               <span>Delivered</span>
+            </button>
+            <button mat-menu-item (click)="openConfirmDialog('edit', {status: 'Not Repairable'})">
+              <mat-icon>block</mat-icon>
+              <span>Not Repairable</span>
             </button>
           </mat-menu>
         </div>

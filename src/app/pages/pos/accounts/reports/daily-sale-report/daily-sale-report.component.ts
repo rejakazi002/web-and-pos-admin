@@ -112,6 +112,7 @@ export class DailySaleReportComponent implements OnInit {
     data.push({ Item: 'Card Sales', Value: (rd.summary?.cardSales || 0).toFixed(2) });
     data.push({ Item: 'Total Discount', Value: (rd.summary?.totalDiscount || 0).toFixed(2) });
     data.push({ Item: 'Total VAT', Value: (rd.summary?.totalVat || 0).toFixed(2) });
+    data.push({ Item: 'Repair Amount', Value: (rd.summary?.totalRepairAmount || 0).toFixed(2) });
 
     if (rd.hourlyBreakdown && rd.hourlyBreakdown.length > 0) {
       data.push({ Item: '', Value: '' });
@@ -165,6 +166,10 @@ export class DailySaleReportComponent implements OnInit {
           <div style="padding: 1.5rem; background: #f9f9f9; border-radius: 8px; text-align: center;">
             <h4 style="margin: 0 0 10px 0; color: #333; font-size: 14px;">Total VAT</h4>
             <p style="margin: 0; font-size: 24px; font-weight: 700; color: #2196f3;">${(rd.summary?.totalVat || 0).toFixed(2)}</p>
+          </div>
+          <div style="padding: 1.5rem; background: #f9f9f9; border-radius: 8px; text-align: center;">
+            <h4 style="margin: 0 0 10px 0; color: #333; font-size: 14px;">Repair Amount</h4>
+            <p style="margin: 0; font-size: 24px; font-weight: 700; color: #2196f3;">${(rd.summary?.totalRepairAmount || 0).toFixed(2)}</p>
           </div>
         </div>
     `;

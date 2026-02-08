@@ -53,7 +53,8 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
     'Pending': 0,
     'In Progress': 0,
     'Completed': 0,
-    'Delivered': 0
+    'Delivered': 0,
+    'Not Repairable': 0
   };
 
   selectedIds: string[] = [];
@@ -558,7 +559,8 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
       'Pending': 0,
       'In Progress': 0,
       'Completed': 0,
-      'Delivered': 0
+      'Delivered': 0,
+      'Not Repairable': 0
     };
 
     // Count from holdAllRepair (all data without filters)
