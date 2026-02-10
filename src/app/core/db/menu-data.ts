@@ -1,5 +1,5 @@
-import {AdminMenu} from '../../interfaces/core/admin-menu.interface';
-import {environment} from '../../../environments/environment';
+import { AdminMenu } from '../../interfaces/core/admin-menu.interface';
+import { environment } from '../../../environments/environment';
 
 
 const ALL_MENUS1: AdminMenu[] = [
@@ -410,7 +410,7 @@ const ALL_MENUS1: AdminMenu[] = [
   //     },
   //   ],
   // },
-// {
+  // {
   {
     id: 600,
     name: 'Accounts',
@@ -1411,87 +1411,87 @@ export const ALL_MENUS: AdminMenu[] = [
   //     },
   //   ],
   // },
-// {
-//   {
-//     id: 600,
-//     name: 'Accounts',
-//     hasSubMenu: true,
-//     routerLink: null,
-//     icon: 'account_balance',
-//     subMenus: [
-//       {
-//         id: 15,
-//         name: 'Bank Account List',
-//         hasSubMenu: true,
-//         routerLink: 'pos/accounts/bank-account-list',
-//         icon: 'arrow_right',
-//       },
-//       {
-//         id: 16,
-//         name: 'Add Bank Account',
-//         hasSubMenu: true,
-//         routerLink: 'pos/accounts/add-bank-account',
-//         icon: 'arrow_right',
-//       },
-//       {
-//         id: 17,
-//         name: 'Cash Transaction List',
-//         hasSubMenu: true,
-//         routerLink: 'pos/accounts/cash-transaction-list',
-//         icon: 'arrow_right',
-//       },
-//       {
-//         id: 18,
-//         name: 'Add Cash Transaction',
-//         hasSubMenu: true,
-//         routerLink: 'pos/accounts/add-cash-transaction',
-//         icon: 'arrow_right',
-//       },
-//       {
-//         id: 19,
-//         name: 'Accounts Ledger',
-//         hasSubMenu: true,
-//         routerLink: 'pos/accounts/accounts-ledger',
-//         icon: 'arrow_right',
-//       },
-//       {
-//         id: 20,
-//         name: 'Day Close',
-//         hasSubMenu: true,
-//         routerLink: 'pos/accounts/day-close',
-//         icon: 'arrow_right',
-//       },
-//
-//       {
-//         id: 21,
-//         name: 'Balance Sheet',
-//         hasSubMenu: true,
-//         routerLink: 'pos/accounts/reports/balance-sheet',
-//         icon: 'arrow_right',
-//       },
-//       {
-//         id: 22,
-//         name: 'Profit & Loss',
-//         hasSubMenu: true,
-//         routerLink: 'pos/accounts/reports/profit-loss',
-//         icon: 'arrow_right',
-//       },
-//       {
-//         id: 23,
-//         name: 'Tax Report',
-//         hasSubMenu: true,
-//         routerLink: 'pos/accounts/reports/tax-report',
-//         icon: 'arrow_right',
-//       },
-//       {
-//         id: 39,
-//         name: 'Sales Record',
-//         hasSubMenu: true,
-//         routerLink: 'pos/accounts/reports/sales-record',
-//         icon: 'arrow_right',
-//       },
-//     ],
-//   },
+  // {
+  //   {
+  //     id: 600,
+  //     name: 'Accounts',
+  //     hasSubMenu: true,
+  //     routerLink: null,
+  //     icon: 'account_balance',
+  //     subMenus: [
+  //       {
+  //         id: 15,
+  //         name: 'Bank Account List',
+  //         hasSubMenu: true,
+  //         routerLink: 'pos/accounts/bank-account-list',
+  //         icon: 'arrow_right',
+  //       },
+  //       {
+  //         id: 16,
+  //         name: 'Add Bank Account',
+  //         hasSubMenu: true,
+  //         routerLink: 'pos/accounts/add-bank-account',
+  //         icon: 'arrow_right',
+  //       },
+  //       {
+  //         id: 17,
+  //         name: 'Cash Transaction List',
+  //         hasSubMenu: true,
+  //         routerLink: 'pos/accounts/cash-transaction-list',
+  //         icon: 'arrow_right',
+  //       },
+  //       {
+  //         id: 18,
+  //         name: 'Add Cash Transaction',
+  //         hasSubMenu: true,
+  //         routerLink: 'pos/accounts/add-cash-transaction',
+  //         icon: 'arrow_right',
+  //       },
+  //       {
+  //         id: 19,
+  //         name: 'Accounts Ledger',
+  //         hasSubMenu: true,
+  //         routerLink: 'pos/accounts/accounts-ledger',
+  //         icon: 'arrow_right',
+  //       },
+  //       {
+  //         id: 20,
+  //         name: 'Day Close',
+  //         hasSubMenu: true,
+  //         routerLink: 'pos/accounts/day-close',
+  //         icon: 'arrow_right',
+  //       },
+  //
+  //       {
+  //         id: 21,
+  //         name: 'Balance Sheet',
+  //         hasSubMenu: true,
+  //         routerLink: 'pos/accounts/reports/balance-sheet',
+  //         icon: 'arrow_right',
+  //       },
+  //       {
+  //         id: 22,
+  //         name: 'Profit & Loss',
+  //         hasSubMenu: true,
+  //         routerLink: 'pos/accounts/reports/profit-loss',
+  //         icon: 'arrow_right',
+  //       },
+  //       {
+  //         id: 23,
+  //         name: 'Tax Report',
+  //         hasSubMenu: true,
+  //         routerLink: 'pos/accounts/reports/tax-report',
+  //         icon: 'arrow_right',
+  //       },
+  //       {
+  //         id: 39,
+  //         name: 'Sales Record',
+  //         hasSubMenu: true,
+  //         routerLink: 'pos/accounts/reports/sales-record',
+  //         icon: 'arrow_right',
+  //       },
+  //     ],
+  //   },
   {
     id: 13,
     name: 'Pos',

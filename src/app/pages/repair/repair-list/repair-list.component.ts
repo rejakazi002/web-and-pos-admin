@@ -1,24 +1,24 @@
-import {Component, inject, OnDestroy, OnInit, ViewChild, ChangeDetectorRef} from '@angular/core';
-import {FormControl, FormGroup, NgForm} from '@angular/forms';
-import {EMPTY, Subscription} from 'rxjs';
-import {MatDialog} from '@angular/material/dialog';
-import {MatDatepickerInputEvent} from '@angular/material/datepicker';
-import {Router} from '@angular/router';
-import {debounceTime, distinctUntilChanged, pluck, switchMap} from 'rxjs/operators';
-import {FilterData} from '../../../interfaces/gallery/filter-data';
-import {ConfirmDialogComponent} from '../../../shared/components/ui/confirm-dialog/confirm-dialog.component';
-import {RepairService} from '../../../services/common/repair.service';
-import {UiService} from '../../../services/core/ui.service';
-import {UtilsService} from '../../../services/core/utils.service';
-import {ReloadService} from '../../../services/core/reload.service';
-import {ShopInformationService} from '../../../services/common/shop-information.service';
-import {Select} from '../../../interfaces/core/select';
-import {MONTHS, YEARS} from '../../../core/utils/app-data';
-import {adminBaseMixin} from '../../../mixin/admin-base.mixin';
-import {PageDataService} from '../../../services/core/page-data.service';
-import {Title} from '@angular/platform-browser';
+import { Component, inject, OnDestroy, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { FormControl, FormGroup, NgForm } from '@angular/forms';
+import { EMPTY, Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, pluck, switchMap } from 'rxjs/operators';
+import { FilterData } from '../../../interfaces/gallery/filter-data';
+import { ConfirmDialogComponent } from '../../../shared/components/ui/confirm-dialog/confirm-dialog.component';
+import { RepairService } from '../../../services/common/repair.service';
+import { UiService } from '../../../services/core/ui.service';
+import { UtilsService } from '../../../services/core/utils.service';
+import { ReloadService } from '../../../services/core/reload.service';
+import { ShopInformationService } from '../../../services/common/shop-information.service';
+import { Select } from '../../../interfaces/core/select';
+import { MONTHS, YEARS } from '../../../core/utils/app-data';
+import { adminBaseMixin } from '../../../mixin/admin-base.mixin';
+import { PageDataService } from '../../../services/core/page-data.service';
+import { Title } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
-import {ExportToolbarComponent, ColumnVisibility} from '../../../shared/components/export-toolbar/export-toolbar.component';
+import { ExportToolbarComponent, ColumnVisibility } from '../../../shared/components/export-toolbar/export-toolbar.component';
 
 @Component({
   selector: 'app-repair-list',
@@ -97,7 +97,8 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
     });
     this.subscriptions.push(subReload);
 
-    this.setDefaultFilter();
+    // Initialize filter as null to load all repairs
+    this.filter = null;
     this.getAllRepair();
     this.getShopInformation();
     this.setPageData();
@@ -121,57 +122,57 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
             return EMPTY;
           }
 
-              const mSelect = {
-                images: 1,
-                date: 1,
-                dateString: 1,
-                nricNo: 1,
-                deliveredDate: 1,
-                phoneNo: 1,
-                brand: 1,
-                modelNo: 1,
-                imeiNo: 1,
-                repairFor: 1,
-                deliveredTime: 1,
-                amount: 1,
-                partsAmount: 1,
-                parts: 1,
-                status: 1,
-                description: 1,
-                createdAt: 1,
-              };
+          const mSelect = {
+            images: 1,
+            date: 1,
+            dateString: 1,
+            nricNo: 1,
+            deliveredDate: 1,
+            phoneNo: 1,
+            brand: 1,
+            modelNo: 1,
+            imeiNo: 1,
+            repairFor: 1,
+            deliveredTime: 1,
+            amount: 1,
+            partsAmount: 1,
+            parts: 1,
+            status: 1,
+            description: 1,
+            createdAt: 1,
+          };
 
           const filterData: FilterData = {
             pagination: null,
             filter: this.filter,
             select: mSelect,
-            sort: {dateString: -1},
+            sort: { dateString: -1 },
           };
 
           return this.repairService.getAllRepair(filterData, this.searchQuery);
         })
       )
       .subscribe({
-            next: (res: any) => {
-              this.searchRepair = res.data || [];
-              this.allRepair = res.data || [];
-              // Initialize select property and calculate total amount for search results
-              this.allRepair.forEach(item => {
-                if (item.select === undefined) {
-                  item.select = false;
-                }
-                // Calculate total amount - ensure partsAmount is a number
-                const partsAmount = item.partsAmount ? parseFloat(item.partsAmount.toString()) : 0;
-                const repairAmount = item.amount ? parseFloat(item.amount.toString()) : 0;
-                item.totalAmount = partsAmount + repairAmount;
-              });
-              // Use totalAmount for grouping
-              const searchDataWithTotal = this.searchRepair.map(item => {
-                const partsAmount = item.partsAmount ? parseFloat(item.partsAmount.toString()) : 0;
-                const repairAmount = item.amount ? parseFloat(item.amount.toString()) : 0;
-                return { ...item, amount: partsAmount + repairAmount };
-              });
-              this.repairs = this.utilsService.arrayGroupByField(searchDataWithTotal, 'dateString', 'amount');
+        next: (res: any) => {
+          this.searchRepair = res.data || [];
+          this.allRepair = res.data || [];
+          // Initialize select property and calculate total amount for search results
+          this.allRepair.forEach(item => {
+            if (item.select === undefined) {
+              item.select = false;
+            }
+            // Calculate total amount - ensure partsAmount is a number
+            const partsAmount = item.partsAmount ? parseFloat(item.partsAmount.toString()) : 0;
+            const repairAmount = item.amount ? parseFloat(item.amount.toString()) : 0;
+            item.totalAmount = partsAmount + repairAmount;
+          });
+          // Use totalAmount for grouping
+          const searchDataWithTotal = this.searchRepair.map(item => {
+            const partsAmount = item.partsAmount ? parseFloat(item.partsAmount.toString()) : 0;
+            const repairAmount = item.amount ? parseFloat(item.amount.toString()) : 0;
+            return { ...item, amount: partsAmount + repairAmount };
+          });
+          this.repairs = this.utilsService.arrayGroupByField(searchDataWithTotal, 'dateString', 'amount');
           // Initialize select property for grouped items
           this.repairs.forEach(group => {
             group.data.forEach(item => {
@@ -180,10 +181,10 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
               }
             });
           });
-          this.calculation = res.calculation || { 
-            totalAmount: 0, 
-            totalPartsAmount: 0, 
-            totalRepairAmount: 0 
+          this.calculation = res.calculation || {
+            totalAmount: 0,
+            totalPartsAmount: 0,
+            totalRepairAmount: 0
           };
           // Note: Status counts are calculated from holdAllRepair (all data), not search results
         },
@@ -199,8 +200,8 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
     this.pageDataService.setPageData({
       title: 'Repair List',
       navArray: [
-        {name: 'Dashboard', url: `/dashboard`},
-        {name: 'Repair', url: ''},
+        { name: 'Dashboard', url: `/dashboard` },
+        { name: 'Repair', url: '' },
       ]
     })
   }
@@ -253,7 +254,7 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
       filter: this.filter,
       pagination: null,
       select: mSelect,
-      sort: {dateString: -1},
+      sort: { dateString: -1 },
     };
 
     const subscription = this.repairService.getAllRepair(filter, null)
@@ -289,10 +290,10 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
               });
             });
             this.holdPrevData = this.repairs;
-            this.calculation = res.calculation || { 
-              totalAmount: 0, 
-              totalPartsAmount: 0, 
-              totalRepairAmount: 0 
+            this.calculation = res.calculation || {
+              totalAmount: 0,
+              totalPartsAmount: 0,
+              totalRepairAmount: 0
             };
             // Ensure calculation has the separate amounts
             if (this.calculation && !this.calculation.totalPartsAmount) {
@@ -346,7 +347,7 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
     switch (type) {
       case 'month': {
         this.isDefaultFilter = false;
-        this.filter = {'month': value};
+        this.filter = { 'month': value };
         this.activeFilterMonth = index;
         break;
       }
@@ -360,7 +361,7 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
   filterByStatus(status: string | null) {
     this.selectedStatus = status;
     this.isDefaultFilter = false;
-    
+
     if (status) {
       this.filter = {
         ...this.filter,
@@ -371,7 +372,7 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
       const { status: _, ...rest } = this.filter || {};
       this.filter = rest;
     }
-    
+
     this.getAllRepair();
   }
 
@@ -379,9 +380,9 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
     if (event.value) {
       const startDate = this.utilsService.getDateString(this.dataFormDateRange.value.start);
       const endDate = this.utilsService.getDateString(this.dataFormDateRange.value.end);
-      const qData = {dateString: {$gte: startDate, $lte: endDate}};
+      const qData = { dateString: { $gte: startDate, $lte: endDate } };
       this.isDefaultFilter = false;
-      this.filter = {...qData};
+      this.filter = { ...qData };
       this.getAllRepair();
     }
   }
@@ -389,11 +390,15 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
   onRemoveAllQuery() {
     this.activeSort = null;
     this.activeFilterMonth = null;
+    this.activeFilterYear = null;
     this.selectedStatus = null;
-    this.sortQuery = {createdAt: -1};
+    this.sortQuery = { dateString: -1 };
     this.filter = null;
+    this.searchQuery = null;
+    this.searchRepair = [];
     this.dataFormDateRange.reset();
-    this.setDefaultFilter();
+    // this.setDefaultFilter(); // Valid: Removed to allow fetching all data
+    this.isDefaultFilter = false;
     this.getAllRepair();
   }
 
@@ -566,7 +571,7 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
     // Count from holdAllRepair (all data without filters)
     if (this.holdAllRepair && this.holdAllRepair.length > 0) {
       this.statusCounts['All'] = this.holdAllRepair.length;
-      
+
       this.holdAllRepair.forEach(repair => {
         const status = repair.status || 'Pending';
         if (this.statusCounts.hasOwnProperty(status)) {
@@ -649,7 +654,7 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
     const shopInfo: any = this.shopInformation;
     let currencySymbol = '৳';
     if (shopInfo?.currency) {
-      switch(shopInfo.currency) {
+      switch (shopInfo.currency) {
         case 'BDT':
           currencySymbol = '৳';
           break;
