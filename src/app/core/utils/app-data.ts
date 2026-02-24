@@ -241,7 +241,7 @@ export const PACKAGE_TYPES: Select[] = [
 ];
 
 export const DATA_STATUS: Select[] = [
-  // {value: 'publish', viewValue: 'Publish'},
+  { value: 'publish', viewValue: 'Publish' },
   { value: 'draft', viewValue: 'Draft' },
 ];
 
