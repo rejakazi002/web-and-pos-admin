@@ -239,6 +239,15 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
       technician: [null],
     });
 
+    // Setup status listener for auto-date
+    this.dataForm.get('status').valueChanges.subscribe(status => {
+      if (status === 'Delivered') {
+        if (!this.dataForm.get('deliveredDate').value) {
+          this.dataForm.patchValue({ deliveredDate: new Date() });
+        }
+      }
+    });
+
     // Setup listeners
   }
 
