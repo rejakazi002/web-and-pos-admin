@@ -546,6 +546,10 @@ export class RepairListComponent extends adminBaseMixin(Component) implements On
       return;
     }
 
+    if (data.status === 'Delivered') {
+      data.deliveredDate = new Date();
+    }
+
     const subscription = this.repairService.updateMultipleRepairById(this.selectedIds, data)
       .subscribe({
         next: (res: any) => {
