@@ -627,6 +627,10 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
     mData.parts = partsData;
     mData.partsAmount = this.getPartsTotal();
 
+    if (this.saleId) {
+      mData.saleId = this.saleId;
+    }
+
     if (this.id) {
       this.updateRepairById(mData);
     } else {
@@ -698,7 +702,7 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
             setTimeout(() => {
               this.formElement.resetForm();
               this.router.navigate(['/repair/repair-list']).then();
-            }, 200);
+            }, 1000);
           } else {
             this.uiService.message(res.message || 'Failed to add repair', 'warn');
           }
@@ -730,7 +734,7 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
             this.reloadService.needRefreshData$();
             setTimeout(() => {
               this.router.navigate(['/repair/repair-list']).then();
-            }, 200);
+            }, 1000);
           } else {
             this.uiService.message(res.message || 'Failed to update repair', 'warn');
           }
