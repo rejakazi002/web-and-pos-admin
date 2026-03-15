@@ -627,8 +627,10 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
     mData.parts = partsData;
     mData.partsAmount = this.getPartsTotal();
 
-    if (this.saleId) {
+    if (this.saleId && partsData.length > 0) {
       mData.saleId = this.saleId;
+    } else if (partsData.length === 0) {
+      mData.saleId = null;
     }
 
     if (this.id) {
@@ -1246,10 +1248,17 @@ export class AddRepairComponent extends adminBaseMixin(Component) implements OnI
             console.log('Sale updated for repair parts');
           } else {
             console.error('Failed to update sale for repair:', res.message);
+            // If the sale was not found, create a new one
+            if (res.message === 'Sale not found') {
+               this.createSaleForRepair(saleData, (saleData as any).repairId || this.id);
+            }
           }
         },
         error: (error) => {
           console.error('Error updating sale for repair:', error);
+          if (error && error.status === 404) {
+             this.createSaleForRepair(saleData, (saleData as any).repairId || this.id);
+          }
         }
       });
     this.subscriptions.push(subscription);
